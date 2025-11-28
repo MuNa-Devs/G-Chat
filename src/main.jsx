@@ -1,11 +1,20 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom';
 
 import './index.css'
 import App from './App.jsx'
+import AuthProvider from './AuthContext.jsx';
+import ThemeManager from './utils/ThemeManager.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+	<BrowserRouter>
+		<ThemeManager>
+			<AuthProvider>
+				<StrictMode>
+					<App />
+				</StrictMode>
+			</AuthProvider>
+		</ThemeManager>
+	</BrowserRouter>
 )

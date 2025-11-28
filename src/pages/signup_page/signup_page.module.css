@@ -1,0 +1,204 @@
+.signupBody {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.headerTexts {
+    text-align: center;
+}
+
+.headerTexts h3 {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+}
+
+.signupBody h1 {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0;
+    width: auto;
+    color: var(--text-primary);
+}
+
+.signupBody h2 {
+    font-size: 1.5em;
+    margin: 0;
+    width: auto;
+    color: var(--text-secondary);
+}
+
+.signupBody p {
+    font-size: 0.8em;
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.signupCard {
+    background-color: var(--bg-light);
+    padding: 28px;
+    margin: 20px;
+    height: auto;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    justify-content: space-evenly;
+}
+
+.signupCard div,
+.signupCard h5,
+.signupCard input {
+    margin: 1px;
+}
+
+.signupCard div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.signupCard h5 {
+    color: var(--text-primary);
+}
+
+.signupCard .text {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+    border-radius: 5px;
+    min-height: 20px;
+    max-height: 40px;
+    min-width: 250px;
+    max-width: 500px;
+    border: 0.5px solid var(--card-bg);
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+.signupCard .text:focus {
+    outline: 0.5px solid var(--accent);
+    background-color: var(--card-bg);
+}
+
+.utils {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.rememberMeDude {
+    display: flex;
+    align-items: center;
+}
+
+.rememberMeDude label {
+    width: 100%;
+    display: inline-flex;
+    gap: 5px;
+    color: var(--text-secondary);
+}
+
+.rememberMeDude input {
+    border: 0.5px solid var(--card-bg);
+    background-color: var(--card-bg);
+}
+
+a {
+    text-decoration: none;
+    color: var(--accent);
+}
+
+.utils a p {
+    color: var(--accent);
+}
+
+.signupBtn {
+    padding: 10px;
+    min-height: 20px;
+    max-height: 40px;
+    min-width: 250px;
+    max-width: 500px;
+    background-color: var(--accent);
+    color: var(--button-text);
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+} .signupBtn:hover{
+    opacity: 0.8;
+}
+
+.signupBtn:active {
+    background-color: var(--accent);
+    opacity: 0.8;
+}
+
+.signupBtn:disabled {
+    background-color: var(--accent);
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* Media queries */
+
+@media (max-height: 500px) {
+    .signupBody {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .signupCard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .signupCard h3,
+    .signupBtn {
+        grid-column: span 2;
+        text-align: center;
+    }
+
+    .title {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .signupCard {
+        min-width: 300px;
+        max-width: 360px;
+        border-radius: 12px;
+        width: 100%;
+    }
+
+    .signupCard .text {
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    /*  */
+}
+
+@media (max-width: 1024px) {
+    /*  */
+}
+
+@media (max-width: 1280px) {
+    /*  */
+}
