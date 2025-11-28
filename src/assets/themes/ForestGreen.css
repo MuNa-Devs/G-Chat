@@ -1,0 +1,31 @@
+body.ForestGreen{
+    --bg: #0f1a13;
+    --bg-light: #16241b;
+    --bg-lighter: #1c2f23;
+    --card-bg: #23392b;
+
+    --text-primary: #e8f5e9;
+    --text-secondary: #9fbfaf;
+    --button-text: #e8ecf2;
+
+    --border: #3a5444;
+    --border-light: #4a6a56;
+
+    --accent: #4caf50;
+    --primary: #2e7d32;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

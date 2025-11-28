@@ -1,0 +1,31 @@
+body.DesertSand{
+    --bg: #f4eadf;
+    --bg-light: #fff8ef;
+    --bg-lighter: #f0e3d7;
+    --card-bg: #e2d2c4;
+
+    --text-primary: #3d2f24;
+    --text-secondary: #6b5f55;
+    --button-text: #e8ecf2;
+
+    --border: #d2c5b7;
+    --border-light: #e3d7cb;
+
+    --accent: #c17f59;
+    --primary: #a8683f;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

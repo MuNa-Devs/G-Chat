@@ -1,0 +1,35 @@
+body.WorkFriendly {
+    /* Backgrounds */
+    --bg: #f7f9fc;
+    --bg-light: #ffffff;
+    --bg-lighter: #eef3f8;
+    --card-bg: #dde6ee;
+
+    /* Text */
+    --text-primary: #1a2a36;
+    --text-secondary: #516273;
+    --button-text: #e8ecf2;
+
+    /* Borders */
+    --border: #d0d8e1;
+    --border-light: #e4e9ef;
+
+    /* Accent / Primary */
+    --accent: #2c82c9;
+    --primary: #2c82c9; /* same as accent for identity */
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

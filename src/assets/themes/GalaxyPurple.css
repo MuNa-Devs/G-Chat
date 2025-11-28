@@ -1,0 +1,31 @@
+body.GalaxyPurple{
+    --bg: #0f0a1b;
+    --bg-light: #150e27;
+    --bg-lighter: #1e1537;
+    --card-bg: #2d2050;
+
+    --text-primary: #f2e8ff;
+    --text-secondary: #b9a3d1;
+    --button-text: #e8ecf2;
+
+    --border: #443064;
+    --border-light: #5b4284;
+
+    --accent: #b16bff;
+    --primary: #8c47ff;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

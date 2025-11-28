@@ -1,0 +1,31 @@
+body.MaterialGrey{
+    --bg: #1e1e1e;
+    --bg-light: #2c2c2c;
+    --bg-lighter: #333333;
+    --card-bg: #3c3c3c;
+
+    --text-primary: #ffffff;
+    --text-secondary: #bdbdbd;
+    --button-text: #e8ecf2;
+
+    --border: #4a4a4a;
+    --border-light: #6b6b6b;
+
+    --accent: #82aaff;
+    --primary: #2962ff;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

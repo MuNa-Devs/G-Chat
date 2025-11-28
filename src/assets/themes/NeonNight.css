@@ -1,0 +1,31 @@
+body.NeonNight{
+    --bg: #06040a;
+    --bg-light: #0a0712;
+    --bg-lighter: #120d22;
+    --card-bg: #1d1636;
+
+    --text-primary: #e2dbff;
+    --text-secondary: #a394d1;
+    --button-text: #e8ecf2;
+
+    --border: #382b63;
+    --border-light: #4b3a82;
+
+    --accent: #ff37e1;
+    --primary: #8b5dff;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

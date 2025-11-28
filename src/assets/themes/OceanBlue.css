@@ -1,0 +1,31 @@
+body.OceanBlue{
+    --bg: #0a1a2f;
+    --bg-light: #0f243a;
+    --bg-lighter: #153152;
+    --card-bg: #1c3d5e;
+
+    --text-primary: #e3f2fd;
+    --text-secondary: #9bbad1;
+    --button-text: #e8ecf2;
+
+    --border: #2d4f6c;
+    --border-light: #3c5f7f;
+
+    --accent: #4f9fff;
+    --primary: #1476ff;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

@@ -1,0 +1,31 @@
+body.IceBlue{
+    --bg: #eef7ff;
+    --bg-light: #ffffff;
+    --bg-lighter: #e3f1ff;
+    --card-bg: #d5e7f7;
+
+    --text-primary: #1b2b38;
+    --text-secondary: #566c7d;
+    --button-text: #e8ecf2;
+
+    --border: #c2d6e5;
+    --border-light: #d7e7f2;
+
+    --accent: #3fa9f5;
+    --primary: #167ddc;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

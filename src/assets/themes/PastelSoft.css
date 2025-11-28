@@ -1,0 +1,31 @@
+body.PastelSoft{
+    --bg: #faf6ff;
+    --bg-light: #ffffff;
+    --bg-lighter: #f7f2ff;
+    --card-bg: #f0eaff;
+
+    --text-primary: #4b4b4b;
+    --text-secondary: #7b7b8a;
+    --button-text: #e8ecf2;
+
+    --border: #d7ccef;
+    --border-light: #e6ddf7;
+
+    --accent: #8f77ff;
+    --primary: #8f77ff;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

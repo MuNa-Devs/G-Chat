@@ -1,0 +1,31 @@
+body.AutumnWarm{
+    --bg: #2a1a12;
+    --bg-light: #3c2518;
+    --bg-lighter: #4a2e1d;
+    --card-bg: #5b3924;
+
+    --text-primary: #ffe4cc;
+    --text-secondary: #bfa08a;
+    --button-text: #e8ecf2;
+
+    --border: #6e4231;
+    --border-light: #86533f;
+
+    --accent: #ffb875;
+    --primary: #ff8c42;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

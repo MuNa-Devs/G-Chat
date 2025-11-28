@@ -1,0 +1,36 @@
+body.SunnyDay {
+    /* Core Theme Colors */
+    --bg: #f5f7fa;
+    --bg-light: #ffffff;
+    --bg-lighter: #f0f2f5;
+    --card-bg: #e6e9ef;
+
+    /* Text Colors */
+    --text-primary: #1a1d21;
+    --text-secondary: #5a616b;
+    --button-text: #e8ecf2;
+    --button-alt-text: #1a1b1b;
+
+    /* Borders */
+    --border: #d0d5dd;
+    --border-light: #c7ccd6;
+
+    /* Theme Accents */
+    --accent: #137fec;   /* Bright blue remains same */
+    --primary: #0b6cd4;  /* Slightly deeper blue for contrast */
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

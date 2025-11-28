@@ -1,0 +1,35 @@
+body.SoftGrind{
+    /* Base Backgrounds */
+    --bg: #f6f7fb;         /* soft bluish-white */
+    --bg-light: #ffffff;   /* clean white for cards/sections */
+    --bg-lighter: #eef1f7; /* subtle cool tint for depth */
+    --card-bg: #e9edf4;    /* neutral, soft, non-distracting */
+
+    /* Text Colors */
+    --text-primary: #2d313a;     /* soft charcoal (not harsh black) */
+    --text-secondary: #6f7582;   /* muted lavender-grey */
+    --button-text: #e8ecf2;
+
+    /* Borders */
+    --border: #d7dbe3;           /* gentle edge without high contrast */
+    --border-light: #e3e7ee;     /* barely visible, smooth UI feel */
+
+    /* Accent Colors (the fusion part) */
+    --accent: #6a8cff;           /* lavender-blue */
+    --primary: #4fc3b3;          /* mint-teal pop (balances the blue) */
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

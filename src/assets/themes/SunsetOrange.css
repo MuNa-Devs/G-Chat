@@ -1,0 +1,31 @@
+body.SunsetOrange{
+    --bg: #1c0f0a;
+    --bg-light: #26140e;
+    --bg-lighter: #331a12;
+    --card-bg: #422218;
+
+    --text-primary: #ffe8d6;
+    --text-secondary: #c9a798;
+    --button-text: #e8ecf2;
+
+    --border: #5c3a2e;
+    --border-light: #704638;
+
+    --accent: #ff8a50;
+    --primary: #ff6d24;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}

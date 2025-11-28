@@ -1,0 +1,35 @@
+body.NightLight{
+    /* Core Theme Colors */
+    --bg: #121417;
+    --bg-light: #1c1f25;
+    --bg-lighter: #1e2228;
+    --card-bg: #2a2f36;
+
+    /* Text Colors */
+    --text-primary: #e8ecf2;
+    --text-secondary: #9aa5b5;
+    --button-text: #e8ecf2;
+
+    /* Borders */
+    --border: #3b4754;
+    --border-light: #3b47548e;
+
+    /* Theme Accents */
+    --accent: #4da3ff;
+    --primary: #137fec;
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #5aa6e3;
+    --primary-dark: #1a5f94;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}
