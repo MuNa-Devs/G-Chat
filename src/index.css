@@ -2,4 +2,50 @@ body{
 	margin: 0;
 	padding: 0;
 	background-color: var(--bg);
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	letter-spacing: 0.3px;
+}
+
+h1{
+	font-size: 1.5em;
+	margin: 1px;
+	color: var(--text-primary);
+}
+
+h2{
+	font-size: 1.2em;
+	margin: 1px;
+	color: var(--text-primary);
+}
+
+h3{
+	font-size: 0.95em;
+	margin: 0px;
+	color: var(--text-primary);
+	opacity: 0.9;
+}
+
+h4{
+	font-size: 0.9em;
+	margin: 0;
+	color: var(--text-primary);
+	opacity: 0.85;
+}
+
+h5{
+	font-size: 0.8em;
+}
+
+p{
+	font-size: 0.76em;
+}
+
+a{
+	color: var(--accent);
+}
+
+button{
+	cursor: pointer;
+} button *{
+	color: var(--button-text);
 }

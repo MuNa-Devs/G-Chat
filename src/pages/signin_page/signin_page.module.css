@@ -15,22 +15,17 @@
 }
 
 .signinBody h1 {
-    font-size: 1.8em;
     font-weight: bold;
-    margin: 0;
     width: auto;
-    color: var(--text-primary);
 }
 
 .signinBody h2 {
-    font-size: 1.5em;
     margin: 0;
     width: auto;
     color: var(--text-secondary);
 }
 
 .signinBody p {
-    font-size: 0.8em;
     margin: 0;
     color: var(--text-secondary);
 }
@@ -61,21 +56,17 @@
     gap: 8px;
 }
 
-.signinCard h5 {
-    color: var(--text-primary);
-}
-
 .signinCard .text {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 5px;
-    border-radius: 5px;
+    padding: 8px;
+    border-radius: 8px;
     min-height: 20px;
     max-height: 40px;
     min-width: 250px;
     max-width: 500px;
-    border: 0.5px solid var(--card-bg);
+    border: 0.5px solid var(--border);
     background-color: var(--card-bg);
     color: var(--text-primary);
 }
@@ -104,8 +95,10 @@
 }
 
 .rememberMeDude input {
-    border: 0.5px solid var(--card-bg);
+    border: 0.5px solid var(--border);
+    outline: none;
     background-color: var(--card-bg);
+    cursor: pointer;
 }
 
 a {
@@ -118,14 +111,14 @@ a {
 }
 
 .loginBtn {
-    padding: 10px;
+    padding: 8px;
     min-height: 20px;
     max-height: 40px;
     min-width: 250px;
     max-width: 500px;
     background-color: var(--accent);
     color: var(--button-text);
-    border-radius: 5px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
 }

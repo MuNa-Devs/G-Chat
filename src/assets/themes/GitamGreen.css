@@ -1,0 +1,36 @@
+body.GitamGreen {
+    /* Core Theme Colors */
+    --bg: #F0E0C1;            /* GITAM light background / base */
+    --bg-light: #FFFFFF;      /* light variant for cards / sections */
+    --bg-lighter: #F7F4EE;    /* even lighter for highlights */
+
+    --card-bg: #A6EDE5;       /* accent-background for cards */
+
+    /* Text Colors */
+    --text-primary: #1e1e1e;   /* dark text on light background */
+    --text-secondary: #4a4a4a; /* muted dark for secondary text */
+    --button-text: white;
+
+    /* Borders */
+    --border: #d1c9bb;
+    --border-light: #d1c9bb80;
+
+    /* Theme Accents */
+    --accent: #63c3b8;
+    --primary: #56c0e6;        /* a slightly stronger blue-cyan */
+
+    /* Extra Colors (NEW Variables) */
+    --primary-light: #9bd9ee;
+    --primary-dark: #469cbf;
+
+    --success: #2eb67d;
+    --success-light: #65d0a1;
+
+    --warning: #f0ad4e;
+    --warning-light: #f8c97c;
+
+    --danger: #d9534f;
+    --danger-light: #e67b78;
+
+    --shadow: rgba(0, 0, 0, 0.05);
+}
