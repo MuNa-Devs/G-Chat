@@ -8,14 +8,14 @@ body.NightLight{
     /* Text Colors */
     --text-primary: #e8ecf2;
     --text-secondary: #9aa5b5;
-    --button-text: #e8ecf2;
+    --button-text: #d6d9df;
 
     /* Borders */
     --border: #3b4754;
     --border-light: #3b47548e;
 
     /* Theme Accents */
-    --accent: #4da3ff;
+    --accent: #238dff;
     --primary: #137fec;
 
     /* Extra Colors (NEW Variables) */

@@ -1,0 +1,297 @@
+.roomsPage{
+    margin: 0;
+    padding: 0;
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.mainLayout{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 16px;
+    margin-right: 16px;
+    padding-left: 8px;
+    padding-right: 9px;
+
+    overflow-x: hidden;
+}
+
+.mainLayout .header{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.mainLayout .header .heading h1{
+    color: var(--text-primary);
+}
+
+.mainLayout .header .heading p{
+    color: var(--text-secondary);
+}
+
+.mainLayout .body{
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.body .searchRooms{
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.searchRooms .searchBar{
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    flex: 1;
+    height: auto;
+    display: flex;
+}
+
+.searchBar div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    width: 24px;
+    padding: 8px;
+}
+
+.searchBar div i{
+    color: var(--button-text);
+}
+
+.searchBar input{
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    caret-color: var(--text-primary);
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.searchRooms .filter{
+    height: 32px;
+    width: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    background-color: var(--card-bg);
+}
+
+.searchRooms .filter button{
+    background-color: transparent;
+    height: 100%;
+    width: auto;
+    border-radius: 8px;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75em;
+}
+
+.searchRooms .filter .activeBtn{
+    background-color: var(--bg-light);
+    color: var(--text-primary) !important;
+}
+
+.rooms{
+    padding: 16px;
+    flex: 1;
+    width: 100%;
+}
+
+/* Room Div Styles */
+.roomDiv{
+    height: 48px;
+    width: calc(100% - 48px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-lighter);
+    border: 1px solid var(--border-light);
+    border-radius: 9px;
+    padding: 24px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.roomDiv .roomInfo{
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    min-width: 0px;
+}
+
+.roomInfo .logo{
+    height: 48px;
+    width: 48px;
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roomInfo .logo img{
+    height: 48px;
+    border-radius: 50%;
+}
+
+.roomInfo .details{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    gap: 4px;
+    min-width: 0px;
+}
+
+.roomInfo .details h4{
+    font-size: 0.8em;
+    letter-spacing: 0.25px;
+    max-width: calc(100% - 8px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roomInfo .details p{
+    color: var(--text-secondary);
+}
+
+.roomDiv .options{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.roomDiv .options div{
+    height: 12px;
+    width: 12px;
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-light);
+}
+
+.roomDiv .options button{
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.roomDiv .options button span{
+    color: var(--text-secondary);
+    font-size: 0.85em;
+}
+
+.roomDiv .options button i{
+    display: none;
+}
+
+/* Media Queries */
+@media (max-width: 660px){
+    .roomDiv{
+        padding: 16px;
+        padding-top: 12px;
+        width: calc(100% - 32px);
+    }
+    .roomDiv .options button span{
+        display: none;
+    }
+
+    .roomDiv .options button i{
+        display: block;
+    }
+}
+
+@media (max-width: 610px){
+    .roomDiv .options div{
+        display: none;
+    }
+}
+
+@media (max-width: 600px){
+    .header button span{
+        display: none;
+    }
+
+    .body .searchRooms{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .body .searchRooms .searchBar{
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px){
+    .header .heading p{
+        display: none;
+    }
+
+    .roomsPage{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 470px){
+    .searchBar input{
+        display: none;
+    }
+
+    .body .searchRooms{
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .searchRooms .searchBar{
+        flex: 0;
+        width: auto;
+    }
+}

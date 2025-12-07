@@ -1,0 +1,263 @@
+/* Sidebar at left */
+.sidebarAtLeft{
+    height: 100dvh;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: var(--bg-light);
+    outline: 1px solid var(--border-light);
+    position: static;
+    top: 0px;
+    left: 0px;
+}
+
+.sidebarAtLeft .userProfile{
+    height: auto;
+    width: calc(100% - 32px);
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebarAtLeft .userProfile .logo{
+    height: 56px;
+    width: 56px;
+    background-color: var(--bg-lighter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.sidebarAtLeft .userProfile .logo img{
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+}
+
+.sidebarAtLeft .userProfile .userDetails{
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+}
+
+.sidebarAtLeft .userProfile .userDetails h4{
+    font-size: 0.85em;
+    color: var(--text-primary);
+    font-weight: 200;
+    letter-spacing: 0.25px;
+}
+
+.sidebarAtLeft .userProfile .userDetails p{
+    color: var(--text-secondary);
+}
+
+.sidebarAtLeft .sidebarOptions{
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebarAtLeft .sidebarOptions button{
+    width: calc(100% - 48px);
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    padding: 8px;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+}
+
+.sidebarAtLeft .sidebarOptions button i,
+.sidebarAtLeft .sidebarOptions button span{
+    color: var(--text-primary);
+}
+
+.sidebarAtLeft .sidebarOptions .activeBtn{
+    outline: 1px solid var(--primary);
+}
+
+.sidebarAtLeft .sidebarOptions .activeBtn i,
+.sidebarAtLeft .sidebarOptions .activeBtn span{
+    color: var(--primary);
+}
+
+.sidebarAtLeft .sidebarUtils{
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.sidebarAtLeft .sidebarUtils button{
+    width: calc(100% - 48px);
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-left: 16px;
+    margin-right: 16px;
+    border-radius: 8px;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+}
+
+.sidebarAtLeft .sidebarUtils .settings i,
+.sidebarAtLeft .sidebarUtils .settings span{
+    color: var(--text-primary);
+}
+
+.sidebarUtils .logout i,
+.sidebarUtils .logout span{
+    color: var(--danger);
+}
+
+/* Sidebar at top */
+.sidebarAtTop{
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    position: static;
+    top: 0px;
+    left: 0px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebarAtTop .userProfile{
+    height: auto;
+    width: calc(100% - 16px);
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.sidebarAtTop .userProfile .logo{
+    height: 48px;
+    width: 48px;
+    background-color: var(--bg-lighter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.sidebarAtTop .userProfile .userDetails{
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+}
+
+.sidebarAtTop .userProfile .userDetails h4{
+    font-size: 0.85em;
+    color: var(--text-primary);
+    font-weight: 200;
+    letter-spacing: 0.25px;
+}
+
+.sidebarAtTop .userProfile .userDetails p{
+    color: var(--text-secondary);
+}
+
+.sidebarAtTop .userProfile .logo img{
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+}
+
+.sidebarAtTop .sidebarUtils{
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 8px;
+}
+
+.sidebarAtTop .sidebarUtils button{
+    background-color: transparent;
+    border: none;
+}
+
+.sidebarAtTop .sidebarUtils .utilsBtn i,
+.sidebarAtTop .sidebarUtils .settings i{
+    color: var(--text-primary);
+}
+
+/* Media Queries */
+@media (max-width: 830px){
+    .sidebarAtLeft{
+        width: 5rem;
+    }
+
+    .sidebarAtLeft .userProfile{
+        justify-content: center;
+        padding: 8px;
+        width: calc(100% - 16px);
+    }
+
+    .sidebarAtLeft .userProfile .logo{
+        height: 48px;
+        width: 48px;
+    }
+
+    .sidebarAtLeft .userProfile .userDetails{
+        display: none;
+    }
+
+    .sidebarAtLeft .sidebarOptions button{
+        height: 32px;
+        width: 32px;
+        text-align: center;
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    .sidebarAtLeft .sidebarOptions button span,
+    .sidebarAtLeft .sidebarUtils button span{
+        display: none;
+    }
+}
+
+@media (max-width: 560px){
+    .sidebarAtLeft{
+        display: none;
+    }
+
+    .sidebarAtTop{
+        display: flex;
+    }
+}

@@ -3,38 +3,52 @@
 // import Logo from '../reusable_elements/Logo'
 import styles from './signin_page.module.css';
 
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 function SignInPage(){
-    const [isLoginTriggered, setLoginStatus] = useState(false);
-    const [login_error, setLoginErr] = useState(false);
+    const navigate = useNavigate();
+    const [warning_div_action, setWarningDivAction] = useState({
+        action: false,
+        message: ''
+    })
 
-    const [input, setInput] = useState({
-        email: "",
-        password: ""
-    });
-
-    const handleInputUpdates = e => setInput({
-        ...input, [e.target.name]: e.target.value
-    });
+    // --------------------------------
+    // Input handlings
+    // --------------------------------
+    const [inputs, setInputs] = useState({
+        email: '',
+        password: ''
+    })
 
     const [input_err_status, setInputErrStatus] = useState({
         email: false,
         password: false
-    });
+    })
 
-    const loginTriggered = () => {
-        const temp_input_err_status = {
-            email: ! input.email,
-            password: ! input.password
-        };
+    const handleInput = (e) => {
+        setInputs({
+            ...inputs,
+            [e.target.name]: e.target.value
+        })
+    }
 
-        setInputErrStatus(temp_input_err_status);
+    const handleLogin = (e) => {
+        const temp_inp_error_status = {
+            email: ! inputs.email,
+            password: ! inputs.password
+        }
 
-        if (Object.values(temp_input_err_status).includes(true)) return;
+        setInputErrStatus(temp_inp_error_status)
 
-        setLoginStatus(true);
+        if (Object.values(input_err_status).includes(true)){
+            setWarningDivAction({
+                action: true,
+                message: "All fields are required!"
+            })
+        }
+
+        else navigate("/dashboard")
     }
 
     return (
@@ -51,15 +65,16 @@ function SignInPage(){
 
             <div className={styles.signinCard}>
                 <div className={styles.email}>
-                    <h5>Email</h5>
+                    <h5>Gitam Email</h5>
 
                     <input className={styles.text}
                         type="email" 
-                        placeholder='Enter your email address'
+                        placeholder='Enter your Gitam email address'
                         name='email'
-                        value={input.email}
-                        onChange={handleInputUpdates}
-                        style={{outline: input_err_status.email && "1px solid red"}}
+                        value={inputs.email}
+                        onChange={handleInput}
+
+                        style={{outline: input_err_status.email ? '1px solid red' : 'none'}}
                     />
                 </div>
 
@@ -70,9 +85,8 @@ function SignInPage(){
                         type="password"
                         placeholder='Enter your password' 
                         name='password'
-                        value={input.password}
-                        onChange={handleInputUpdates}
-                        style={{outline: input_err_status.password && "1px solid red"}}
+                        value={inputs.password}
+                        onChange={handleInput}
                     />
                 </div>
 
@@ -87,19 +101,10 @@ function SignInPage(){
                     <a href="#" className={styles.forgotpswd}><p>Forgot Password?</p></a>
                 </div>
 
-                {
-                    Object.values(input_err_status).includes(true) && <WarningDiv warning_text='All fields are required!' /> ||
-                    login_error === "invalid data" && <WarningDiv warning_text="Invalid data" /> ||
-                    login_error === "incorrect password" && <WarningDiv warning_text='Incorrect credentials' /> ||
-                    login_error === "user not found" && <WarningDiv warning_text="Account doesn't exist!" /> ||
-                    login_error === "unknown" && <WarningDiv />
-                }
-
                 <button
                     className={styles.loginBtn}
-                    onClick={loginTriggered}
-                    disabled={isLoginTriggered}
-                >{isLoginTriggered ? "Processing..." : "Login"}</button>
+                    onClick={() => navigate("/dashboard")}
+                >Login</button>
             </div>
 
             <div className={styles.signupoption}>
