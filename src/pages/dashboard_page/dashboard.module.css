@@ -115,8 +115,8 @@
     background-color: transparent;
     border-radius: 7px;
     margin-right: 5px;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid#eae5d4;
+    color: #eae5d4;
     padding-left: 7px;
 }
 .messageContainer{
@@ -150,7 +150,7 @@
     cursor: pointer;
 }
 .footerButtons i{
-    color: white;
+    color: #eae5d4;
     font-size: 1.3rem;
 }
 .pageNameContainer p{
