@@ -10,7 +10,7 @@ export default function App() {
 
 	return (
 		<Routes>
-			<Route path="/" element={<Temp />} />
+			<Route path="/" element={<DashBoard />} />
 
 			<Route path="/signin" element={<SignInPage />} />
 
