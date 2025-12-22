@@ -2,7 +2,7 @@
 
 // import Logo from '../reusable_elements/Logo'
 import styles from './signin_page.module.css';
-
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -21,10 +21,7 @@ function SignInPage(){
         password: ''
     })
 
-    const [input_err_status, setInputErrStatus] = useState({
-        email: false,
-        password: false
-    })
+    const [input_err_status , seterr] = useState("");
 
     const handleInput = (e) => {
         setInputs({
@@ -33,22 +30,27 @@ function SignInPage(){
         })
     }
 
-    const handleLogin = (e) => {
-        const temp_inp_error_status = {
-            email: ! inputs.email,
-            password: ! inputs.password
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if(!inputs.email || !inputs.password){
+            seterr ("you should enter all fields");
+            return;
         }
 
-        setInputErrStatus(temp_inp_error_status)
+        try{
+            const response = await axios.post("http://localhost:5500/signin", inputs);
+            if(response.data.success){
+                localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        if (Object.values(input_err_status).includes(true)){
-            setWarningDivAction({
-                action: true,
-                message: "All fields are required!"
-            })
+                navigate("/dashboard");
+            } else {
+                seterr(response.data.message);
+            }
+        } catch(err){
+            
+            seterr(err.message);
+
         }
-
-        else navigate("/dashboard")
     }
 
     return (
@@ -62,8 +64,9 @@ function SignInPage(){
 
                 <p>Login to your G-Chat account</p>
             </div>
-
+            
             <div className={styles.signinCard}>
+                <form onSubmit={handleSubmit}>
                 <div className={styles.email}>
                     <h5>Gitam Email</h5>
 
@@ -103,10 +106,10 @@ function SignInPage(){
 
                 <button
                     className={styles.loginBtn}
-                    onClick={() => navigate("/dashboard")}
+                    type="submit"
                 >Login</button>
-            </div>
-
+                </form>
+                </div>
             <div className={styles.signupoption}>
                 <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
             </div>
