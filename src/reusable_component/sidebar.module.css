@@ -56,7 +56,6 @@
 .sidebarAtLeft .userProfile .userDetails h4{
     font-size: 0.85em;
     color: var(--text-primary);
-    font-weight: 200;
     letter-spacing: 0.25px;
 }
 
@@ -184,7 +183,6 @@
 .sidebarAtTop .userProfile .userDetails h4{
     font-size: 0.85em;
     color: var(--text-primary);
-    font-weight: 200;
     letter-spacing: 0.25px;
 }
 
