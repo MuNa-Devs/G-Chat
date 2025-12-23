@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import axios from "axios";
+
 
 import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
@@ -30,6 +32,15 @@ export default function DashBoard() {
             socket.off("receive_message");
         };
     }, []);
+
+    useEffect(() => {
+    axios.get("http://172.20.138.7:5500/messages")
+        .then(res => {
+            setMessages(res.data);
+        })
+        .catch(err => console.error(err));
+    }, []);
+
 
     // SEND MESSAGE
     const sendMessage = () => {
