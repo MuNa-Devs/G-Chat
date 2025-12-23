@@ -2,7 +2,6 @@ import SignInPage from "./pages/signin_page/SignInPage";
 import SignUpPage from "./pages/signup_page/SignUpPage";
 import DashBoard from "./pages/dashboard_page/DashBoard";
 import RoomPage from "./pages/privateroom_page/RoomPage";
-import Temp from "./Temp";
 
 import { Routes, Route } from "react-router-dom";
 
