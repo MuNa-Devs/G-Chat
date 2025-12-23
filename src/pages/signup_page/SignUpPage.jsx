@@ -1,11 +1,11 @@
 // Components
 import styles from './signup_page.module.css';
+import { checkValidity } from '../page_utils/AuthPageUtils';
 
 // Package imports
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import axios from 'axios';
-import { checkValidity } from '../page_utils/AuthPageUtils';
 
 // Signup page component
 export default function SignUpPage() {
@@ -41,14 +41,14 @@ export default function SignUpPage() {
             return;
         }
 
-        if (! checkValidity({ inputs, setInpErrStatus })) {
+        if (! checkValidity({ form: inputs, setInpErrStatus: setInpErrStatus })) {
             alert("All the fields are required");
 
             return;
         }
 
         try {
-            const response = await axios.post("http://localhost:5500/signup", inputs);
+            const response = await axios.post("http://localhost:5500/g-chat/signup", inputs);
 
             if (response.data.success) {
                 localStorage.setItem("user", JSON.stringify(response.data.user));

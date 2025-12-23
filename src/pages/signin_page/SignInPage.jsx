@@ -37,7 +37,7 @@ function SignInPage() {
         }
 
         try {
-            const response = await axios.post("http://localhost:5500/signin", inputs);
+            const response = await axios.post("http://localhost:5500/g-chat/signin", inputs);
 
             if (response.data.success) {
                 localStorage.setItem("user", JSON.stringify(response.data.user));
