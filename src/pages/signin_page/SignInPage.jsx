@@ -1,27 +1,24 @@
-// Need to complete it (add backend communication)
 
 // import Logo from '../reusable_elements/Logo'
 import styles from './signin_page.module.css';
+
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { checkValidity } from '../page_utils/AuthPageUtils';
 
-function SignInPage(){
+function SignInPage() {
     const navigate = useNavigate();
-    const [warning_div_action, setWarningDivAction] = useState({
-        action: false,
-        message: ''
-    })
 
-    // --------------------------------
-    // Input handlings
-    // --------------------------------
     const [inputs, setInputs] = useState({
         email: '',
         password: ''
     })
 
-    const [input_err_status , seterr] = useState("");
+    const [input_err_status, seterr] = useState({
+        email: false,
+        password: false
+    });
 
     const handleInput = (e) => {
         setInputs({
@@ -32,24 +29,25 @@ function SignInPage(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(!inputs.email || !inputs.password){
-            seterr ("you should enter all fields");
+
+        if (! checkValidity({ form: inputs, setInpErrStatus: seterr })) {
+            alert("All the fields are required");
+
             return;
         }
 
-        try{
+        try {
             const response = await axios.post("http://localhost:5500/signin", inputs);
-            if(response.data.success){
-                localStorage.setItem("user", JSON.stringify(response.data.user));
 
+            if (response.data.success) {
+                localStorage.setItem("user", JSON.stringify(response.data.user));
                 navigate("/dashboard");
             } else {
-                seterr(response.data.message);
+                //
+                console.log(response.data.message);
             }
-        } catch(err){
-            
-            seterr(err.message);
-
+        } catch (err) {
+            //
         }
     }
 
@@ -57,27 +55,24 @@ function SignInPage(){
         <div className={styles.signinBody}>
             <div className={styles.headerTexts}>
                 <div className="logo">
-                    <h1 className={styles.title}>G-Chat</h1>
+                    <h1 className={styles.title}>Welcome Back!</h1>
                 </div>
-
-                <h2 className={styles.greetings}>Welcome Back!</h2>
 
                 <p>Login to your G-Chat account</p>
             </div>
-            
+
             <div className={styles.signinCard}>
-                <form onSubmit={handleSubmit}>
                 <div className={styles.email}>
                     <h5>Gitam Email</h5>
 
                     <input className={styles.text}
-                        type="email" 
+                        type="email"
                         placeholder='Enter your Gitam email address'
                         name='email'
                         value={inputs.email}
                         onChange={handleInput}
 
-                        style={{outline: input_err_status.email ? '1px solid red' : 'none'}}
+                        style={{ outline: input_err_status.email ? '1px solid red' : 'none' }}
                     />
                 </div>
 
@@ -86,10 +81,12 @@ function SignInPage(){
 
                     <input className={styles.text}
                         type="password"
-                        placeholder='Enter your password' 
+                        placeholder='Enter your password'
                         name='password'
                         value={inputs.password}
                         onChange={handleInput}
+                        
+                        style={{ outline: input_err_status.password ? '1px solid red' : 'none' }}
                     />
                 </div>
 
@@ -97,6 +94,7 @@ function SignInPage(){
                     <div className={styles.rememberMeDude}>
                         <label>
                             <input type="checkbox" />
+
                             <h5>Remember me</h5>
                         </label>
                     </div>
@@ -106,10 +104,10 @@ function SignInPage(){
 
                 <button
                     className={styles.loginBtn}
-                    type="submit"
+                    onClick={handleSubmit}
                 >Login</button>
-                </form>
-                </div>
+            </div>
+            
             <div className={styles.signupoption}>
                 <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
             </div>

@@ -16,7 +16,7 @@ body.GitamGreen {
     --border-light: #d1c9bb80;
 
     /* Theme Accents */
-    --accent: #63c3b8;
+    --accent: #3cc5b5;
     --primary: #56c0e6;        /* a slightly stronger blue-cyan */
 
     /* Extra Colors (NEW Variables) */
@@ -30,7 +30,7 @@ body.GitamGreen {
     --warning-light: #f8c97c;
 
     --danger: #d9534f;
-    --danger-light: #e67b78;
+    --danger-light: #f08e8bb7;
 
     --shadow: rgba(0, 0, 0, 0.05);
 }

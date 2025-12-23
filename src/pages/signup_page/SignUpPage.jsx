@@ -5,53 +5,59 @@ import styles from './signup_page.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import axios from 'axios';
+import { checkValidity } from '../page_utils/AuthPageUtils';
 
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
-      const [form ,setform] = useState({
+
+    const [inputs, setInputs] = useState({
         username: "",
         email: "",
         password: "",
         conf_password: ""
     });
-    
-    const [err,seterr] = useState('');
+
+    const [input_err_status, setInpErrStatus] = useState({
+        username: false,
+        email: false,
+        password: false,
+        conf_password: false
+    });
 
     const handlechange = (e) => {
-        setform({
-            ...form,
+        setInputs({
+            ...inputs,
             [e.target.name]: e.target.value
         });
     };
 
-    const handlesubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(form.password !== form.conf_password){
-            seterr("Passwords do not match");
+        if (inputs.password !== inputs.conf_password) {
+            alert("Passwords do not match");
+
             return;
         }
 
-        if(!form.username || !form.email || !form.password || !form.conf_password){
-            seterr("All fields are required");
+        if (! checkValidity({ inputs, setInpErrStatus })) {
+            alert("All the fields are required");
+
             return;
         }
 
         try {
-            const response = await axios.post("http://172.20.129.49:5500/signup", form); //axios retuns an object
-            
-            if(response.data.success){
+            const response = await axios.post("http://localhost:5500/signup", inputs);
+
+            if (response.data.success) {
                 localStorage.setItem("user", JSON.stringify(response.data.user));
                 navigate("/dashboard");
             } else {
-                seterr(response.data.message);
+                alert(response.data.message);
             }
-            
-        }
-        
-        catch (error) {
-            seterr(error.message);
+        } catch (error) {
+            alert(error.message);
         }
     };
 
@@ -62,11 +68,10 @@ export default function SignUpPage() {
                     <h1 className={styles.title}>G-Chat</h1>
                 </div>
 
-                <h3>Create Your G-Chat Account</h3>
+                <p>Create Your G-Chat Account</p>
             </div>
 
             <div className={styles.signupCard}>
-            <form onSubmit={handlesubmit}>
                 <div className={styles.name}>
                     <h5>Full Name</h5>
 
@@ -75,7 +80,8 @@ export default function SignUpPage() {
                         type="text"
                         placeholder='Enter your name'
                         onChange={handlechange}
-                        value={form.username}
+                        value={inputs.username}
+                        style={{ outline: input_err_status.username ? '1px solid red' : 'none' }}
                     />
                 </div>
 
@@ -87,7 +93,8 @@ export default function SignUpPage() {
                         type="email"
                         placeholder='Gitam email'
                         onChange={handlechange}
-                        value={form.email}
+                        value={inputs.email}
+                        style={{ outline: input_err_status.email ? '1px solid red' : 'none' }}
                     />
                 </div>
 
@@ -99,7 +106,8 @@ export default function SignUpPage() {
                         type="password"
                         placeholder='Enter your password'
                         onChange={handlechange}
-                        value={form.password}
+                        value={inputs.password}
+                        style={{ outline: input_err_status.password ? '1px solid red' : 'none' }}
                     />
                 </div>
 
@@ -111,14 +119,16 @@ export default function SignUpPage() {
                         type="password"
                         placeholder='Re-enter your password'
                         onChange={handlechange}
-                        value={form.conf_password}
+                        value={inputs.conf_password}
+                        style={{ outline: input_err_status.conf_password ? '1px solid red' : 'none' }}
                     />
                 </div>
 
-                <button className={styles.signupBtn}  type="submit" >
-                        Sign Up
-                    </button>
-                </form>
+                <button className={styles.signupBtn}
+                    onClick={handleSubmit}
+                >
+                    Sign Up
+                </button>
             </div>
 
             <div className={styles.signinOption}>
