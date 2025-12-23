@@ -5,7 +5,7 @@ import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 
 // SOCKET CONNECTION
-const socket = io("http://localhost:5500");
+const socket = io("http://172.20.138.7:5500");
 
 export default function DashBoard() {
 

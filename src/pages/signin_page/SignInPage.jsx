@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-function SignInPage(){
+function SignInPage() {
     const navigate = useNavigate();
     const [warning_div_action, setWarningDivAction] = useState({
         action: false,
@@ -21,7 +21,7 @@ function SignInPage(){
         password: ''
     })
 
-    const [input_err_status , seterr] = useState("");
+    const [input_err_status, seterr] = useState("");
 
     const handleInput = (e) => {
         setInputs({
@@ -32,22 +32,24 @@ function SignInPage(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(!inputs.email || !inputs.password){
-            seterr ("you should enter all fields");
+
+        if (!inputs.email || !inputs.password) {
+            seterr("you should enter all fields");
             return;
         }
 
-        try{
-            const response = await axios.post("http://localhost:5500/signin", inputs);
-            if(response.data.success){
+        try {
+            const response = await axios.post("http://172.20.138.7:5500/signin", inputs);
+            if (response.data.success) {
                 localStorage.setItem("user", JSON.stringify(response.data.user));
 
                 navigate("/dashboard");
             } else {
                 seterr(response.data.message);
+                console.log("Signin failed:", response.data.message);
             }
-        } catch(err){
-            
+        } catch (err) {
+            console.error("Error during signin:", err);
             seterr(err.message);
 
         }
@@ -64,52 +66,52 @@ function SignInPage(){
 
                 <p>Login to your G-Chat account</p>
             </div>
-            
+
             <div className={styles.signinCard}>
                 <form onSubmit={handleSubmit}>
-                <div className={styles.email}>
-                    <h5>Gitam Email</h5>
+                    <div className={styles.email}>
+                        <h5>Gitam Email</h5>
 
-                    <input className={styles.text}
-                        type="email" 
-                        placeholder='Enter your Gitam email address'
-                        name='email'
-                        value={inputs.email}
-                        onChange={handleInput}
+                        <input className={styles.text}
+                            type="email"
+                            placeholder='Enter your Gitam email address'
+                            name='email'
+                            value={inputs.email}
+                            onChange={handleInput}
 
-                        style={{outline: input_err_status.email ? '1px solid red' : 'none'}}
-                    />
-                </div>
-
-                <div className={styles.pswd}>
-                    <h5>Password</h5>
-
-                    <input className={styles.text}
-                        type="password"
-                        placeholder='Enter your password' 
-                        name='password'
-                        value={inputs.password}
-                        onChange={handleInput}
-                    />
-                </div>
-
-                <div className={styles.utils}>
-                    <div className={styles.rememberMeDude}>
-                        <label>
-                            <input type="checkbox" />
-                            <h5>Remember me</h5>
-                        </label>
+                            style={{ outline: input_err_status.email ? '1px solid red' : 'none' }}
+                        />
                     </div>
 
-                    <a href="#" className={styles.forgotpswd}><p>Forgot Password?</p></a>
-                </div>
+                    <div className={styles.pswd}>
+                        <h5>Password</h5>
 
-                <button
-                    className={styles.loginBtn}
-                    type="submit"
-                >Login</button>
+                        <input className={styles.text}
+                            type="password"
+                            placeholder='Enter your password'
+                            name='password'
+                            value={inputs.password}
+                            onChange={handleInput}
+                        />
+                    </div>
+
+                    <div className={styles.utils}>
+                        <div className={styles.rememberMeDude}>
+                            <label>
+                                <input type="checkbox" />
+                                <h5>Remember me</h5>
+                            </label>
+                        </div>
+
+                        <a href="#" className={styles.forgotpswd}><p>Forgot Password?</p></a>
+                    </div>
+
+                    <button
+                        className={styles.loginBtn}
+                        type="submit"
+                    >Login</button>
                 </form>
-                </div>
+            </div>
             <div className={styles.signupoption}>
                 <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
             </div>

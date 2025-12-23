@@ -39,7 +39,7 @@ export default function SignUpPage() {
         }
 
         try {
-            const response = await axios.post("http://172.20.129.49:5500/signup", form); //axios retuns an object
+            const response = await axios.post("http://172.20.138.7:5500/signup", form); //axios retuns an object
             
             if(response.data.success){
                 localStorage.setItem("user", JSON.stringify(response.data.user));
