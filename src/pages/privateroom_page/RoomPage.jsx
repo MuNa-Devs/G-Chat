@@ -44,7 +44,6 @@ export default function RoomPage(){
                             room_title="Designing & Analysis of Algorithms"
                             prof_name="Prof. B. Rajesh"
                             msg_count="4"
-                            button_text="Enter Room"
                         />
 
                         <div className="bufferDiv"></div>
