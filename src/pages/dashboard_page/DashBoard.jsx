@@ -7,7 +7,9 @@ import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 
 // SOCKET CONNECTION
-const socket = io("http://172.20.138.7:5500");
+ const socket = io("http://localhost:5500"); 
+
+//http://172.20.138.7
 
 export default function DashBoard() {
 
@@ -34,7 +36,7 @@ export default function DashBoard() {
     }, []);
 
     useEffect(() => {
-    axios.get("http://172.20.138.7:5500/messages")
+    axios.get("http://localhost:5500/g-chat/messages")
         .then(res => {
             setMessages(res.data);
         })
