@@ -29,7 +29,7 @@ export default function RoomPage(){
                         <div className={styles.searchBar}>
                             <div><i className="fa-solid fa-magnifying-glass"></i></div>
 
-                            <input type="text" placeholder="Search by name, code, professor..." />
+                            <input type="text" placeholder="Search by room name, room ID, professor..." />
                         </div>
 
                         <div className={styles.filter}>
@@ -40,10 +40,24 @@ export default function RoomPage(){
 
                     <div className={styles.rooms}>
                         <Rooms
-                            logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQosHO7VDBNYy2K4ir7M5cg0tklHgFBAGQnvw&s"
+                            logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzK4MPGrobcEUCHECoFuLYSRurTGGWhBTvCg&s"
                             room_title="Designing & Analysis of Algorithms"
                             prof_name="Prof. B. Rajesh"
-                            msg_count="4"
+                            join={true}
+                        />
+
+                        <Rooms
+                            logo="https://www.directive.com/images/easyblog_shared/January_2025_Newsletters/1.5/DBMS_387949414_400.jpg"
+                            room_title="Database Management System"
+                            prof_name="Prof. Neelima Santoshi"
+                            join={true}
+                        />
+
+                        <Rooms
+                            logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6GO5C3N3-4JKVoPUqZJxcMWbFkAhZGZoT3w&s"
+                            room_title="Operating Systems"
+                            prof_name="Prof. Bhargav"
+                            join={true}
                         />
 
                         <div className="bufferDiv"></div>

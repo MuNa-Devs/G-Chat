@@ -16,8 +16,10 @@ export default function Rooms(props){
                 </div>
             </div>
 
-            <div className={styles.options}>
-                <div>{props.msg_count}</div>
+            <div className={styles.buttons}>
+                <button>View</button>
+
+                {props.join && <button>Join</button>}
             </div>
         </div>
     )

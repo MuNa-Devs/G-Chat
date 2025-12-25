@@ -5,7 +5,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 const ThemeContext = createContext();
 
 export default function ThemeManager({ children }){
-    const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "GitamGreen");
+    const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "NightLight");
 
     useEffect(() => {
         document.body.className = theme;

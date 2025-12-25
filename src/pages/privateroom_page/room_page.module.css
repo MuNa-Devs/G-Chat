@@ -47,8 +47,8 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin-top: 24px;
 }
 
@@ -126,32 +126,34 @@
 
 .rooms{
     padding: 16px;
-    flex: 1;
-    width: 100%;
+    height: auto;
+    width: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
 /* Room Div Styles */
 .roomDiv{
-    height: 48px;
-    width: calc(100% - 48px);
+    height: auto;
+    width: 252px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     background-color: var(--bg-lighter);
     border: 1px solid var(--border-light);
     border-radius: 9px;
     padding: 24px;
-    padding-top: 12px;
-    padding-bottom: 12px;
     margin-top: 8px;
-    cursor: pointer;
+    gap: 16px;
 }
 
 .roomDiv .roomInfo{
     display: flex;
-    flex: 1;
-    flex-direction: row;
+    width: calc(100% - 16px);
+    height: 100%;
+    flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 16px;
@@ -159,8 +161,8 @@
 }
 
 .roomInfo .logo{
-    height: 48px;
-    width: 48px;
+    height: 96px;
+    width: 96px;
     border: 1px solid var(--border-light);
     border-radius: 50%;
     display: flex;
@@ -169,7 +171,7 @@
 }
 
 .roomInfo .logo img{
-    height: 48px;
+    height: 96px;
     border-radius: 50%;
 }
 
@@ -179,7 +181,7 @@
     align-items: flex-start;
     justify-content: space-evenly;
     gap: 4px;
-    min-width: 0px;
+    width: 100%;
 }
 
 .roomInfo .details h4{
@@ -231,6 +233,24 @@
 
 .roomDiv .options button i{
     display: none;
+}
+
+.buttons{
+    width: calc(100% - 16px);
+    height: auto;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buttons button{
+    width: 48%;
+    border: 1px solid var(--border-light);
+	padding: 8px;
+    background-color: var(--bg-light);
+    color: var(--button-text);
+    border-radius: 8px;
 }
 
 /* Media Queries */
