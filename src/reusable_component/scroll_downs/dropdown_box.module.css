@@ -1,0 +1,50 @@
+.dropdownBox2 {
+	position: relative;
+	width: auto;
+}
+
+.dropdownHeader {
+	padding: 8px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	background-color: var(--bg-lighter);
+	border: 1px solid var(--border-light);
+	border-radius: 8px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	height: auto;
+}
+
+.arrow {
+	font-size: 0.8em;
+}
+
+.dropdownMenu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	border: 1px solid var(--border-light);
+	background-color: var(--bg-lighter);
+	border-radius: 8px;
+	z-index: 999;
+	max-height: 200px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.dropdownItem {
+	padding: 8px;
+	color: var(--text-primary);
+	cursor: pointer;
+}
+
+.dropdownItem:hover {
+	background-color: var(--card-bg);
+}

@@ -2,12 +2,23 @@ import styles from "./room_page.module.css"
 import Rooms from "./Rooms"
 import SideBar from "../../reusable_component/SideBar"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import NewRoom from "./CreateRoom";
+import axios from "axios";
 
 export default function RoomPage(){
     const [is_empty, setEmpty] = useState(true);
     const [new_room_triggered, setNRTrigger] = useState(false);
+
+    const [all_rooms, setAllRooms] = useState([]);
+
+    // useEffect(() => {
+    //     axios.get("https://localhost:5500/g-chat/rooms/get_all_rooms")
+    //     .then((res) => {
+    //         const data = res.data;
+    //         console.log(data);
+    //     });
+    // }, []);
 
     return (
         <div className={styles.roomsPage}>

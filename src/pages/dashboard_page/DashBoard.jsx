@@ -34,13 +34,17 @@ export default function DashBoard() {
         };
     }, []);
 
-    useEffect(() => {
-        axios.get("http://localhost:5500/g-chat/messages")
-            .then(res => {
-                setMessages(res.data);
-            })
-            .catch(err => console.error(err));
-    }, []);
+useEffect(() => {
+    axios.get("http://localhost:5500/g-chat/messages")
+        .then(res => {
+            const normalized = res.data.map(msg => ({
+                ...msg,
+                user_id: Number(msg.user_id)
+            }));
+            setMessages(normalized);
+        })
+        .catch(err => console.error(err));
+}, []);
 
 
     // SEND MESSAGE
@@ -87,19 +91,60 @@ export default function DashBoard() {
                 </div>
 
                 {/* CHAT MESSAGES */}
+                {/* CHAT MESSAGES */}
                 <div
                     style={{
                         flex: 1,
                         overflowY: "auto",
-                        padding: "8px"
+                        padding: "12px",
+                        backgroundColor: 'transparent'
                     }}
                 >
-                    {messages.map((msg, index) => (
-                        <div key={index} style={{ marginBottom: "8px" }}>
-                            <strong>{msg.username}:</strong> {msg.message}
-                        </div>
-                    ))}
+                    {messages.map((msg, index) => {
+                        const isMe = Number(msg.user_id) === Number(user.id);
+                        console.log(msg.user_id, user.id);
+
+
+                        return (
+                            <div
+                                key={index}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: isMe ? "flex-end" : "flex-start",
+                                    marginBottom: "10px"
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        maxWidth: "65%",
+                                        padding: "10px 14px",
+                                        borderRadius: "14px",
+                                        backgroundColor: isMe ? "#4f46e5" : "#e5e7eb",
+                                        color: isMe ? "#ffffff" : "#000000"
+                                    }}
+                                >
+                                    {!isMe && (
+                                        <div
+                                            style={{
+                                                fontSize: "12px",
+                                                fontWeight: "600",
+                                                marginBottom: "4px",
+                                                opacity: 0.8
+                                            }}
+                                        >
+                                            {msg.username}
+                                        </div>
+                                    )}
+
+                                    <div style={{ fontSize: "14px" }}>
+                                        {msg.message}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
+
 
                 <div className={styles.footer}>
                     <div className={styles.footerBox}>
