@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 import SideBar from '../../reusable_component/SideBar';
-import styles from './temp.module.css';
+import styles from './dashboard.module.css';
 
 // SOCKET CONNECTION
 const socket = io("http://localhost:5500");
