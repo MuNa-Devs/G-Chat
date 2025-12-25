@@ -129,8 +129,8 @@
     height: auto;
     width: auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 22px;
 }
 
 /* Room Div Styles */
@@ -253,7 +253,55 @@
     border-radius: 8px;
 }
 
+.newRoomDiv{
+    height: 100dvh;
+    width: 100dvw;
+    z-index: 99;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 /* Media Queries */
+@media (max-width: 1920px){
+    .rooms{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1595px){
+    .rooms{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1275px){
+    .rooms{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 955px){
+    .rooms{
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media (max-width: 830px){
+    .rooms{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 795px){
+    .rooms{
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
 @media (max-width: 660px){
     .roomDiv{
         padding: 16px;
@@ -313,5 +361,18 @@
     .searchRooms .searchBar{
         flex: 0;
         width: auto;
+    }
+}
+
+@media (max-width: 345px){
+    .rooms{
+        gap: 8px;
+        padding: 8px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .roomDiv{
+        padding: 6px;
     }
 }

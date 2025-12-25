@@ -2,7 +2,12 @@ import styles from "./room_page.module.css"
 import Rooms from "./Rooms"
 import SideBar from "../../reusable_component/SideBar"
 
+import { useState } from "react"
+import NewRoom from "./CreateRoom";
+
 export default function RoomPage(){
+    const [is_empty, setEmpty] = useState(true);
+    const [new_room_triggered, setNRTrigger] = useState(false);
 
     return (
         <div className={styles.roomsPage}>
@@ -21,7 +26,10 @@ export default function RoomPage(){
                         <p>A list of all course-related chat rooms you can join.</p>
                     </div>
 
-                    <button className={"utilBtn"}><i className="fa-solid fa-plus"></i> <span>Create</span> Room</button>
+                    <button
+                        className={"utilBtn"}
+                        onClick={() => setNRTrigger(true)}
+                    ><i className="fa-solid fa-plus"></i> <span>Create</span> Room</button>
                 </div>
 
                 <div className={styles.body}>
@@ -39,31 +47,19 @@ export default function RoomPage(){
                     </div>
 
                     <div className={styles.rooms}>
-                        <Rooms
-                            logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzK4MPGrobcEUCHECoFuLYSRurTGGWhBTvCg&s"
-                            room_title="Designing & Analysis of Algorithms"
-                            prof_name="Prof. B. Rajesh"
-                            join={true}
-                        />
-
-                        <Rooms
-                            logo="https://www.directive.com/images/easyblog_shared/January_2025_Newsletters/1.5/DBMS_387949414_400.jpg"
-                            room_title="Database Management System"
-                            prof_name="Prof. Neelima Santoshi"
-                            join={true}
-                        />
-
-                        <Rooms
-                            logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6GO5C3N3-4JKVoPUqZJxcMWbFkAhZGZoT3w&s"
-                            room_title="Operating Systems"
-                            prof_name="Prof. Bhargav"
-                            join={true}
-                        />
+                        {is_empty && <h4>No Rooms available</h4>}
 
                         <div className="bufferDiv"></div>
                     </div>
                 </div>
             </div>
+
+            {
+                new_room_triggered &&
+                <div className={styles.newRoomDiv}>
+                    <NewRoom closeHook={setNRTrigger} />
+                </div>
+            }
         </div>
     )
 }
