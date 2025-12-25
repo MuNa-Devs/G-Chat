@@ -48,7 +48,7 @@ export default function SignUpPage() {
         }
 
         try {
-            const response = await axios.post("http://localhost:5500/g-chat/signup", inputs);
+            const response = await axios.post("http://192.168.1.5:5500/g-chat/signup", inputs);
 
             if (response.data.success) {
                 localStorage.setItem("user", JSON.stringify(response.data.user));

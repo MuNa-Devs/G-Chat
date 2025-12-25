@@ -7,9 +7,7 @@ import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 
 // SOCKET CONNECTION
- const socket = io("http://localhost:5500"); 
-
-//http://172.20.138.7
+const socket = io("http://192.168.1.5:5500");
 
 export default function DashBoard() {
 
@@ -27,6 +25,7 @@ export default function DashBoard() {
     // RECEIVE MESSAGES
     useEffect(() => {
         socket.on("receive_message", (data) => {
+            console.log("msg_received.");
             setMessages((prev) => [...prev, data]);
         });
 
@@ -36,11 +35,11 @@ export default function DashBoard() {
     }, []);
 
     useEffect(() => {
-    axios.get("http://localhost:5500/g-chat/messages")
-        .then(res => {
-            setMessages(res.data);
-        })
-        .catch(err => console.error(err));
+        axios.get("http://192.168.1.5:5500/g-chat/messages")
+            .then(res => {
+                setMessages(res.data);
+            })
+            .catch(err => console.error(err));
     }, []);
 
 
@@ -62,7 +61,7 @@ export default function DashBoard() {
                 logo={'https://i.pravatar.cc/300'}
                 userName={user.username}
                 department={'Computer Science'}
-                active_page={'dashboard'} 
+                active_page={'dashboard'}
             />
 
             <div className={styles.body}>
@@ -92,11 +91,11 @@ export default function DashBoard() {
                     style={{
                         flex: 1,
                         overflowY: "auto",
-                        padding: "10px"
+                        padding: "8px"
                     }}
                 >
                     {messages.map((msg, index) => (
-                        <div key={index} style={{ marginBottom: "6px" }}>
+                        <div key={index} style={{ marginBottom: "8px" }}>
                             <strong>{msg.username}:</strong> {msg.message}
                         </div>
                     ))}
