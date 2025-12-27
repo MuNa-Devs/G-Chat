@@ -12,6 +12,8 @@ export default function NewRoom(props) {
     const [join_pref, setJoinPref] = useState("Anyone Can Join");
     const [room_size, setRoomSize] = useState(10);
 
+    const [btn_text, setBtnText] = useState("Create");
+
     const upload = (e) => document.getElementById("logo").click();
 
     const handleDetails = (e) => {
@@ -21,6 +23,8 @@ export default function NewRoom(props) {
     }
 
     const createRoom = () => {
+        setBtnText("Creating...");
+        document.getElementById("save").disabled = true;
         const form = new FormData();
 
         form.append("room_icon", room_icon);
@@ -41,7 +45,9 @@ export default function NewRoom(props) {
             }
         ).then(res => {
             const data = res.data;
-            console.log(data);
+            setBtnText("Create");
+            document.getElementById("save").disabled = false;
+            props.closeHook(false);
         }).catch(err => {
             console.log(err);
         });
@@ -165,9 +171,9 @@ export default function NewRoom(props) {
                     onClick={() => props.closeHook(false)}
                 >Cancel</button>
 
-                <button className={styles.save}
+                <button className={styles.save} id="save"
                     onClick={createRoom}
-                ><i className="fa-regular fa-cloud"></i> Create</button>
+                ><i className="fa-regular fa-cloud"></i> {btn_text}</button>
             </div>
         </div>
     );

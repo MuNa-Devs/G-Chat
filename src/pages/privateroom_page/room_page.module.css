@@ -145,6 +145,7 @@
     border: 1px solid var(--border-light);
     border-radius: 9px;
     padding: 24px;
+    padding-bottom: 16px;
     margin-top: 8px;
     gap: 16px;
 }
@@ -161,8 +162,8 @@
 }
 
 .roomInfo .logo{
-    height: 96px;
-    width: 96px;
+    height: 108px;
+    width: 108px;
     border: 1px solid var(--border-light);
     border-radius: 50%;
     display: flex;
@@ -171,7 +172,8 @@
 }
 
 .roomInfo .logo img{
-    height: 96px;
+    height: 108px;
+    width: 108px;
     border-radius: 50%;
 }
 
@@ -184,9 +186,18 @@
     width: 100%;
 }
 
-.roomInfo .details h4{
-    font-size: 0.8em;
-    letter-spacing: 0.25px;
+.roomInfo .details .info{
+    display: flex;
+    width: 100%;
+    height: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.roomInfo .details > h4{
+    font-size: 0.85em;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
     max-width: calc(100% - 8px);
     white-space: nowrap;
     overflow: hidden;
@@ -245,7 +256,7 @@
 }
 
 .buttons button{
-    width: 48%;
+    flex: 1;
     border: 1px solid var(--border-light);
 	padding: 8px;
     background-color: var(--bg-light);
@@ -302,27 +313,6 @@
     }
 }
 
-@media (max-width: 660px){
-    .roomDiv{
-        padding: 16px;
-        padding-top: 12px;
-        width: calc(100% - 32px);
-    }
-    .roomDiv .options button span{
-        display: none;
-    }
-
-    .roomDiv .options button i{
-        display: block;
-    }
-}
-
-@media (max-width: 610px){
-    .roomDiv .options div{
-        display: none;
-    }
-}
-
 @media (max-width: 600px){
     .header button span{
         display: none;
@@ -346,6 +336,11 @@
     .roomsPage{
         flex-direction: column;
     }
+
+    .mainLayout .body{
+        align-items: center;
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 470px){
@@ -364,7 +359,7 @@
     }
 }
 
-@media (max-width: 345px){
+@media (max-width: 390px){
     .rooms{
         gap: 8px;
         padding: 8px;
