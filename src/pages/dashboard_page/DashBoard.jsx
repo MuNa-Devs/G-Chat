@@ -66,11 +66,7 @@ export default function DashBoard() {
 
             <div className={styles.body}>
                 <div className={styles.header}>
-                    <div className={styles.sidebarButtonContainer}>
-                        <button>
-                            <i className={`fa-solid fa-bars ${styles.sidebarButton}`}></i>
-                        </button>
-                    </div>
+
 
                     <div className={styles.pageNameContainer}>
                         <p className={styles.global}>Global Chat</p>

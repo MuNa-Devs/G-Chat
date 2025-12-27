@@ -19,7 +19,7 @@
 .header {
     height: 9%;
     width: 100%;
-    background-color: #007367;
+    background-color: var(--bg-light);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -101,7 +101,7 @@
 .footerBox{
     height:80%;
     width:45%;
-    background-color:  #007367;
+    background-color:  var(--bg-light);
     display: flex;
     flex-direction: row;
     border-radius: 15px;
