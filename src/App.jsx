@@ -10,6 +10,7 @@ import { LoginProtector } from "./Contexts";
 
 import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./pages/loading_screen/LoadingScreen";
+import Settings from "./pages/settings_page/Settings";
 
 export default function App() {
 	return (
@@ -40,6 +41,14 @@ export default function App() {
 				path="/friends" element={
 					<LoginProtector>
 						<FriendsPage />
+					</LoginProtector>
+				}
+			/>
+
+			<Route
+				path="/settings" element={
+					<LoginProtector>
+						<Settings />
 					</LoginProtector>
 				}
 			/>

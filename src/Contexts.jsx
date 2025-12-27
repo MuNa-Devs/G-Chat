@@ -10,7 +10,7 @@ export default function ContextProvider({ children }) {
     const [is_loading, setLoading] = useState(true);
 
     const [is_logged_in, setIsLoggedIn] = useState(() => {
-        const status = sessionStorage.getItem("is_logged_in");
+        const status = localStorage.getItem("is_logged_in");
 
         if (status === null) return false;
         else return (status === "true");
@@ -18,12 +18,12 @@ export default function ContextProvider({ children }) {
 
     const setLogin = () => {
         setIsLoggedIn(true);
-        sessionStorage.setItem("is_logged_in", "true");
+        localStorage.setItem("is_logged_in", "true");
     }
 
     const setLogOut = () => {
         setIsLoggedIn(false);
-        sessionStorage.setItem("is_logged_in", "false");
+        localStorage.setItem("is_logged_in", "false");
     }
 
     useEffect(() => {

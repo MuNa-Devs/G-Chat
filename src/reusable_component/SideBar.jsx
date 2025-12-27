@@ -62,6 +62,7 @@ export default function SideBar(props) {
                 <div className={styles.sidebarUtils}>
                     <button
                         className={styles.settings}
+                        onClick={() => navigate("/settings")}
                     ><i className="fa-solid fa-gear"></i> <span>Settings</span></button>
 
                     <button
@@ -96,6 +97,7 @@ export default function SideBar(props) {
 
                     <button
                         className={styles.settings}
+                        onClick={() => navigate("/settings")}
                     ><i className="fa-solid fa-gear"></i></button>
 
                     <button
