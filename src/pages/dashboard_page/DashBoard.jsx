@@ -15,8 +15,7 @@ export default function DashBoard() {
     // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
 
-    // If user not logged in, redirect
-    if (!currentUserId) window.location.href = "/signin";
+
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
