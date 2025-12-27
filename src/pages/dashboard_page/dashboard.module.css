@@ -19,7 +19,6 @@
 .header {
     height: 9%;
     width: 100%;
-    background-color: var(--bg-light);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -69,12 +68,18 @@
     width:68%;
 }
 .global{
-    font-size: 1.35rem;
-    margin-top:-3px;
+    color: var(--text-primary);
+    margin-left: 20px;
+    font-size: 1.45rem;
+    margin-top: 12px;
 }
-.smallName{
-    font-size: 0.9rem;
+
+.header .pageNameContainer .smallName {
+    color: var(--text-secondary);
+    margin-left: 20px;
+    font-size: 14px;
     margin-top: 5px;
+
 }
 /* ===== SEARCH INPUT ===== */
 .input {
@@ -89,8 +94,8 @@
     background-size: 18px;
     padding-left: 40px;
     background-color: #1d1b36;
-    color: white;
-    margin-top: 6px;
+
+    margin-top: 10px;
     margin-left: 20px;
 }
 
@@ -156,4 +161,12 @@
 .pageNameContainer p{
     color:#eae5d4;
     margin-left: 9px;
+}
+
+.line {
+    width: 96.5%;
+    height: 1px;
+    background-color: var(--border);
+    margin-top: 10px;
+    margin-left: 30px;
 }

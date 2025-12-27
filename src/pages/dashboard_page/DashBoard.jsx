@@ -69,7 +69,7 @@ export default function DashBoard() {
 
 
                     <div className={styles.pageNameContainer}>
-                        <p className={styles.global}>Global Chat</p>
+                        <h2 className={styles.global}>Global Chat</h2>
                         <p className={styles.smallName}>College Wide Discussions</p>
                     </div>
 
@@ -81,6 +81,7 @@ export default function DashBoard() {
                         />
                     </div>
                 </div>
+                <div className={styles.line}></div>
 
                 {/* CHAT MESSAGES */}
                 <div
