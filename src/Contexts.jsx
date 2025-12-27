@@ -81,7 +81,8 @@ export const loadUserDetails = async (setUserDetails, setLoading) => {
             username: '',
             email: '',
             is_verified: false,
-            pfp: ''
+            pfp: '',
+            department: ''
         })
     }
 
