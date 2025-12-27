@@ -50,7 +50,7 @@ export default function DashBoard() {
         if (!message.trim()) return;
 
         socket.emit("send_message", {
-            user_id: user.id,
+            user_id: user_details.id,
             message: message
         });
 
