@@ -34,7 +34,7 @@ export default function SideBar(props) {
                         className={`
                         ${props.active_page == "privaterooms" && styles.activeBtn}
                     `}
-                    ><i className="fa-solid fa-unlock-keyhole"></i> <span>Private Rooms</span></button>
+                    ><i className="fa-solid fa-people-roof"></i> <span>Rooms</span></button>
 
                     <button
                         className={`

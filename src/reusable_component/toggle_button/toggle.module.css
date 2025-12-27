@@ -1,0 +1,30 @@
+.toggleSwitch{
+    width: 32px;
+    height: 17px;
+    background-color: #3b4754;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.toggleSwitch.on{
+    background-color: #137fec;
+}
+
+.toggleSwitch.off{
+    background-color: #3b4754;
+}
+
+.toggleCircle{
+    width: 15px;
+    height: 15px;
+    background-color: #e2e8f0;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.toggleSwitch.on .toggleCircle{
+    transform: translateX(17px);
+}

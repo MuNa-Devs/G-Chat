@@ -1,0 +1,350 @@
+.newRoom {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 65dvw;
+    max-width: 800px;
+    height: 65dvh;
+    max-height: 550px;
+
+    background-color: var(--bg-lighter);
+    border-radius: 12px;
+    padding: 16px;
+
+    box-shadow: 0 0 40px var(--shadow);
+    z-index: 999;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.titlebar {
+    height: auto;
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+
+.titlebar h3 {
+    font-size: 0.95em;
+    letter-spacing: 0.5px;
+}
+
+.closeBtn {
+    background-color: transparent;
+    border: none;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.closeBtn i {
+    color: #ff5f5f;
+}
+
+.titlebar .topButtons .cancel,
+.titlebar .topButtons .save {
+    display: none;
+}
+
+.sections {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sections .sectionBodyContainer {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1;
+    max-height: 375px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    border-bottom: 1px solid var(--border);
+}
+
+.sections .sectionBodyContainer::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sections .sectionBodyContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.sections .sectionBodyContainer .profilePic {
+    height: auto;
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.sections .sectionBodyContainer .profilePic .image {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    font-size: 0.75em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sections .sectionBodyContainer .profilePic .image img {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+}
+
+.sections .sectionBodyContainer .profilePic .uploadBtn {
+    height: 100%;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.sections .profilePic .uploadBtn button {
+    width: auto;
+    height: auto;
+    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: var(--primary);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.sections .profilePic .uploadBtn p {
+    font-size: 0.7em;
+    color: var(--text-secondary);
+}
+
+.sections .details {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.sections .details>div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    height: auto;
+    width: 100%;
+    gap: 4px;
+}
+
+.sections .details>div h5 {
+    margin: 0;
+    padding: 0;
+    font-size: 0.73em;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.sections .details div input,
+.roomDesc textarea {
+    width: calc(100% - 24px);
+    padding: 8px;
+    padding-left: 12px;
+    background-color: var(--border-light);
+    border: none;
+    border-radius: 9px;
+    caret-color: var(--text-primary);
+    color: var(--text-primary);
+    font-size: 0.75em;
+    letter-spacing: 0.5px;
+    outline: none;
+}
+
+.sections .details .maxMembs input {
+    padding: 0;
+    padding-left: 16px;
+}
+
+.sections .details .roomType {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.sections .details .roomType>h5 {
+    margin: 0;
+    margin-right: 40px;
+}
+
+.sections .details .roomType div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    cursor: pointer;
+}
+
+.sections .details .roomType div label {
+    height: auto;
+    margin: 0;
+    margin-right: 8px;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.sections .details .roomType div input {
+    width: auto;
+    height: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.sections .details .joinPref {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+}
+
+.bottomButtons {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 20px;
+    gap: 10px;
+}
+
+.bottomButtons button {
+    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.bottomButtons .cancel {
+    color: var(--text-secondary);
+    background-color: transparent;
+}
+
+.bottomButtons .cancel:hover {
+    background-color: #ff5f5f;
+    color: var(--text-primary);
+}
+
+.bottomButtons .save {
+    color: var(--text-primary);
+    background-color: var(--primary);
+}
+
+/* Media Queries */
+@media (max-height: 600px) {
+    .newRoom {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        transform: translate(0%, 0%);
+
+        width: calc(100% - 32px);
+        max-width: 1800px;
+        height: calc(100% - 32px);
+        max-height: 1950px;
+
+        background-color: var(--bg-lighter);
+        border-radius: 0px;
+        padding: 16px;
+
+        box-shadow: 0 0 40px var(--shadow);
+        z-index: 999;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+    }
+
+    .sections .sectionBodyContainer {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        flex: 1;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        border-bottom: 1px solid var(--border);
+    }
+}
+
+@media (max-width: 420px) {
+    .newRoom {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        transform: translate(0%, 0%);
+
+        width: calc(100% - 32px);
+        max-width: 1800px;
+        height: calc(100% - 32px);
+        max-height: 1950px;
+
+        background-color: var(--bg-lighter);
+        border-radius: 0px;
+        padding: 16px;
+
+        box-shadow: 0 0 40px var(--shadow);
+        z-index: 999;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+    }
+
+    .sections .sectionBodyContainer {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        flex: 1;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        border-bottom: 1px solid var(--border);
+    }
+}
