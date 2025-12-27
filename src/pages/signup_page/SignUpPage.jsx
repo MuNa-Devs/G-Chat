@@ -1,15 +1,19 @@
 // Components
 import styles from './signup_page.module.css';
 import { checkValidity } from '../page_utils/AuthPageUtils';
+import { AppContext, loadUserDetails } from '../../Contexts';
+import { UiContext } from '../../utils/UiContext';
 
 // Package imports
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from 'axios';
 
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
+    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
+    const {setOverride} = useContext(UiContext);
 
     const [inputs, setInputs] = useState({
         username: "",
@@ -51,10 +55,12 @@ export default function SignUpPage() {
             const response = await axios.post("http://localhost:5500/g-chat/signup", inputs);
 
             if (response.data.success) {
-                localStorage.setItem("user", JSON.stringify(response.data.user));
+                localStorage.setItem("user_id", response.data.user.id);
+                await loadUserDetails(setUserDetails, setLoading);
+                setLogin(true);
                 navigate("/dashboard");
             } else {
-                alert(response.data.message);
+                console.log(response.data.message);
             }
         } catch (error) {
             alert(error.message);

@@ -1,24 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import axios from "axios";
 
-
 import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
+import { AppContext } from '../../Contexts';
 
 // SOCKET CONNECTION
 const socket = io("http://localhost:5500");
 
 export default function DashBoard() {
+    const {user_details} = useContext(AppContext);
 
     // GET LOGGED-IN USER
-    const user = JSON.parse(localStorage.getItem("user"));
-    const currentUserId = Number(user.id);
+    const currentUserId = Number(user_details.id);
 
     // If user not logged in, redirect
-    if (!user) {
-        window.location.href = "/signin";
-    }
+    if (!currentUserId) window.location.href = "/signin";
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -26,7 +24,6 @@ export default function DashBoard() {
     // RECEIVE MESSAGES
     useEffect(() => {
         socket.on("receive_message", (data) => {
-            console.log("msg_received.");
             setMessages((prev) => [...prev, data]);
         });
 
@@ -63,9 +60,7 @@ export default function DashBoard() {
     return (
         <div className={styles.dashboardMain}>
             <SideBar
-                logo={'https://i.pravatar.cc/300'}
-                userName={user.username}
-                department={'Computer Science'}
+                logo={"#"}
                 active_page={'dashboard'}
             />
 
@@ -78,7 +73,7 @@ export default function DashBoard() {
                     </div>
 
                     <div className={styles.pageNameContainer}>
-                        <p className={styles.global}>GLOBAL CHAT</p>
+                        <p className={styles.global}>Global Chat</p>
                         <p className={styles.smallName}>College Wide Discussions</p>
                     </div>
 
@@ -92,7 +87,6 @@ export default function DashBoard() {
                 </div>
 
                 {/* CHAT MESSAGES */}
-                {/* CHAT MESSAGES */}
                 <div
                     style={{
                         flex: 1,
@@ -103,8 +97,6 @@ export default function DashBoard() {
                 >
                     {messages.map((msg, index) => {
                         const isMe = Number(msg.user_id) === currentUserId;
-                        console.log(msg.user_id, user.id);
-
 
                         return (
                             <div

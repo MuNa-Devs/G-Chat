@@ -36,8 +36,7 @@ export default function FriendsPage() {
     return (
         <div className={styles.friendsMain}>
             <SideBar
-                logo={'https://i.pravatar.cc/300'}
-                department={'Computer Science'}
+                logo="#"
                 active_page={'friends'}
             />
 

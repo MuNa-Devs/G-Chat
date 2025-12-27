@@ -6,7 +6,13 @@ export default function Rooms(props){
         <div className={styles.roomDiv}>
             <div className={styles.roomInfo}>
                 <div className={styles.logo}>
-                    <img src={props.logo || "https://www.shutterstock.com/image-vector/blank-image-photo-placeholder-icon-600nw-2501054919.jpg"} alt="Logo" />
+                    <img 
+                        src={props.logo}
+                        onError={e => {
+                            e.target.onError = null;
+                            e.target.src = "https://cdn-icons-png.flaticon.com/512/8184/8184182.png";
+                        }}
+                    />
                 </div>
 
                 <div className={styles.details}>

@@ -2,9 +2,11 @@ import styles from "./room_page.module.css"
 import Rooms from "./Rooms"
 import SideBar from "../../reusable_component/SideBar"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import NewRoom from "./CreateRoom";
 import axios from "axios";
+import { AppContext } from "../../Contexts";
+import LoadingScreen from "../loading_screen/LoadingScreen";
 
 export default function RoomPage() {
     const [is_empty, setEmpty] = useState(true);
@@ -20,14 +22,19 @@ export default function RoomPage() {
 
     const [room_filter, setFilter] = useState("my");
 
+    const {is_loading, user_details} = useContext(AppContext);
+
     useEffect(() => {
+
+        if (is_loading) return;
+
         setPlaceHolder("Loading available rooms...")
         loadMyRooms();
-    }, []);
+    }, [user_details?.id]);
 
     const loadMyRooms = async () => {
         setFilter("my");
-        const rooms = await getMyRooms(JSON.parse(localStorage.getItem("user")).id, my_rooms_count);
+        const rooms = await getMyRooms(user_details.id, my_rooms_count);
 
         if (!rooms.length && !my_rooms_count) {
             setEmpty(true);
@@ -57,12 +64,12 @@ export default function RoomPage() {
         setAllRooms(prev => [...prev, ...rooms]);
     }
 
+    if (is_loading) return <LoadingScreen />
+
     return (
         <div className={styles.roomsPage}>
             <SideBar
-                logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3kprXSmAqpSeDBVP9vmHZpvCbB_WNcxn8Eg&s"
-                userName="H. Sohel"
-                department="Computer Science"
+                logo="#"
                 active_page="privaterooms"
             />
 
@@ -105,8 +112,9 @@ export default function RoomPage() {
 
                         {
                             !is_empty &&
-                            room_filter === "all" ?
-                            all_rooms
+                            (
+                                room_filter === "all" ?
+                                all_rooms
                                 .filter(room => room.r_type !== "private")
                                 .map(room => (
                                     <Rooms
@@ -120,8 +128,8 @@ export default function RoomPage() {
                                     />
                                 ))
 
-                            :
-                            my_rooms
+                                :
+                                my_rooms
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
@@ -133,6 +141,7 @@ export default function RoomPage() {
                                         room_btn="Open Room"
                                     />
                                 ))
+                            )
                         }
 
                         <div className="bufferDiv"></div>

@@ -3,15 +3,20 @@ import { BrowserRouter } from 'react-router-dom';
 
 import './index.css'
 import App from './App.jsx'
-import AuthProvider from './AuthContext.jsx';
+import ContextProvider from './Contexts.jsx';
 import ThemeManager from './utils/ThemeManager.jsx';
+import UiContextProvider, { UiContextController } from './utils/UiContext.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<BrowserRouter>
 		<ThemeManager>
-			<AuthProvider>
-				<App />
-			</AuthProvider>
+			<ContextProvider>
+				<UiContextProvider>
+					<UiContextController>
+						<App />
+					</UiContextController>
+				</UiContextProvider>
+			</ContextProvider>
 		</ThemeManager>
 	</BrowserRouter>
 )
