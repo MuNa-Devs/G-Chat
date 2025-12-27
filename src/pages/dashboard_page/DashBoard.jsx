@@ -13,6 +13,7 @@ export default function DashBoard() {
 
     // GET LOGGED-IN USER
     const user = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = Number(user.id);
 
     // If user not logged in, redirect
     if (!user) {
@@ -101,7 +102,7 @@ useEffect(() => {
                     }}
                 >
                     {messages.map((msg, index) => {
-                        const isMe = Number(msg.user_id) === Number(user.id);
+                        const isMe = Number(msg.user_id) === currentUserId;
                         console.log(msg.user_id, user.id);
 
 
