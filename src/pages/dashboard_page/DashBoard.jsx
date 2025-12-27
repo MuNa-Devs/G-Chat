@@ -13,6 +13,7 @@ export default function DashBoard() {
 
     // GET LOGGED-IN USER
     const user = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = Number(user.id);
 
     // If user not logged in, redirect
     if (!user) {
@@ -34,17 +35,17 @@ export default function DashBoard() {
         };
     }, []);
 
-useEffect(() => {
-    axios.get("http://localhost:5500/g-chat/messages")
-        .then(res => {
-            const normalized = res.data.map(msg => ({
-                ...msg,
-                user_id: Number(msg.user_id)
-            }));
-            setMessages(normalized);
-        })
-        .catch(err => console.error(err));
-}, []);
+    useEffect(() => {
+        axios.get("http://localhost:5500/g-chat/messages")
+            .then(res => {
+                const normalized = res.data.map(msg => ({
+                    ...msg,
+                    user_id: Number(msg.user_id)
+                }));
+                setMessages(normalized);
+            })
+            .catch(err => console.error(err));
+    }, []);
 
 
     // SEND MESSAGE
@@ -101,7 +102,7 @@ useEffect(() => {
                     }}
                 >
                     {messages.map((msg, index) => {
-                        const isMe = Number(msg.user_id) === Number(user.id);
+                        const isMe = Number(msg.user_id) === currentUserId;
                         console.log(msg.user_id, user.id);
 
 
