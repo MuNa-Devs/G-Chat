@@ -4,12 +4,20 @@ import axios from "axios";
 import SideBar from '../../reusable_component/SideBar';
 import styles from './friendspage.module.css';
 import { server_url } from '../../../creds/server_url';
+import { AppContext } from '../../Contexts';
+
+
+
 
 export default function FriendsPage() {
+    
+    const {user_details} = useContext(AppContext);
+
     const [friend, setFriend] = useState("");
+    const [friends, setFriends] = useState([]);
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-    const[hasSearched, setHasSearched] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
     const searchFriends = async (query) => {
         try {
@@ -28,6 +36,37 @@ export default function FriendsPage() {
             setLoading(false);
         }
     };
+
+
+    const addFriend = async (friendId) => {
+        try {
+            await axios.post(`${server_url}/g-chat/add-friend`, {
+                userId: user_details.id,
+                friendId
+            });
+
+            // remove from search results
+            setResults(prev => prev.filter(u => u.id !== friendId));
+
+            // refresh friends list
+            const res = await axios.get(
+                `http://localhost:5500/g-chat/friends/${user.id}`
+            );
+            setFriends(res.data);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
+    useEffect(() => {
+        axios
+            .get(`http://localhost:5500/g-chat/friends/${user.id}`)
+            .then(res => setFriends(res.data))
+            .catch(err => console.error(err));
+    }, []);
+
 
     useEffect(() => {
         if (!friend.trim()) {
@@ -74,32 +113,59 @@ export default function FriendsPage() {
                 <div className={styles.line}></div>
 
                 {/* SEARCH RESULTS */}
-<div className={styles.resultsContainer}>
-    {loading && (
-        <div className={styles.loading}>Searching...</div>
-    )}
+                <div className={styles.resultsContainer}>
+                    {loading && (
+                        <div className={styles.loading}>Searching...</div>
+                    )}
 
-    {!loading && results.map((u) => (
-        <div key={u.id} className={styles.friendItem}>
-            <div className={styles.avatar}>
-                {u.username.charAt(0).toUpperCase()}
-            </div>
+                    {!loading && results.map((u) => (
+                        <div key={u.id} className={styles.friendItem}>
+                            <div className={styles.avatar}>
+                                {u.username.charAt(0).toUpperCase()}
+                            </div>
 
-            <div className={styles.userInfo}>
-                <div className={styles.username}>{u.username}</div>
-                <div className={styles.subText}>Click to add friend</div>
-            </div>
+                            <div className={styles.userInfo}>
+                                <div className={styles.username}>{u.username}</div>
+                                <div className={styles.subText}>Click to add friend</div>
+                            </div>
 
-            <button className={styles.addBtn}>Add</button>
-        </div>
-    ))}
+                            <button
+                                onClick={() => addFriend(u.id)}
+                                className={styles.addBtn}>Add</button>
+                        </div>
+                    ))}
 
-    {!loading && hasSearched && results.length === 0 && (
-        <div className={styles.emptyState}>
-            No users found
-        </div>
-    )}
-</div>
+                    {!loading && hasSearched && results.length === 0 && (
+                        <div className={styles.emptyState}>
+                            No users found
+                        </div>
+                    )}
+                </div>
+
+                {/* FRIENDS LIST */}
+                <div className={styles.friendsList}>
+                    <h3 className={styles.sectionTitle}>Your Friends</h3>
+
+                    {friends.length === 0 && (
+                        <div className={styles.emptyState}>
+                            You have no friends yet
+                        </div>
+                    )}
+
+                    {friends.map((f) => (
+                        <div key={f.id} className={styles.friendItem}>
+                            <div className={styles.avatar}>
+                                {f.username.charAt(0).toUpperCase()}
+                            </div>
+
+                            <div className={styles.userInfo}>
+                                <div className={styles.username}>{f.username}</div>
+                                <div className={styles.subText}>Friend</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
 
             </div>
         </div>
