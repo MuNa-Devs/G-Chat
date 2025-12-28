@@ -6,12 +6,9 @@ import styles from './friendspage.module.css';
 import { server_url } from '../../../creds/server_url';
 import { AppContext } from '../../Contexts';
 
-
-
-
 export default function FriendsPage() {
-    
-    const {user_details} = useContext(AppContext);
+
+    const { user_details } = useContext(AppContext);
 
     const [friend, setFriend] = useState("");
     const [friends, setFriends] = useState([]);

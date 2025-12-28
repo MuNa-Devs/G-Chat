@@ -1,0 +1,154 @@
+.settings{
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 100dvh;
+}
+
+.settings .wrapper{
+    width: auto;
+    height: auto;
+    display: grid;
+    grid-template-rows: (4, 1fr);
+    gap: 32px;
+}
+
+.settings h1{
+    font-size: 1.2em;
+    color: var(--text-primary);
+}
+
+.settings h3{
+    font-size: 0.95em;
+    margin-bottom: 16px;
+}
+
+.settings h5{
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+.settings p{
+    font-size: 0.75em;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.settings .headerWrapper{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings .backBtn{
+    background-color: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.settings .backBtn i,
+.settings .backBtn span{
+    color: var(--danger);
+}
+
+.settings .header{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.settings .header *{
+    margin: 0;
+    padding: 0;
+}
+
+.settings .appearance,
+.settings .others{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    width: auto;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    max-height: 250px;
+    width: 800px;
+}
+
+.settings .appearance .themes,
+.settings .others .language{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+}
+
+.settings .icon{
+    height: 50px;
+    width: 50px;
+    border-radius: 8px;
+    background-color: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings .text{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: 50px;
+}
+
+.settings .text h5{
+    margin: 0;
+}
+
+.settings .bottomBtns{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.settings .bottomBtns button{
+    padding: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.settings .bottomBtns .save{
+    color: var(--button-text);
+    background-color: var(--accent);
+}
+
+.settings .bottomBtns .cancel{
+    color: var(--button-alt-text);
+    background-color: transparent;
+} .settings .bottomBtns .cancel:hover{
+    background-color: #ff5f5f;
+}

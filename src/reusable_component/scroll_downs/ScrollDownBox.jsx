@@ -19,7 +19,7 @@ export default function ScrollDownBox({ label, options, setLabel }) {
 			{/* Header */}
 			<div className={styles.dropdownHeader}
 				onClick={() => setOpen(!open)}
-				style={{width: `${max_width}px`}}
+				style={{width: `${max_width + 20}px`}}
 			>
 				<h5>{label}</h5>
 			</div>
@@ -27,7 +27,7 @@ export default function ScrollDownBox({ label, options, setLabel }) {
 			{/* Options List */}
 			{open && (
 				<div className={styles.dropdownMenu}
-					style={{width: `${max_width + 16}px`}}
+					style={{width: `${max_width + 36}px`}}
 				>
 					{options.map((opt, index) => (
 						<div key={index} className={styles.dropdownItem}

@@ -3,12 +3,13 @@ import { server_url } from "../creds/server_url";
 import axios from "axios";
 import { createContext, useState, useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { UiContext } from "./utils/UiContext";
 
 export const AppContext = createContext();
 
 export default function ContextProvider({ children }) {
     const [user_details, setUserDetails] = useState({});
-    const [is_loading, setLoading] = useState(true);
+    const {setOverride} = useContext(UiContext);
 
     const [is_logged_in, setIsLoggedIn] = useState(() => {
         const status = localStorage.getItem("is_logged_in");
@@ -28,14 +29,12 @@ export default function ContextProvider({ children }) {
     }
 
     useEffect(() => {
-        loadUserDetails(setUserDetails, setLoading);
+        loadUserDetails(setUserDetails, setOverride);
     }, []);
 
     return (
         <AppContext.Provider
             value={{
-                is_loading,
-                setLoading,
                 is_logged_in,
                 setLogin,
                 setLogOut,
@@ -57,8 +56,8 @@ export function LoginProtector({ children }) {
     return children;
 }
 
-export const loadUserDetails = async (setUserDetails, setLoading) => {
-    setLoading(true);
+export const loadUserDetails = async (setUserDetails, setOverride) => {
+    setOverride("loading");
 
     try {
         const user_id = localStorage.getItem("user_id");
@@ -69,7 +68,7 @@ export const loadUserDetails = async (setUserDetails, setLoading) => {
         };
 
         const user_details_res = await axios.get(
-            `${server_url}/g-chat/get-user?user_id=${user_id}`
+            `${server_url}/g-chat/users/get-user?user_id=${user_id}`
         );
         console.log(user_details_res.data.user_details);
 
@@ -87,5 +86,5 @@ export const loadUserDetails = async (setUserDetails, setLoading) => {
         })
     }
 
-    setLoading(false);
+    setOverride(null);
 }
