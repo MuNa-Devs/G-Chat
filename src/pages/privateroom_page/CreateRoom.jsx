@@ -3,6 +3,7 @@ import ScrollDownBox from "../../reusable_component/scroll_downs/ScrollDownBox";
 
 import { useState } from "react";
 import axios from "axios";
+import { server_url } from "../../../creds/server_url";
 
 export default function NewRoom(props) {
     const [room_icon, setRoomIcon] = useState("");
@@ -36,7 +37,7 @@ export default function NewRoom(props) {
         form.append("room_aid", JSON.parse(localStorage.getItem("user")).id);
 
         axios.post(
-            "http://localhost:5500/g-chat/rooms/create",
+            `${server_url}/g-chat/rooms/create`,
             form,
             {
                 headers: {

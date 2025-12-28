@@ -7,6 +7,7 @@ import NewRoom from "./CreateRoom";
 import axios from "axios";
 import { AppContext } from "../../Contexts";
 import LoadingScreen from "../loading_screen/LoadingScreen";
+import { server_url } from "../../../creds/server_url";
 
 export default function RoomPage() {
     const [is_empty, setEmpty] = useState(true);
@@ -119,7 +120,7 @@ export default function RoomPage() {
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
-                                        logo={`http://localhost:5500/files/${room.icon_url}`}
+                                        logo={`${server_url}/files/${room.icon_url}`}
                                         room_title={capitalize(room.r_name)}
                                         prof_name={capitalize(room.username)}
                                         join={true}
@@ -133,7 +134,7 @@ export default function RoomPage() {
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
-                                        logo={`http://localhost:5500/files/${room.icon_url}`}
+                                        logo={`${server_url}/files/${room.icon_url}`}
                                         room_title={capitalize(room.r_name)}
                                         prof_name={capitalize(room.username)}
                                         join={true}
@@ -164,7 +165,7 @@ const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 const getMyRooms = async (uid, my_rooms_count) => {
     try {
         const res = await axios.get(
-            `http://localhost:5500/g-chat/rooms/get_my_rooms?uid=${uid}&rooms_count=${my_rooms_count}`
+            `${server_url}/g-chat/rooms/get_my_rooms?uid=${uid}&rooms_count=${my_rooms_count}`
         );
 
         return res.data.rooms_info;
@@ -178,7 +179,7 @@ const getMyRooms = async (uid, my_rooms_count) => {
 const getAllRooms = async (all_rooms_count) => {
     try {
         const res = await axios.get(
-            `http://localhost:5500/g-chat/rooms/get_all_rooms?rooms_count=${all_rooms_count}`
+            `${server_url}/g-chat/rooms/get_all_rooms?rooms_count=${all_rooms_count}`
         );
 
         return res.data.rooms_info;

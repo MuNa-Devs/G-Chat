@@ -1,3 +1,4 @@
+import { server_url } from "../creds/server_url";
 
 import axios from "axios";
 import { createContext, useState, useContext, useEffect } from "react";
@@ -68,7 +69,7 @@ export const loadUserDetails = async (setUserDetails, setLoading) => {
         };
 
         const user_details_res = await axios.get(
-            `http://localhost:5500/g-chat/get-user?user_id=${user_id}`
+            `${server_url}/g-chat/get-user?user_id=${user_id}`
         );
         console.log(user_details_res.data.user_details);
 

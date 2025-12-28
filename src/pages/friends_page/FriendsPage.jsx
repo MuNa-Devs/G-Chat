@@ -3,6 +3,7 @@ import axios from "axios";
 
 import SideBar from '../../reusable_component/SideBar';
 import styles from './friendspage.module.css';
+import { server_url } from '../../../creds/server_url';
 
 export default function FriendsPage() {
     const [friend, setFriend] = useState("");
@@ -12,7 +13,7 @@ export default function FriendsPage() {
     const searchFriends = async (query) => {
         try {
             const res = await axios.get(
-                `http://localhost:5500/g-chat/search-users?query=${query}`
+                `${server_url}/g-chat/search-users?query=${query}`
             );
             setResults(res.data);
         } catch (err) {

@@ -8,6 +8,7 @@ import { UiContext } from '../../utils/UiContext';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
+import { server_url } from '../../../creds/server_url';
 
 function SignInPage() {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ function SignInPage() {
         }
 
         try {
-            const response = await axios.post("http://localhost:5500/g-chat/signin", inputs);
+            const response = await axios.post(`${server_url}/g-chat/signin`, inputs);
 
             if (response.data.success) {
                 setOverride("loading");

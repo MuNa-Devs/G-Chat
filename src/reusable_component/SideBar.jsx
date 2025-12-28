@@ -3,6 +3,7 @@ import styles from './sidebar.module.css'
 
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../Contexts';
+import { server_url } from '../../creds/server_url';
 
 export default function SideBar(props) {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function SideBar(props) {
                 <div className={styles.userProfile}>
                     <div className={styles.logo}>
                         <img 
-                            src={user_details.pfp}
+                            src={server_url + "/files/" + user_details.pfp}
                             onError={e => {
                                 e.target.onError = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";

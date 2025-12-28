@@ -5,9 +5,10 @@ import axios from "axios";
 import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 import { AppContext } from '../../Contexts';
+import { server_url } from '../../../creds/server_url';
 
 // SOCKET CONNECTION
-const socket = io("http://localhost:5500");
+const socket = io(server_url);
 
 export default function DashBoard() {
     const {user_details} = useContext(AppContext);
@@ -30,7 +31,7 @@ export default function DashBoard() {
     }, []);
 
     useEffect(() => {
-        axios.get("http://localhost:5500/g-chat/messages")
+        axios.get(`${server_url}/g-chat/messages`)
             .then(res => {
                 const normalized = res.data.map(msg => ({
                     ...msg,

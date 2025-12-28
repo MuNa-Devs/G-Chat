@@ -8,6 +8,7 @@ import { UiContext } from '../../utils/UiContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from "react";
 import axios from 'axios';
+import { server_url } from '../../../creds/server_url';
 
 // Signup page component
 export default function SignUpPage() {
@@ -52,13 +53,15 @@ export default function SignUpPage() {
         }
 
         try {
-            const response = await axios.post("http://localhost:5500/g-chat/signup", inputs);
+            const response = await axios.post(`${server_url}/g-chat/signup`, inputs);
 
             if (response.data.success) {
+                setOverride("loading");
                 localStorage.setItem("user_id", response.data.user.id);
                 await loadUserDetails(setUserDetails, setLoading);
                 setLogin(true);
                 navigate("/dashboard");
+                setOverride(null);
             } else {
                 console.log(response.data.message);
             }
