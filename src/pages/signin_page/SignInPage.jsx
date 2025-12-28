@@ -12,7 +12,7 @@ import { server_url } from '../../../creds/server_url';
 
 function SignInPage() {
     const navigate = useNavigate();
-    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
+    const {setLogin, setUserDetails} = useContext(AppContext);
     const {setOverride} = useContext(UiContext);
 
     const [inputs, setInputs] = useState({
@@ -45,12 +45,10 @@ function SignInPage() {
             const response = await axios.post(`${server_url}/g-chat/signin`, inputs);
 
             if (response.data.success) {
-                setOverride("loading");
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setLoading);
+                await loadUserDetails(setUserDetails, setOverride);
                 setLogin(true);
                 navigate("/dashboard");
-                setOverride(null);
             } else {
                 console.log(response.data.message);
             }

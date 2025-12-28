@@ -70,7 +70,7 @@ export default function RoomPage() {
     return (
         <div className={styles.roomsPage}>
             <SideBar
-                logo="#"
+                location="/rooms"
                 active_page="privaterooms"
             />
 

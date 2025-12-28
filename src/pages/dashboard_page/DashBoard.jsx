@@ -59,6 +59,7 @@ export default function DashBoard() {
         <div className={styles.dashboardMain}>
             <SideBar
                 active_page={'dashboard'}
+                location="/dashboard"
             />
 
             <div className={styles.body}>

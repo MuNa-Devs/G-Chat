@@ -13,7 +13,7 @@ import { server_url } from '../../../creds/server_url';
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
-    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
+    const {setLogin, setUserDetails} = useContext(AppContext);
     const {setOverride} = useContext(UiContext);
 
     const [inputs, setInputs] = useState({
@@ -56,12 +56,10 @@ export default function SignUpPage() {
             const response = await axios.post(`${server_url}/g-chat/signup`, inputs);
 
             if (response.data.success) {
-                setOverride("loading");
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setLoading);
+                await loadUserDetails(setUserDetails, setOverride);
                 setLogin(true);
                 navigate("/dashboard");
-                setOverride(null);
             } else {
                 console.log(response.data.message);
             }

@@ -10,13 +10,13 @@ import UiContextProvider, { UiContextController } from './utils/UiContext.jsx';
 createRoot(document.getElementById('root')).render(
 	<BrowserRouter>
 		<ThemeManager>
-			<ContextProvider>
-				<UiContextProvider>
+			<UiContextProvider>
+				<ContextProvider>
 					<UiContextController>
 						<App />
 					</UiContextController>
-				</UiContextProvider>
-			</ContextProvider>
+				</ContextProvider>
+			</UiContextProvider>
 		</ThemeManager>
 	</BrowserRouter>
 )

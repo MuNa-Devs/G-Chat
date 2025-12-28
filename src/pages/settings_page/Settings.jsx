@@ -1,8 +1,10 @@
 import styles from "./settings.module.css";
 import ScrollDownBox from "../../reusable_component/scroll_downs/ScrollDownBox";
+import { getThemeSetter } from "../../utils/ThemeManager";
 
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 export default function Settings() {
     const navigate = useNavigate();
@@ -38,9 +40,9 @@ export default function Settings() {
                         </div>
 
                         <div className={styles.text}>
-                            <h5>Theme</h5>
+                            <h5>Color Palette</h5>
 
-                            <p>Change the theme.</p>
+                            <p>Change the color palette.</p>
                         </div>
 
                         <ScrollDownBox

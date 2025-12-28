@@ -7,14 +7,14 @@ import { server_url } from '../../creds/server_url';
 
 export default function SideBar(props) {
     const navigate = useNavigate();
-    const {user_details} = useContext(AppContext);
+    const { user_details } = useContext(AppContext);
 
     return (
         <>
             <div className={styles.sidebarAtLeft}>
-                <div className={styles.userProfile}>
+                <div className={styles.userProfile} onClick={() => navigate("/user-settings", { state: { from: props.location } })}>
                     <div className={styles.logo}>
-                        <img 
+                        <img
                             src={server_url + "/files/" + user_details.pfp}
                             onError={e => {
                                 e.target.onError = null;
@@ -26,7 +26,7 @@ export default function SideBar(props) {
                     <div className={styles.userDetails}>
                         <h4>{user_details.username || "User"}</h4>
 
-                        <p>{user_details.department}</p>
+                        <p>{user_details.department || "Edit your profile"}</p>
                     </div>
                 </div>
 
@@ -63,7 +63,7 @@ export default function SideBar(props) {
                 <div className={styles.sidebarUtils}>
                     <button
                         className={styles.settings}
-                        onClick={() => navigate("/settings")}
+                        onClick={() => navigate("/settings", { state: { from: props.location } })}
                     ><i className="fa-solid fa-gear"></i> <span>Settings</span></button>
 
                     <button
@@ -73,10 +73,10 @@ export default function SideBar(props) {
             </div>
 
             <div className={styles.sidebarAtTop}>
-                <div className={styles.userProfile}>
+                <div className={styles.userProfile} onClick={() => navigate("/user-settings", { state: { from: props.location } })}>
                     <div className={styles.logo}>
-                        <img 
-                            src={props.logo}
+                        <img
+                            src={server_url + "/files/" + user_details.pfp}
                             onError={e => {
                                 e.target.onError = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
@@ -85,9 +85,9 @@ export default function SideBar(props) {
                     </div>
 
                     <div className={styles.userDetails}>
-                        <h4>{props.userName || "User"}</h4>
+                        <h4>{user_details.username || "User"}</h4>
 
-                        <p>{props.department}</p>
+                        <p>{user_details.department || "Edit your profile"}</p>
                     </div>
                 </div>
 
@@ -98,7 +98,7 @@ export default function SideBar(props) {
 
                     <button
                         className={styles.settings}
-                        onClick={() => navigate("/settings")}
+                        onClick={() => navigate("/settings", { state: { from: props.location } })}
                     ><i className="fa-solid fa-gear"></i></button>
 
                     <button

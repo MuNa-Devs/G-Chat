@@ -74,7 +74,6 @@ export default function NewRoom(props) {
                         <input
                             type="file"
                             accept="image/*"
-                            capture
                             id="logo"
                             style={{ display: "none" }}
                             name="logo"

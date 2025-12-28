@@ -11,6 +11,7 @@ import { LoginProtector } from "./Contexts";
 import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
+import UserSettings from "./pages/user_settings/UserSettings";
 
 export default function App() {
 	return (
@@ -49,6 +50,14 @@ export default function App() {
 				path="/settings" element={
 					<LoginProtector>
 						<Settings />
+					</LoginProtector>
+				}
+			/>
+
+			<Route
+				path="/user-settings" element={
+					<LoginProtector>
+						<UserSettings />
 					</LoginProtector>
 				}
 			/>
