@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext} from 'react';
 import axios from "axios";
 
 import SideBar from '../../reusable_component/SideBar';
@@ -59,7 +59,7 @@ export default function FriendsPage() {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5500/g-chat/friends/${user.id}`)
+            .get(`http://localhost:5500/g-chat/friends/${user_details.id}`)
             .then(res => setFriends(res.data))
             .catch(err => console.error(err));
     }, []);
@@ -141,9 +141,11 @@ export default function FriendsPage() {
 
                 {/* FRIENDS LIST */}
                 <div className={styles.friendsList}>
+                    {friends.length > 0 && (
                     <h3 className={styles.sectionTitle}>Your Friends</h3>
+                    )}
 
-                    {friends.length === 0 && (
+                    {friends.length === 0 && !hasSearched && (
                         <div className={styles.emptyState}>
                             You have no friends yet
                         </div>
