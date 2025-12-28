@@ -15,8 +15,6 @@ export default function DashBoard() {
     // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
 
-
-
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
@@ -59,7 +57,6 @@ export default function DashBoard() {
     return (
         <div className={styles.dashboardMain}>
             <SideBar
-                logo={"#"}
                 active_page={'dashboard'}
             />
 
