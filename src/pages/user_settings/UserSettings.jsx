@@ -23,12 +23,15 @@ export default function UserSettings() {
     const [save_status, setSaveStatus] = useState(false);
 
     useEffect(() => {
+
+        if (!user_details.id) return;
+
         setPfp(user_details.pfp || "");
-        document.getElementById("pfp").src = server_url + "/file/" + user_details.pfp;
+        document.getElementById("pfp").src = server_url + "/files/" + user_details.pfp;
         setUsername(user_details.username || "");
         setDepartment(user_details.department || "");
         setAbout(user_details.about || "");
-        setPhnNo(user_details.phone_no || "");
+        setPhnNo(user_details.phone || "");
         setEmail(user_details.personal_email || "");
     }, [user_details])
 
@@ -86,7 +89,7 @@ export default function UserSettings() {
                         <div className={styles.logoDiv}>
                             <img
                                 id="pfp"
-                                src={server_url + "/file/" + user_details.pfp}
+                                src={server_url + "/files/" + user_details.pfp}
                                 onError={e => {
                                     e.target.onerror = null;
                                     e.target.src = "https://www.shutterstock.com/image-vector/blank-image-photo-placeholder-icon-600nw-2501054919.jpg"

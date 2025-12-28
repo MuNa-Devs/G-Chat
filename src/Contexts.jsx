@@ -9,6 +9,7 @@ export const AppContext = createContext();
 
 export default function ContextProvider({ children }) {
     const [user_details, setUserDetails] = useState({});
+    const [is_loading, setLoading] = useState(false);
     const {setOverride} = useContext(UiContext);
 
     const [is_logged_in, setIsLoggedIn] = useState(() => {
@@ -29,12 +30,14 @@ export default function ContextProvider({ children }) {
     }
 
     useEffect(() => {
-        loadUserDetails(setUserDetails, setOverride);
+        loadUserDetails(setUserDetails, setLoading, setOverride);
     }, []);
 
     return (
         <AppContext.Provider
             value={{
+                is_loading,
+                setLoading,
                 is_logged_in,
                 setLogin,
                 setLogOut,
@@ -56,7 +59,8 @@ export function LoginProtector({ children }) {
     return children;
 }
 
-export const loadUserDetails = async (setUserDetails, setOverride) => {
+export const loadUserDetails = async (setUserDetails, setLoading, setOverride) => {
+    setLoading(true);
     setOverride("loading");
 
     try {
@@ -87,4 +91,5 @@ export const loadUserDetails = async (setUserDetails, setOverride) => {
     }
 
     setOverride(null);
+    setLoading(false);
 }

@@ -34,6 +34,9 @@ export default function RoomPage() {
     }, [user_details?.id]);
 
     const loadMyRooms = async () => {
+
+        if (is_loading || !user_details.id) return;
+
         setFilter("my");
         const rooms = await getMyRooms(user_details.id, my_rooms_count);
 
