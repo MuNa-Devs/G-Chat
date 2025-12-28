@@ -1,11 +1,14 @@
 import styles from "./new_room.module.css";
 import ScrollDownBox from "../../reusable_component/scroll_downs/ScrollDownBox";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { server_url } from "../../../creds/server_url";
+import { AppContext } from "../../Contexts";
 
 export default function NewRoom(props) {
+    const {user_details} = useContext(AppContext);
+
     const [room_icon, setRoomIcon] = useState("");
     const [room_name, setRoomName] = useState("");
     const [room_desc, setRoomDesc] = useState("");
@@ -34,7 +37,7 @@ export default function NewRoom(props) {
         form.append("room_type", room_type);
         form.append("join_pref", join_pref);
         form.append("room_size", room_size);
-        form.append("room_aid", JSON.parse(localStorage.getItem("user")).id);
+        form.append("room_aid", user_details.id);
 
         axios.post(
             `${server_url}/g-chat/rooms/create`,

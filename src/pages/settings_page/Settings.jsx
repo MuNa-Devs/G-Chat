@@ -11,7 +11,7 @@ export default function Settings() {
     const location = useLocation();
     const native = location.state?.from || "/dashboard";
 
-    const {theme, setTheme} = getThemeSetter();
+    const { theme, setTheme } = getThemeSetter();
 
     const [theme_label, setThemeLabel] = useState(localStorage.getItem("theme") || "NightLight");
     const [lang_label, setLangLabel] = useState(localStorage.getItem("language") || "English");
@@ -35,14 +35,16 @@ export default function Settings() {
                     <h3>Appearance</h3>
 
                     <div className={styles.themes}>
-                        <div className={styles.icon}>
-                            <i className="fa-brands fa-affiliatetheme"></i>
-                        </div>
+                        <div className={styles.settingWrapper}>
+                            <div className={styles.icon}>
+                                <i className="fa-brands fa-affiliatetheme"></i>
+                            </div>
 
-                        <div className={styles.text}>
-                            <h5>Color Palette</h5>
+                            <div className={styles.text}>
+                                <h5>Color Palette</h5>
 
-                            <p>Change the color palette.</p>
+                                <p>Change the color palette.</p>
+                            </div>
                         </div>
 
                         <ScrollDownBox
@@ -72,14 +74,16 @@ export default function Settings() {
                     <h3>language</h3>
 
                     <div className={styles.language}>
-                        <div className={styles.icon}>
-                            <i className="fa-solid fa-globe"></i>
-                        </div>
+                        <div className={styles.settingWrapper}>
+                            <div className={styles.icon}>
+                                <i className="fa-solid fa-globe"></i>
+                            </div>
 
-                        <div className={styles.text}>
-                            <h5>Language</h5>
+                            <div className={styles.text}>
+                                <h5>Language</h5>
 
-                            <p>Change the language.</p>
+                                <p>Change the language.</p>
+                            </div>
                         </div>
 
                         <ScrollDownBox

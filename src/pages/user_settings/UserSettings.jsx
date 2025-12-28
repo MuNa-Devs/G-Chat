@@ -2,14 +2,18 @@ import styles from "./user_settings.module.css";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../Contexts";
+import { AppContext, loadUserDetails } from "../../Contexts";
 import axios from "axios";
 import { server_url } from "../../../creds/server_url";
+import { UiContext } from "../../utils/UiContext";
 
 export default function UserSettings() {
     const location = useLocation();
     const navigate = useNavigate();
     const {user_details} = useContext(AppContext);
+
+    const {setUserDetails, setLoading} = useContext(AppContext);
+    const {setOverride} = useContext(UiContext);
 
     const from = location.state?.from || "/dashboard";
 
@@ -58,13 +62,16 @@ export default function UserSettings() {
             const res = await axios.post(
                 `${server_url}/g-chat/users/save-details?id=${user_details.id}`,
                 form
-            )
+            );
+
+            await loadUserDetails(setUserDetails, setLoading, setOverride);
         }
         catch (err){
             console.log(err);
         }
 
         setSaveStatus(false);
+        navigate(from);
     }
 
     return (
@@ -127,6 +134,17 @@ export default function UserSettings() {
                             value={user_name}
                             placeholder="Enter your name"
                             onChange={e => setUsername(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={styles.departmentSec}>
+                        <h5>Department</h5>
+                        <input
+                            type="text"
+                            value={department}
+                            placeholder="Enter your Department"
+                            onChange={e => setDepartment(e.target.value)}
+                            maxLength="40"
                         />
                     </div>
 

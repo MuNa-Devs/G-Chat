@@ -13,7 +13,7 @@ import { server_url } from '../../../creds/server_url';
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
-    const {setLogin, setUserDetails} = useContext(AppContext);
+    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
     const {setOverride} = useContext(UiContext);
 
     const [inputs, setInputs] = useState({
@@ -57,7 +57,7 @@ export default function SignUpPage() {
 
             if (response.data.success) {
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setOverride);
+                await loadUserDetails(setUserDetails, setLoading, setOverride);
                 setLogin(true);
                 navigate("/dashboard");
             } else {

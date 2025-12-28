@@ -12,7 +12,7 @@ import { server_url } from '../../../creds/server_url';
 
 function SignInPage() {
     const navigate = useNavigate();
-    const {setLogin, setUserDetails} = useContext(AppContext);
+    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
     const {setOverride} = useContext(UiContext);
 
     const [inputs, setInputs] = useState({
@@ -46,14 +46,14 @@ function SignInPage() {
 
             if (response.data.success) {
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setOverride);
-                setLogin(true);
+                await loadUserDetails(setUserDetails, setLoading, setOverride);
+                setLogin();
                 navigate("/dashboard");
             } else {
                 console.log(response.data.message);
             }
         } catch (err) {
-            //
+            console.log(err);
         }
     }
 

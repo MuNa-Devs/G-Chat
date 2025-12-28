@@ -109,7 +109,7 @@
     justify-content: space-between;
     margin-top: 16px;
     margin-bottom: 16px;
-    gap: 16px;
+    gap: 24px;
 }
 
 .sidebarAtLeft .sidebarUtils button{

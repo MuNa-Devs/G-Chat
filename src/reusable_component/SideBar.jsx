@@ -7,7 +7,7 @@ import { server_url } from '../../creds/server_url';
 
 export default function SideBar(props) {
     const navigate = useNavigate();
-    const { user_details } = useContext(AppContext);
+    const { user_details, setLogOut } = useContext(AppContext);
 
     return (
         <>
@@ -68,6 +68,7 @@ export default function SideBar(props) {
 
                     <button
                         className={styles.logout}
+                        onClick={() => setLogOut()}
                     ><i className="fa-solid fa-arrow-right-from-bracket"></i> <span>Log Out</span></button>
                 </div>
             </div>
@@ -103,6 +104,7 @@ export default function SideBar(props) {
 
                     <button
                         className={styles.logout}
+                        onClick={() => setLogOut()}
                     ><i className="fa-solid fa-arrow-right-from-bracket"></i></button>
                 </div>
             </div>
