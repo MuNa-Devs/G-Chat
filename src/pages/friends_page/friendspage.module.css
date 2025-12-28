@@ -34,7 +34,7 @@
     background-color: #1d1b36;
 
     margin-top: 6px;
-    margin-left: 20px;
+    margin-left: 170px;
 }
 
 .input:focus {
@@ -102,6 +102,7 @@
     gap: 12px;
     width: 94.5%;
     margin-left: 30px;
+    margin-top: 10px;
 
 }
 
@@ -174,3 +175,108 @@
     font-size: 1.1rem;
     margin-bottom: 10px;
 }
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalBox {
+    width: 400px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.tabs {
+    display: flex;
+    margin-top: 10px;
+
+}
+
+.tabs button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.activeTab {
+    background: #000;
+    color: var(--text-primary);
+}
+
+.requestsList {
+    margin-top: 12px;
+}
+
+.requestItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-radius: 8px;
+    width: 95.5%;
+    padding: 10px; 
+}
+
+.accept {
+    background: green;
+    color: white;
+    margin-right: 6px;
+}
+
+.reject {
+    background: red;
+    color: white;
+}
+
+.pending {
+    color: gray;
+}
+
+.requestsBtn{
+    background-color: var(--primary-dark);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-right: 20px;
+}
+
+.accept, .reject {
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.accept:hover {
+    background-color: #22863a;
+    transform: scale(1.1);
+}
+.reject:hover {
+    background-color: #b91c1c;
+    transform: scale(1.1);
+}
+
+

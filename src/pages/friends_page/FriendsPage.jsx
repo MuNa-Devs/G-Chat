@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext} from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from "axios";
 
 import SideBar from '../../reusable_component/SideBar';
@@ -15,6 +15,11 @@ export default function FriendsPage() {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
+    const [showRequests, setShowRequests] = useState(false);
+const [received, setReceived] = useState([]);
+const [sent, setSent] = useState([]);
+const [activeTab, setActiveTab] = useState("received");
+
 
     const searchFriends = async (query) => {
         try {
@@ -35,34 +40,41 @@ export default function FriendsPage() {
     };
 
 
-    const addFriend = async (friendId) => {
-        try {
-            await axios.post(`${server_url}/g-chat/add-friend`, {
-                userId: user_details.id,
-                friendId
-            });
+const sendRequest = async (receiverId) => {
+    await axios.post(`${server_url}/g-chat/send-request`, {
+        senderId: user_details.id,
+        receiverId
+    });
 
-            // remove from search results
-            setResults(prev => prev.filter(u => u.id !== friendId));
+    setResults(prev => prev.filter(u => u.id !== receiverId));
+};
 
-            // refresh friends list
-            const res = await axios.get(
-                `http://localhost:5500/g-chat/friends/${user.id}`
-            );
-            setFriends(res.data);
 
-        } catch (err) {
-            console.error(err);
-        }
+    const acceptRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
+
+        setReceived(prev => prev.filter(r => r.id !== requestId));
+
+        const res = await axios.get(
+            `${server_url}/g-chat/friends/${user_details.id}`
+        );
+        setFriends(res.data);
+    };
+
+    const rejectRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
+        setReceived(prev => prev.filter(r => r.id !== requestId));
     };
 
 
-    useEffect(() => {
-        axios
-            .get(`http://localhost:5500/g-chat/friends/${user_details.id}`)
-            .then(res => setFriends(res.data))
-            .catch(err => console.error(err));
-    }, []);
+useEffect(() => {
+    if (!user_details?.id) return;
+
+    axios
+        .get(`${server_url}/g-chat/friends/${user_details.id}`)
+        .then(res => setFriends(res.data))
+        .catch(console.error);
+}, [user_details]);
 
 
     useEffect(() => {
@@ -79,6 +91,21 @@ export default function FriendsPage() {
 
         return () => clearTimeout(delay);
     }, [friend]);
+
+useEffect(() => {
+    if (!showRequests || !user_details?.id) return;
+
+    axios.get(`${server_url}/g-chat/requests/received/${user_details.id}`)
+        .then(res => setReceived(res.data))
+        .catch(console.error);
+
+    axios.get(`${server_url}/g-chat/requests/sent/${user_details.id}`)
+        .then(res => setSent(res.data))
+        .catch(console.error);
+
+}, [showRequests, user_details]);
+
+
 
     return (
         <div className={styles.friendsMain}>
@@ -105,6 +132,13 @@ export default function FriendsPage() {
                             onChange={(e) => setFriend(e.target.value)}
                         />
                     </div>
+                    <button
+    className={styles.requestsBtn}
+    onClick={() => setShowRequests(true)}
+>
+    Requests
+</button>
+
                 </div>
 
                 <div className={styles.line}></div>
@@ -127,7 +161,7 @@ export default function FriendsPage() {
                             </div>
 
                             <button
-                                onClick={() => addFriend(u.id)}
+                                onClick={() => sendRequest(u.id)}
                                 className={styles.addBtn}>Add</button>
                         </div>
                     ))}
@@ -142,7 +176,7 @@ export default function FriendsPage() {
                 {/* FRIENDS LIST */}
                 <div className={styles.friendsList}>
                     {friends.length > 0 && (
-                    <h3 className={styles.sectionTitle}>Your Friends</h3>
+                        <h3 className={styles.sectionTitle}>Your Friends</h3>
                     )}
 
                     {friends.length === 0 && !hasSearched && (
@@ -165,6 +199,82 @@ export default function FriendsPage() {
                     ))}
                 </div>
 
+             {showRequests && (
+    <div className={styles.modalOverlay}
+     onClick={() => setShowRequests(false)}>
+        <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+
+            <div className={styles.modalHeader}>
+                <h3>Friend Requests</h3>
+                <span
+                    className={styles.close}
+                    onClick={() => setShowRequests(false)}
+                >
+                    
+                </span>
+            </div>
+
+            <div className={styles.tabs}>
+                <button
+                    className={activeTab === "received" ? styles.activeTab : ""}
+                    onClick={() => setActiveTab("received")}
+                >
+                    Received
+                </button>
+
+                <button
+                    className={activeTab === "sent" ? styles.activeTab : ""}
+                    onClick={() => setActiveTab("sent")}
+                >
+                    Sent
+                </button>
+            </div>
+
+            <div className={styles.requestsList}>
+                {activeTab === "received" &&
+                    received.map(r => (
+                        <div key={r.id} className={styles.requestItem}>
+                            <span>{r.username}</span>
+
+                            <div>
+                                <button
+                                    onClick={() => acceptRequest(r.id)}
+                                    className={styles.accept}
+                                >
+                                    Accept
+                                </button>
+                                <button
+                                    onClick={() => rejectRequest(r.id)}
+                                    className={styles.reject}
+                                >
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                }
+
+                {activeTab === "sent" &&
+                    sent.map(s => (
+                        <div key={s.id} className={styles.requestItem}>
+                            <span>{s.username}</span>
+                            <span className={styles.pending}>Pending</span>
+                        </div>
+                    ))
+                }
+
+                {activeTab === "received" && received.length === 0 && (
+                    <div className={styles.emptyState}>No requests</div>
+                )}
+
+                {activeTab === "sent" && sent.length === 0 && (
+                    <div className={styles.emptyState}>No sent requests</div>
+                )}
+            </div>
+
+        </div>
+    </div>
+)}
 
             </div>
         </div>
