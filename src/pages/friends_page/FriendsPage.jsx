@@ -9,21 +9,31 @@ export default function FriendsPage() {
     const [friend, setFriend] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const[hasSearched, setHasSearched] = useState(false);
 
     const searchFriends = async (query) => {
         try {
+            setLoading(true);
+            setHasSearched(false);
             const res = await axios.get(
                 `${server_url}/g-chat/search-users?query=${query}`
             );
             setResults(res.data);
+            setHasSearched(true);
         } catch (err) {
             console.error(err);
+            setHasSearched(true);
+        }
+        finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         if (!friend.trim()) {
             setResults([]);
+            setHasSearched(false);
+            setLoading(false);
             return;
         }
 
@@ -64,32 +74,32 @@ export default function FriendsPage() {
                 <div className={styles.line}></div>
 
                 {/* SEARCH RESULTS */}
-                <div className={styles.resultsContainer}>
-                    {loading && (
-                        <div className={styles.loading}>Searching...</div>
-                    )}
+<div className={styles.resultsContainer}>
+    {loading && (
+        <div className={styles.loading}>Searching...</div>
+    )}
 
-                    {!loading && results.map((u) => (
-                        <div key={u.id} className={styles.friendItem}>
-                            <div className={styles.avatar}>
-                                {u.username.charAt(0).toUpperCase()}
-                            </div>
+    {!loading && results.map((u) => (
+        <div key={u.id} className={styles.friendItem}>
+            <div className={styles.avatar}>
+                {u.username.charAt(0).toUpperCase()}
+            </div>
 
-                            <div className={styles.userInfo}>
-                                <div className={styles.username}>{u.username}</div>
-                                <div className={styles.subText}>Click to add friend</div>
-                            </div>
+            <div className={styles.userInfo}>
+                <div className={styles.username}>{u.username}</div>
+                <div className={styles.subText}>Click to add friend</div>
+            </div>
 
-                            <button className={styles.addBtn}>Add</button>
-                        </div>
-                    ))}
+            <button className={styles.addBtn}>Add</button>
+        </div>
+    ))}
 
-                    {!loading && results.length === 0 && friend && (
-                        <div className={styles.emptyState}>
-                            No users found
-                        </div>
-                    )}
-                </div>
+    {!loading && hasSearched && results.length === 0 && (
+        <div className={styles.emptyState}>
+            No users found
+        </div>
+    )}
+</div>
 
             </div>
         </div>
