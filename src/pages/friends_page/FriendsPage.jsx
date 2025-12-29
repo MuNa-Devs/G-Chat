@@ -46,19 +46,14 @@ const sendRequest = async (receiverId) => {
         receiverId
     });
 
-    // refresh sent tab immediately
-    const res = await axios.get(
-        `${server_url}/g-chat/requests/sent/${user_details.id}`
-    );
-    setSent(res.data);
+    setResults(prev => prev.filter(u => u.id !== receiverId));
 };
-
 
 
 const acceptRequest = async (requestId) => {
     await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
 
-    // remove from received
+    // refresh received
     setReceived(prev => prev.filter(r => r.id !== requestId));
 
     // refresh sent
@@ -74,7 +69,6 @@ const acceptRequest = async (requestId) => {
     setFriends(friendsRes.data);
 };
 
-
 const rejectRequest = async (requestId) => {
     await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
 
@@ -85,7 +79,6 @@ const rejectRequest = async (requestId) => {
     );
     setSent(sentRes.data);
 };
-
 
 
 
@@ -277,13 +270,16 @@ useEffect(() => {
                 }
 
                 {activeTab === "sent" &&
-                    sent.map(s => (
-                        <div key={s.id} className={styles.requestItem}>
-                            <span>{s.username}</span>
-                            <span className={styles.pending}>Pending</span>
-                        </div>
-                    ))
-                }
+    sent
+        .filter(s => s.status === "pending")
+        .map(s => (
+            <div key={s.id} className={styles.requestItem}>
+                <span>{s.username}</span>
+                <span className={styles.pending}>Pending</span>
+            </div>
+        ))
+}
+
 
                 {activeTab === "received" && received.length === 0 && (
                     <div className={styles.emptyState}>No requests</div>
