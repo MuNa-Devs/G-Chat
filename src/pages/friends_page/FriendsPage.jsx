@@ -46,25 +46,47 @@ const sendRequest = async (receiverId) => {
         receiverId
     });
 
-    setResults(prev => prev.filter(u => u.id !== receiverId));
+    // refresh sent tab immediately
+    const res = await axios.get(
+        `${server_url}/g-chat/requests/sent/${user_details.id}`
+    );
+    setSent(res.data);
 };
 
 
-    const acceptRequest = async (requestId) => {
-        await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
 
-        setReceived(prev => prev.filter(r => r.id !== requestId));
+const acceptRequest = async (requestId) => {
+    await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
 
-        const res = await axios.get(
-            `${server_url}/g-chat/friends/${user_details.id}`
-        );
-        setFriends(res.data);
-    };
+    // remove from received
+    setReceived(prev => prev.filter(r => r.id !== requestId));
 
-    const rejectRequest = async (requestId) => {
-        await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
-        setReceived(prev => prev.filter(r => r.id !== requestId));
-    };
+    // refresh sent
+    const sentRes = await axios.get(
+        `${server_url}/g-chat/requests/sent/${user_details.id}`
+    );
+    setSent(sentRes.data);
+
+    // refresh friends
+    const friendsRes = await axios.get(
+        `${server_url}/g-chat/friends/${user_details.id}`
+    );
+    setFriends(friendsRes.data);
+};
+
+
+const rejectRequest = async (requestId) => {
+    await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
+
+    setReceived(prev => prev.filter(r => r.id !== requestId));
+
+    const sentRes = await axios.get(
+        `${server_url}/g-chat/requests/sent/${user_details.id}`
+    );
+    setSent(sentRes.data);
+};
+
+
 
 
 useEffect(() => {

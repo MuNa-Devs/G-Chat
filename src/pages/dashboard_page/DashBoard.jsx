@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState , useRef} from 'react';
 import { io } from 'socket.io-client';
 import axios from "axios";
 
@@ -12,12 +12,23 @@ const socket = io(server_url);
 
 export default function DashBoard() {
     const {user_details} = useContext(AppContext);
+    const bottomRef = useRef(null);
 
     // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+
+    const hasScrolled = useRef(false);
+
+useEffect(() => {
+    if (!hasScrolled.current && messages.length > 0) {
+        bottomRef.current?.scrollIntoView({ behavior: "auto" });
+        hasScrolled.current = true;
+    }
+}, [messages]);
+
 
     // RECEIVE MESSAGES
     useEffect(() => {
@@ -131,6 +142,7 @@ export default function DashBoard() {
                             </div>
                         );
                     })}
+                    <div ref={bottomRef} />
                 </div>
 
 
