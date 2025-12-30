@@ -50,35 +50,21 @@ const sendRequest = async (receiverId) => {
 };
 
 
-const acceptRequest = async (requestId) => {
-    await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
+    const acceptRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/accept-request`, { requestId : requestId, userId: user_details.id });
 
-    // refresh received
-    setReceived(prev => prev.filter(r => r.id !== requestId));
+        setReceived(prev => prev.filter(r => r.id !== requestId));
 
-    // refresh sent
-    const sentRes = await axios.get(
-        `${server_url}/g-chat/requests/sent/${user_details.id}`
-    );
-    setSent(sentRes.data);
+        const res = await axios.get(
+            `${server_url}/g-chat/friends/${user_details.id}`
+        );
+        setFriends(res.data);
+    };
 
-    // refresh friends
-    const friendsRes = await axios.get(
-        `${server_url}/g-chat/friends/${user_details.id}`
-    );
-    setFriends(friendsRes.data);
-};
-
-const rejectRequest = async (requestId) => {
-    await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
-
-    setReceived(prev => prev.filter(r => r.id !== requestId));
-
-    const sentRes = await axios.get(
-        `${server_url}/g-chat/requests/sent/${user_details.id}`
-    );
-    setSent(sentRes.data);
-};
+    const rejectRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/reject-request`, { requestId: requestId , userId: user_details.id });
+        setReceived(prev => prev.filter(r => r.id !== requestId));
+    };
 
 
 
@@ -270,16 +256,13 @@ useEffect(() => {
                 }
 
                 {activeTab === "sent" &&
-    sent
-        .filter(s => s.status === "pending")
-        .map(s => (
-            <div key={s.id} className={styles.requestItem}>
-                <span>{s.username}</span>
-                <span className={styles.pending}>Pending</span>
-            </div>
-        ))
-}
-
+                    sent.map(s => (
+                        <div key={s.id} className={styles.requestItem}>
+                            <span>{s.username}</span>
+                            <span className={styles.pending}>Pending</span>
+                        </div>
+                    ))
+                }
 
                 {activeTab === "received" && received.length === 0 && (
                     <div className={styles.emptyState}>No requests</div>
