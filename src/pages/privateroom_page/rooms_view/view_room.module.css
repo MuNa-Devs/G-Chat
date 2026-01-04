@@ -103,10 +103,11 @@ h5{
 }
 
 .roomDesc{
+    background-color: var(--bg-light);
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
     width: calc(100% - 50px);
     padding: 24px;
-    padding-top: 8px;
-    padding-bottom: 8px;
 
     display: flex;
     flex-direction: column;

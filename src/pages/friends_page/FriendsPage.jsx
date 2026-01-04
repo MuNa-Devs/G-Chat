@@ -16,9 +16,9 @@ export default function FriendsPage() {
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [showRequests, setShowRequests] = useState(false);
-const [received, setReceived] = useState([]);
-const [sent, setSent] = useState([]);
-const [activeTab, setActiveTab] = useState("received");
+    const [received, setReceived] = useState([]);
+    const [sent, setSent] = useState([]);
+    const [activeTab, setActiveTab] = useState("received");
 
 
     const searchFriends = async (query) => {
@@ -40,56 +40,42 @@ const [activeTab, setActiveTab] = useState("received");
     };
 
 
-const sendRequest = async (receiverId) => {
-    await axios.post(`${server_url}/g-chat/send-request`, {
-        senderId: user_details.id,
-        receiverId
-    });
+    const sendRequest = async (receiverId) => {
+        await axios.post(`${server_url}/g-chat/send-request`, {
+            senderId: user_details.id,
+            receiverId
+        });
 
-    setResults(prev => prev.filter(u => u.id !== receiverId));
-};
+        setResults(prev => prev.filter(u => u.id !== receiverId));
+    };
 
 
-const acceptRequest = async (requestId) => {
-    await axios.post(`${server_url}/g-chat/accept-request`, { requestId });
+    const acceptRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/accept-request`, { requestId: requestId, userId: user_details.id });
 
-    // refresh received
-    setReceived(prev => prev.filter(r => r.id !== requestId));
+        setReceived(prev => prev.filter(r => r.id !== requestId));
 
-    // refresh sent
-    const sentRes = await axios.get(
-        `${server_url}/g-chat/requests/sent/${user_details.id}`
-    );
-    setSent(sentRes.data);
+        const res = await axios.get(
+            `${server_url}/g-chat/friends/${user_details.id}`
+        );
+        setFriends(res.data);
+    };
 
-    // refresh friends
-    const friendsRes = await axios.get(
-        `${server_url}/g-chat/friends/${user_details.id}`
-    );
-    setFriends(friendsRes.data);
-};
-
-const rejectRequest = async (requestId) => {
-    await axios.post(`${server_url}/g-chat/reject-request`, { requestId });
-
-    setReceived(prev => prev.filter(r => r.id !== requestId));
-
-    const sentRes = await axios.get(
-        `${server_url}/g-chat/requests/sent/${user_details.id}`
-    );
-    setSent(sentRes.data);
-};
+    const rejectRequest = async (requestId) => {
+        await axios.post(`${server_url}/g-chat/reject-request`, { requestId: requestId, userId: user_details.id });
+        setReceived(prev => prev.filter(r => r.id !== requestId));
+    };
 
 
 
-useEffect(() => {
-    if (!user_details?.id) return;
+    useEffect(() => {
+        if (!user_details?.id) return;
 
-    axios
-        .get(`${server_url}/g-chat/friends/${user_details.id}`)
-        .then(res => setFriends(res.data))
-        .catch(console.error);
-}, [user_details]);
+        axios
+            .get(`${server_url}/g-chat/friends/${user_details.id}`)
+            .then(res => setFriends(res.data))
+            .catch(console.error);
+    }, [user_details]);
 
 
     useEffect(() => {
@@ -107,18 +93,18 @@ useEffect(() => {
         return () => clearTimeout(delay);
     }, [friend]);
 
-useEffect(() => {
-    if (!showRequests || !user_details?.id) return;
+    useEffect(() => {
+        if (!showRequests || !user_details?.id) return;
 
-    axios.get(`${server_url}/g-chat/requests/received/${user_details.id}`)
-        .then(res => setReceived(res.data))
-        .catch(console.error);
+        axios.get(`${server_url}/g-chat/requests/received/${user_details.id}`)
+            .then(res => setReceived(res.data))
+            .catch(console.error);
 
-    axios.get(`${server_url}/g-chat/requests/sent/${user_details.id}`)
-        .then(res => setSent(res.data))
-        .catch(console.error);
+        axios.get(`${server_url}/g-chat/requests/sent/${user_details.id}`)
+            .then(res => setSent(res.data))
+            .catch(console.error);
 
-}, [showRequests, user_details]);
+    }, [showRequests, user_details]);
 
 
 
@@ -148,11 +134,11 @@ useEffect(() => {
                         />
                     </div>
                     <button
-    className={styles.requestsBtn}
-    onClick={() => setShowRequests(true)}
->
-    Requests
-</button>
+                        className={styles.requestsBtn}
+                        onClick={() => setShowRequests(true)}
+                    >
+                        Requests
+                    </button>
 
                 </div>
 
@@ -214,85 +200,82 @@ useEffect(() => {
                     ))}
                 </div>
 
-             {showRequests && (
-    <div className={styles.modalOverlay}
-     onClick={() => setShowRequests(false)}>
-        <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+                {showRequests && (
+                    <div className={styles.modalOverlay}
+                        onClick={() => setShowRequests(false)}>
+                        <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
 
-            <div className={styles.modalHeader}>
-                <h3>Friend Requests</h3>
-                <span
-                    className={styles.close}
-                    onClick={() => setShowRequests(false)}
-                >
-                    
-                </span>
-            </div>
-
-            <div className={styles.tabs}>
-                <button
-                    className={activeTab === "received" ? styles.activeTab : ""}
-                    onClick={() => setActiveTab("received")}
-                >
-                    Received
-                </button>
-
-                <button
-                    className={activeTab === "sent" ? styles.activeTab : ""}
-                    onClick={() => setActiveTab("sent")}
-                >
-                    Sent
-                </button>
-            </div>
-
-            <div className={styles.requestsList}>
-                {activeTab === "received" &&
-                    received.map(r => (
-                        <div key={r.id} className={styles.requestItem}>
-                            <span>{r.username}</span>
-
-                            <div>
-                                <button
-                                    onClick={() => acceptRequest(r.id)}
-                                    className={styles.accept}
+                            <div className={styles.modalHeader}>
+                                <h3>Friend Requests</h3>
+                                <span
+                                    className={styles.close}
+                                    onClick={() => setShowRequests(false)}
                                 >
-                                    Accept
+
+                                </span>
+                            </div>
+
+                            <div className={styles.tabs}>
+                                <button
+                                    className={activeTab === "received" ? styles.activeTab : ""}
+                                    onClick={() => setActiveTab("received")}
+                                >
+                                    Received
                                 </button>
+
                                 <button
-                                    onClick={() => rejectRequest(r.id)}
-                                    className={styles.reject}
+                                    className={activeTab === "sent" ? styles.activeTab : ""}
+                                    onClick={() => setActiveTab("sent")}
                                 >
-                                    Reject
+                                    Sent
                                 </button>
                             </div>
+
+                            <div className={styles.requestsList}>
+                                {activeTab === "received" &&
+                                    received.map(r => (
+                                        <div key={r.id} className={styles.requestItem}>
+                                            <span>{r.username}</span>
+
+                                            <div>
+                                                <button
+                                                    onClick={() => acceptRequest(r.id)}
+                                                    className={styles.accept}
+                                                >
+                                                    Accept
+                                                </button>
+                                                <button
+                                                    onClick={() => rejectRequest(r.id)}
+                                                    className={styles.reject}
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+
+                                {activeTab === "sent" &&
+                                    sent.map(s => (
+                                        <div key={s.id} className={styles.requestItem}>
+                                            <span>{s.username}</span>
+                                            <span className={styles.pending}>Pending</span>
+                                        </div>
+                                    ))
+                                }
+
+                                {activeTab === "received" && received.length === 0 && (
+                                    <div className={styles.emptyState}>No requests</div>
+                                )}
+
+                                {activeTab === "sent" && sent.length === 0 && (
+                                    <div className={styles.emptyState}>No sent requests</div>
+                                )}
+                            </div>
+
                         </div>
-                    ))
-                }
-
-                {activeTab === "sent" &&
-    sent
-        .filter(s => s.status === "pending")
-        .map(s => (
-            <div key={s.id} className={styles.requestItem}>
-                <span>{s.username}</span>
-                <span className={styles.pending}>Pending</span>
-            </div>
-        ))
-}
-
-
-                {activeTab === "received" && received.length === 0 && (
-                    <div className={styles.emptyState}>No requests</div>
+                    </div>
                 )}
-
-                {activeTab === "sent" && sent.length === 0 && (
-                    <div className={styles.emptyState}>No sent requests</div>
-                )}
-            </div>
-
-        </div>
-    </div>
-)}
 
             </div>
         </div>
