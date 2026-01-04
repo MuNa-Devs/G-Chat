@@ -20,14 +20,12 @@ export default function DashBoard() {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
-    const hasScrolled = useRef(false);
 
-useEffect(() => {
-    if (!hasScrolled.current && messages.length > 0) {
-        bottomRef.current?.scrollIntoView({ behavior: "auto" });
-        hasScrolled.current = true;
-    }
+
+    useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 }, [messages]);
+
 
 
     // RECEIVE MESSAGES
