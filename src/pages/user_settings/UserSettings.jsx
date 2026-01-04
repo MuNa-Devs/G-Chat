@@ -2,7 +2,8 @@ import styles from "./user_settings.module.css";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { AppContext, loadUserDetails } from "../../Contexts";
+import { AppContext } from "../../Contexts";
+import { loadUserDetails } from "../../loadUserDetails.js";
 import axios from "axios";
 import { server_url } from "../../../creds/server_url";
 import { UiContext } from "../../utils/UiContext";

@@ -1,7 +1,8 @@
 // Components
 import styles from './signup_page.module.css';
 import { checkValidity } from '../page_utils/AuthPageUtils';
-import { AppContext, loadUserDetails } from '../../Contexts';
+import { AppContext } from '../../Contexts.jsx';
+import { loadUserDetails } from '../../loadUserDetails.js';
 import { UiContext } from '../../utils/UiContext';
 
 // Package imports

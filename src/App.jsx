@@ -3,6 +3,7 @@ import SignUpPage from "./pages/signup_page/SignUpPage";
 import DashBoard from "./pages/dashboard_page/DashBoard";
 import RoomPage from "./pages/privateroom_page/RoomPage";
 import FriendsPage from "./pages/friends_page/FriendsPage";
+import ViewRoom from "./pages/privateroom_page/rooms_view/ViewRoom";
 import Dorakaled from "./pages/page_not_found/404";
 import AprilFool from "./pages/page_not_found/AprilFool";
 
@@ -28,6 +29,13 @@ export default function App() {
 						<RoomPage />
 					</LoginProtector>
 				}
+			/>
+
+			<Route path="/room/:room_id" element={
+					<LoginProtector>
+						<ViewRoom />
+					</LoginProtector>
+				} 
 			/>
 
 			<Route

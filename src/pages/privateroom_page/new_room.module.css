@@ -8,6 +8,7 @@
     max-width: 800px;
     height: 65dvh;
     max-height: 550px;
+    min-height: 468px;
 
     background-color: var(--bg-lighter);
     border-radius: 12px;
@@ -48,11 +49,6 @@
 
 .closeBtn i {
     color: #ff5f5f;
-}
-
-.titlebar .topButtons .cancel,
-.titlebar .topButtons .save {
-    display: none;
 }
 
 .sections {
@@ -234,7 +230,7 @@
     gap: 24px;
 }
 
-.bottomButtons {
+.bottomButtons, .topButtons {
     width: 100%;
     height: auto;
     display: flex;
@@ -244,7 +240,8 @@
     gap: 10px;
 }
 
-.bottomButtons button {
+.bottomButtons button,
+.topButtons button {
     padding: 8px;
     padding-left: 16px;
     padding-right: 16px;
@@ -255,23 +252,45 @@
     cursor: pointer;
 }
 
-.bottomButtons .cancel {
+.bottomButtons .cancel, 
+.topButtons .cancel {
     color: var(--text-secondary);
     background-color: transparent;
 }
 
-.bottomButtons .cancel:hover {
+.bottomButtons .cancel:hover,
+.topButtons .cancel:hover {
     background-color: #ff5f5f;
     color: var(--text-primary);
 }
 
-.bottomButtons .save {
+.bottomButtons .save,
+.topButtons .save {
     color: var(--text-primary);
     background-color: var(--primary);
 }
 
+.topButtons{
+    display: none;
+}
+
 /* Media Queries */
-@media (max-height: 600px) {
+@media (max-height: 800px){
+    .topButtons{
+        flex: 1;
+        padding-bottom: 0px;
+        display: flex;
+        align-items: center;
+        padding-right: 8px;
+        justify-content: flex-end;
+    }
+
+    .bottomButtons{
+        display: none;
+    }
+}
+
+@media (max-height: 500px) {
     .newRoom {
         position: fixed;
         top: 0px;

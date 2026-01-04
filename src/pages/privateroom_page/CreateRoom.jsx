@@ -7,7 +7,7 @@ import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
 
 export default function NewRoom(props) {
-    const {user_details} = useContext(AppContext);
+    const { user_details } = useContext(AppContext);
 
     const [room_icon, setRoomIcon] = useState("");
     const [room_name, setRoomName] = useState("");
@@ -61,16 +61,25 @@ export default function NewRoom(props) {
         <div className={styles.newRoom}>
             <div className={styles.titlebar}>
                 <h3>Create New Room</h3>
+
+                <div className={styles.topButtons}>
+                    <button className={styles.cancel}
+                        onClick={() => props.closeHook(false)}
+                    >Cancel</button>
+
+                    <button className={styles.save} id="save"
+                        onClick={createRoom}
+                    ><i className="fa-regular fa-cloud"></i> {btn_text}</button>
+                </div>
             </div>
 
             <div className={styles.sections}>
                 <div className={styles.sectionBodyContainer}>
                     <div className={styles.profilePic}>
                         <div className={styles.image}>
-                            <img 
+                            <img
                                 id="icon"
                                 src="https://www.shutterstock.com/image-vector/blank-image-photo-placeholder-icon-600nw-2501054919.jpg"
-                                alt=""
                             />
                         </div>
 

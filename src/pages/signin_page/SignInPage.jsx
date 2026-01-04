@@ -2,7 +2,8 @@
 // import Logo from '../reusable_elements/Logo'
 import styles from './signin_page.module.css';
 import { checkValidity } from '../page_utils/AuthPageUtils';
-import { AppContext, loadUserDetails } from '../../Contexts';
+import { AppContext } from '../../Contexts.jsx';
+import { loadUserDetails } from '../../loadUserDetails.js';
 import { UiContext } from '../../utils/UiContext';
 
 import axios from 'axios';

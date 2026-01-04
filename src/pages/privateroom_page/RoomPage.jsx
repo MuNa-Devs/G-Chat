@@ -123,6 +123,7 @@ export default function RoomPage() {
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
+                                        room_id={room.r_id}
                                         logo={`${server_url}/files/${room.icon_url}`}
                                         room_title={capitalize(room.r_name)}
                                         prof_name={capitalize(room.username)}
@@ -137,6 +138,7 @@ export default function RoomPage() {
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
+                                        room_id={room.r_id}
                                         logo={`${server_url}/files/${room.icon_url}`}
                                         room_title={capitalize(room.r_name)}
                                         prof_name={capitalize(room.username)}
