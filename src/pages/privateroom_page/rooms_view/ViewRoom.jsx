@@ -1,16 +1,27 @@
 import styles from "./view_room.module.css";
 import SideBar from "../../../reusable_component/SideBar";
+import RoomMember from "./RoomMember";
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 import { server_url } from "../../../../creds/server_url";
+import { AppContext } from "../../../Contexts";
 
 export default function ViewRoom() {
     const { room_id } = useParams();
     const location = useLocation();
     const is_member = location.state?.is_member;
+
+    const [room_members, setRoomMembers] = useState([]);
+    const { user_details } = useContext(AppContext);
+
+    const [c_user_id, setCurrentUserId] = useState(0);
+
+    useEffect(() => {
+        setCurrentUserId(user_details?.id || 0);
+    }, [user_details?.id]);
 
     const navigate = useNavigate();
 
@@ -26,7 +37,25 @@ export default function ViewRoom() {
         }).catch(err => {
             console.log(err);
         });
+
+        axios.get(
+            server_url + `/g-chat/rooms/get-members?room_id=${room_id}`
+        ).then(res => {
+            setRoomMembers(res.data.members);
+            console.log(res.data.members);
+        }).catch(err => {
+            console.log(err);
+        });
     }, [room_id]);
+
+    const handleJoin = (e) => {
+        const mode = e.target.textContent;
+
+        switch (mode){
+            case "Join Room":
+                //
+        }
+    };
 
     return (
         <div className={styles.viewRoom}>
@@ -57,12 +86,53 @@ export default function ViewRoom() {
                         />
                     </div>
 
-                    <h2>{room_data.r_name}</h2>
+                    <div className={styles.wrappersWrapper}>
+                        <div className={styles.displayWrapper}>
+                            <h2>{room_data.r_name}</h2>
 
-                    <div className={styles.otherInfo}>
-                        <h5><i className="fa-solid fa-user-tie"></i> Admin:</h5>
+                            <div className={styles.otherInfo}>
+                                <h5><i className="fa-solid fa-user-tie"></i> Admin:</h5>
 
-                        <h5>{room_data.admin_name}</h5>
+                                <h5>
+                                    {room_data.admin_name}
+                                    <span
+                                        onClick={() => console.log("Admin profile accessed")}
+                                    >{"  "}<i className="fa-solid fa-link"></i></span>
+                                </h5>
+                            </div>
+
+                            <div className={styles.otherInfo2}>
+                                <h5>
+                                    <i className="fa-solid fa-people-group"></i> Members {room_data.popl_size}/{room_data.r_size}
+                                </h5>
+
+                                <h5>
+                                    <i className="fa-solid fa-shield-halved"></i> {room_data.r_type}
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div className={styles.joinBtn}>
+                            {
+                                !room_members.some(
+                                    member => member.id == c_user_id
+                                ) &&
+                                (
+                                    room_data.join_pref !== "Invite Only" &&
+                                    <button className="utilBtn"
+                                        onClick={handleJoin}
+                                    >
+                                        {
+                                            room_data.join_pref === "Approve Join Requests"
+                                                ? "Request Join Access"
+                                                : room_data.join_pref === "Anyone Can Join"
+                                                    ? "Join Room"
+                                                    : "Join Room"
+                                        }
+                                    </button>
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
 
@@ -72,8 +142,21 @@ export default function ViewRoom() {
 
                         <h5>{room_data.r_desc}</h5>
                     </div>
+                </div>
 
-                    <div className={styles.buffer}></div>
+                <div className={styles.members}>
+                    <h3>Room Members</h3>
+
+                    {
+                        room_members?.length > 0 && room_members.map(member => (
+                            <RoomMember
+                                key={member.id}
+                                admin={member.id == room_data.id ? true : false}
+                                name={member.username}
+                                pfp={member.pfp}
+                            />
+                        ))
+                    }
                 </div>
             </div>
         </div>

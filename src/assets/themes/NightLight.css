@@ -25,7 +25,8 @@ body.NightLight{
     --success: #2eb67d;
     --success-light: #65d0a1;
 
-    --warning: #f0ad4e;
+    --warning: #d08822;
+    --warning-bg: #8a540793;
     --warning-light: #f8c97c;
 
     --danger: #d9534f;
