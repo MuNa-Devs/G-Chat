@@ -2,14 +2,20 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { UiContext } from "./utils/UiContext";
 import { loadUserDetails } from "./loadUserDetails";
+import { io } from "socket.io-client";
+import { server_url } from "../creds/server_url";
 
 export const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
+    // User details:
     const [user_details, setUserDetails] = useState({});
+
+    // For loading screen:
     const [is_loading, setLoading] = useState(false);
     const { setOverride } = useContext(UiContext);
 
+    // To check login:
     const [is_logged_in, setIsLoggedIn] = useState(() => {
         const status = localStorage.getItem("is_logged_in");
         return status === "true";
@@ -25,6 +31,10 @@ export function AppProvider({ children }) {
         localStorage.setItem("is_logged_in", "false");
     };
 
+    // For socket connection:
+    const socket = io(server_url);
+    socket.emit("register_client", {user_id: localStorage.getItem("user_id")});
+
     useEffect(() => {
         loadUserDetails(setUserDetails, setLoading, setOverride);
     }, []);
@@ -39,6 +49,7 @@ export function AppProvider({ children }) {
                 setLogOut,
                 user_details,
                 setUserDetails,
+                socket,
             }}
         >
             {children}

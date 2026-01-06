@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState, useRef } from 'react';
-import { io } from 'socket.io-client';
 import axios from "axios";
 
 import SideBar from '../../reusable_component/SideBar';
@@ -8,7 +7,7 @@ import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
 
 // SOCKET CONNECTIONoo
-const socket = io(server_url);
+const {socket} = useContext(AppContext);
 
 export default function DashBoard() {
     const { user_details } = useContext(AppContext);
@@ -23,21 +22,13 @@ export default function DashBoard() {
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(true);
 
-
-
-
-
-useEffect(() => {
-    if (autoScroll) {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-        setShowNewMsgBtn(true);
-    }
-}, [messages]);
-
-
-
-
+    useEffect(() => {
+        if (autoScroll) {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        } else {
+            setShowNewMsgBtn(true);
+        }
+    }, [messages]);
 
     // RECEIVE MESSAGES
     useEffect(() => {
@@ -167,29 +158,29 @@ useEffect(() => {
                     <div ref={bottomRef} />
                 </div>
                 {showNewMsgBtn && (
-    <button
-        onClick={() => {
-            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-            setAutoScroll(true);
-            setShowNewMsgBtn(false);
-        }}
-        style={{
-            position: "fixed",
-            bottom: "90px",
-            right: "40px",
-            padding: "10px 14px",
-            borderRadius: "20px",
-            backgroundColor: "#4f46e5",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            zIndex: 1000
-        }}
-    >
-        ⬇ New messages
-    </button>
-)}
+                    <button
+                        onClick={() => {
+                            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+                            setAutoScroll(true);
+                            setShowNewMsgBtn(false);
+                        }}
+                        style={{
+                            position: "fixed",
+                            bottom: "90px",
+                            right: "40px",
+                            padding: "10px 14px",
+                            borderRadius: "20px",
+                            backgroundColor: "#4f46e5",
+                            color: "#fff",
+                            border: "none",
+                            cursor: "pointer",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                            zIndex: 1000
+                        }}
+                    >
+                        ⬇ New messages
+                    </button>
+                )}
 
 
                 <div className={styles.footer}>

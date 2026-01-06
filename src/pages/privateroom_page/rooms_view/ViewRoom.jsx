@@ -15,7 +15,7 @@ export default function ViewRoom() {
     const is_member = location.state?.is_member;
 
     const [room_members, setRoomMembers] = useState([]);
-    const { user_details } = useContext(AppContext);
+    const { user_details, socket } = useContext(AppContext);
 
     const [c_user_id, setCurrentUserId] = useState(0);
 
@@ -51,9 +51,20 @@ export default function ViewRoom() {
     const handleJoin = (e) => {
         const mode = e.target.textContent;
 
-        switch (mode){
+        switch (mode) {
             case "Join Room":
-                //
+                axios.get(
+                    server_url + `/g-chat/rooms/join?room_id=${room_data.r_id}&user_id=${user_details.id}`
+                ).then(res => {
+                    console.log(res.data);
+                }).catch(err => {
+                    console.log(err);
+                });
+
+                // socket.emit("room-joined", {
+                //     user_id: user_details?.id || localStorage.getItem("user_id"),
+                //     room_id: room_id
+                // });
         }
     };
 
@@ -147,17 +158,26 @@ export default function ViewRoom() {
                 <div className={styles.members}>
                     <h3>Room Members</h3>
 
+                    <RoomMember
+                        key={room_data.id}
+                        admin={true}
+                        name={room_data.username}
+                        pfp={room_data.pfp}
+                    />
+
                     {
                         room_members?.length > 0 && room_members.map(member => (
-                            <RoomMember
+                            member.id !== room_data.id && <RoomMember
                                 key={member.id}
-                                admin={member.id == room_data.id ? true : false}
+                                admin={false}
                                 name={member.username}
                                 pfp={member.pfp}
                             />
                         ))
                     }
                 </div>
+
+                <div className={styles.buffer}></div>
             </div>
         </div>
     );

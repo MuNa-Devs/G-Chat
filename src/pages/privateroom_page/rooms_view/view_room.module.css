@@ -86,8 +86,8 @@ h5{
 .otherInfo{
     display: flex;
     flex-direction: row;
-    min-width: 150px;
-    max-width: 200px;
+    width: auto;
+    gap: 24px;
     align-items: center;
     justify-content: space-between;
 }
@@ -183,7 +183,7 @@ h5{
     gap: 16px;
     width: calc(100% - 32px);
     max-width: 850px;
-    padding: 12px;
+    padding: 6px;
     padding-left: 16px;
     padding-right: 16px;
     
@@ -215,4 +215,8 @@ h5{
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
+}
+
+.buffer{
+    height: 200px;
 }
