@@ -8,75 +8,86 @@ import { server_url } from '../../../creds/server_url';
 
 export default function DashBoard() {
     const { user_details, socket } = useContext(AppContext);
+
+    const chatRef = useRef(null);
     const bottomRef = useRef(null);
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
 
-    // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const chatRef = useRef(null);
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
-    useEffect(() => {
-        if (autoScroll) {
-            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        } else {
-            setShowNewMsgBtn(true);
-        }
+    /* ---------------- INITIAL LOAD (jump to bottom instantly) ---------------- */
+    useLayoutEffect(() => {
+        if (!bottomRef.current || hasMounted.current || messages.length === 0) return;
+
+        bottomRef.current.scrollIntoView({ behavior: "auto" });
+        hasMounted.current = true;
+        prevMsgCount.current = messages.length;
     }, [messages]);
 
-    // RECEIVE MESSAGES
+    /* ---------------- HANDLE NEW MESSAGES ---------------- */
     useEffect(() => {
+        if (!hasMounted.current) return;
+
+        const newMessageArrived = messages.length > prevMsgCount.current;
+
+        if (newMessageArrived) {
+            if (autoScroll) {
+                bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+                setShowNewMsgBtn(false);
+            } else {
+                setShowNewMsgBtn(true);
+            }
+        }
+
+        prevMsgCount.current = messages.length;
+    }, [messages, autoScroll]);
+
+    /* ---------------- SOCKET RECEIVE ---------------- */
+    useEffect(() => {
+        if (!socket) return;
+
         socket.on("receive_message", (data) => {
-            setMessages(prev => [
-                ...prev,
-                {
-                    ...data,
-                    created_at: data.created_at
-                        ? new Date(data.created_at).toISOString()
-                        : new Date().toISOString()
-                }
-            ]);
+            setMessages(prev => [...prev, data]);
         });
 
         return () => socket.off("receive_message");
-    }, []);
+    }, [socket]);
 
+    /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
         axios.get(`${server_url}/g-chat/messages`)
             .then(res => {
                 const normalized = res.data.map(msg => ({
                     ...msg,
-                    user_id: Number(msg.user_id),
-                    created_at: msg.created_at
-                        ? new Date(msg.created_at).toISOString()
-                        : new Date().toISOString()
+                    user_id: Number(msg.user_id)
                 }));
                 setMessages(normalized);
             })
-            .catch(err => console.error(err));
+            .catch(console.error);
     }, []);
 
-    // SEND MESSAGE
+    /* ---------------- SEND MESSAGE ---------------- */
     const sendMessage = () => {
         if (!message.trim()) return;
 
         socket.emit("send_message", {
             user_id: user_details.id,
-            message: message,
-            created_at: new Date().toISOString()
+            message
+            // ⛔ DO NOT send created_at (server handles it)
         });
 
         setMessage('');
     };
 
+    /* ---------------- FORMAT TIME ---------------- */
     const formatTime = (time) => {
         if (!time) return "";
-
         const date = new Date(time);
         if (isNaN(date.getTime())) return "";
 
@@ -88,46 +99,35 @@ export default function DashBoard() {
 
     return (
         <div className={styles.dashboardMain}>
-            <SideBar
-                active_page={'dashboard'}
-                location="/dashboard"
-            />
+            <SideBar active_page="dashboard" location="/dashboard" />
 
             <div className={styles.body}>
                 <div className={styles.header}>
-
-
                     <div className={styles.pageNameContainer}>
                         <h2 className={styles.global}>Global Chat</h2>
                         <p className={styles.smallName}>College Wide Discussions</p>
                     </div>
 
                     <div className={styles.headerInputContainer}>
-                        <input
-                            className={styles.input}
-                            placeholder='search...'
-                            type='text'
-                        />
+                        <input className={styles.input} placeholder="search..." />
                     </div>
                 </div>
+
                 <div className={styles.line}></div>
 
                 {/* CHAT MESSAGES */}
                 <div
-
                     ref={chatRef}
                     onScroll={() => {
                         const el = chatRef.current;
                         const isNearBottom =
                             el.scrollHeight - el.scrollTop - el.clientHeight < 80;
-
                         setAutoScroll(isNearBottom);
                     }}
                     style={{
                         flex: 1,
                         overflowY: "auto",
-                        padding: "12px",
-                        backgroundColor: 'transparent'
+                        padding: "12px"
                     }}
                 >
                     {messages.map((msg, index) => {
@@ -148,36 +148,32 @@ export default function DashBoard() {
                                         padding: "10px 14px",
                                         borderRadius: "14px",
                                         backgroundColor: isMe ? "#4f46e5" : "#e5e7eb",
-                                        color: isMe ? "#ffffff" : "#000000",
+                                        color: isMe ? "#fff" : "#000",
                                         position: "relative"
                                     }}
                                 >
                                     {!isMe && (
-                                        <div
-                                            style={{
-                                                fontSize: "12px",
-                                                fontWeight: "600",
-                                                marginBottom: "4px",
-                                                opacity: 0.8
-                                            }}
-                                        >
+                                        <div style={{
+                                            fontSize: "12px",
+                                            fontWeight: "600",
+                                            marginBottom: "4px",
+                                            opacity: 0.8
+                                        }}>
                                             {msg.username}
                                         </div>
                                     )}
 
-                                    <div style={{ fontSize: "14px", paddingRight: "45px" }}>
+                                    <div style={{ paddingRight: "45px" }}>
                                         {msg.message}
                                     </div>
-                                    <div
-                                        style={{
-                                            position: "absolute",
-                                            bottom: "4px",
-                                            right: "8px",
-                                            fontSize: "11px",
-                                            opacity: 0.7,
-                                            color: isMe ? "#e0e7ff" : "#374151"
-                                        }}
-                                    >
+
+                                    <div style={{
+                                        position: "absolute",
+                                        bottom: "4px",
+                                        right: "8px",
+                                        fontSize: "11px",
+                                        opacity: 0.7
+                                    }}>
                                         {formatTime(msg.created_at)}
                                     </div>
                                 </div>
@@ -186,6 +182,8 @@ export default function DashBoard() {
                     })}
                     <div ref={bottomRef} />
                 </div>
+
+                {/* NEW MESSAGE BUTTON */}
                 {showNewMsgBtn && (
                     <button
                         onClick={() => {
@@ -203,7 +201,6 @@ export default function DashBoard() {
                             color: "#fff",
                             border: "none",
                             cursor: "pointer",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
                             zIndex: 1000
                         }}
                     >
@@ -211,39 +208,24 @@ export default function DashBoard() {
                     </button>
                 )}
 
-
+                {/* FOOTER */}
                 <div className={styles.footer}>
                     <div className={styles.footerBox}>
-                        <div className={styles.messageContainer}>
-                            <input
-                                className={styles.messageInput}
-                                placeholder='Type a message...'
-                                type='text'
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                            />
-                        </div>
-
-                        <div className={styles.footerButtons}>
-                            <div className={styles.smiley}>
-                                <i className={`fa-regular fa-face-smile ${styles.smile}`}></i>
-                            </div>
-
-                            <div className={styles.attach}>
-                                <i className={`fa-solid fa-paperclip ${styles.smile}`}></i>
-                            </div>
-
-                            <button
-                                className={styles.sendButton}
-                                onClick={sendMessage}
-                            >
-                                Send
-                            </button>
-                        </div>
+                        <input
+                            className={styles.messageInput}
+                            placeholder="Type a message..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                        />
+                        <button
+                            className={styles.sendButton}
+                            onClick={sendMessage}
+                        >
+                            Send
+                        </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );
