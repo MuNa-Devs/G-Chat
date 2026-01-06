@@ -32,12 +32,17 @@ export function AppProvider({ children }) {
     };
 
     // For socket connection:
-    const socket = io(server_url);
-    socket.emit("register_client", {user_id: localStorage.getItem("user_id")});
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
         loadUserDetails(setUserDetails, setLoading, setOverride);
     }, []);
+
+    useEffect(() => {
+        if (socket === null) setSocket(io(server_url));
+        
+        socket?.emit("register_client", {user_id: localStorage.getItem("user_id")});
+    }, [socket])
 
     return (
         <AppContext.Provider

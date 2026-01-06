@@ -5,9 +5,22 @@ import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
+import { UiContext } from '../../utils/UiContext';
 
 export default function DashBoard() {
-    const { user_details, socket } = useContext(AppContext);
+    const { user_details, setLoading, socket } = useContext(AppContext);
+
+    const {setOverride} = useContext(UiContext);
+
+    useEffect(() => {
+        if (socket === null){
+            setOverride("loading");
+        }
+        else{
+            setOverride(null);
+        }
+    }, [socket]);
+
     const bottomRef = useRef(null);
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
@@ -31,6 +44,8 @@ export default function DashBoard() {
 
     // RECEIVE MESSAGES
     useEffect(() => {
+        if (!socket) return;
+
         socket.on("receive_message", (data) => {
             setMessages(prev => [
                 ...prev,
@@ -44,7 +59,7 @@ export default function DashBoard() {
         });
 
         return () => socket.off("receive_message");
-    }, []);
+    }, [socket]);
 
     useEffect(() => {
         axios.get(`${server_url}/g-chat/messages`)
@@ -63,6 +78,8 @@ export default function DashBoard() {
 
     // SEND MESSAGE
     const sendMessage = () => {
+        if (! socket) return;
+
         if (!message.trim()) return;
 
         socket.emit("send_message", {
