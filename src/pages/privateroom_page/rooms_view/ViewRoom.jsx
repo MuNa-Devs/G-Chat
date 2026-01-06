@@ -19,6 +19,8 @@ export default function ViewRoom() {
 
     const [c_user_id, setCurrentUserId] = useState(0);
 
+    const [refreshData, setRefreshState] = useState(0);
+
     useEffect(() => {
         setCurrentUserId(user_details?.id || 0);
     }, [user_details?.id]);
@@ -33,7 +35,6 @@ export default function ViewRoom() {
         ).then(res => {
             const data = res.data;
             setRoomData(data.room_info);
-            console.log(data);
         }).catch(err => {
             console.log(err);
         });
@@ -42,13 +43,12 @@ export default function ViewRoom() {
             server_url + `/g-chat/rooms/get-members?room_id=${room_id}`
         ).then(res => {
             setRoomMembers(res.data.members);
-            console.log(res.data.members);
         }).catch(err => {
             console.log(err);
         });
-    }, [room_id]);
+    }, [room_id, refreshData]);
 
-    const handleJoin = (e) => {
+    const handleJoin = async (e) => {
         const mode = e.target.textContent;
 
         switch (mode) {
@@ -56,17 +56,24 @@ export default function ViewRoom() {
                 axios.get(
                     server_url + `/g-chat/rooms/join?room_id=${room_data.r_id}&user_id=${user_details.id}`
                 ).then(res => {
+                    setRefreshState(prev => prev + 1);
                     console.log(res.data);
                 }).catch(err => {
                     console.log(err);
                 });
-
-                // socket.emit("room-joined", {
-                //     user_id: user_details?.id || localStorage.getItem("user_id"),
-                //     room_id: room_id
-                // });
         }
     };
+
+    const handleLeave = async (e) => {
+        axios.get(
+            server_url + `/g-chat/rooms/leave?room_id=${room_data.r_id}&user_id=${user_details.id}`
+        ).then(res => {
+            setRefreshState(prev => prev + 1);
+            console.log(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
 
     return (
         <div className={styles.viewRoom}>
@@ -127,21 +134,30 @@ export default function ViewRoom() {
                             {
                                 !room_members.some(
                                     member => member.id == c_user_id
-                                ) &&
-                                (
-                                    room_data.join_pref !== "Invite Only" &&
-                                    <button className="utilBtn"
-                                        onClick={handleJoin}
-                                    >
-                                        {
-                                            room_data.join_pref === "Approve Join Requests"
-                                                ? "Request Join Access"
-                                                : room_data.join_pref === "Anyone Can Join"
-                                                    ? "Join Room"
-                                                    : "Join Room"
-                                        }
-                                    </button>
-                                )
+                                ) ?
+                                    (
+                                        room_data.join_pref !== "Invite Only" &&
+                                        <button className="utilBtn"
+                                            onClick={handleJoin}
+                                        >
+                                            {
+                                                room_data.join_pref === "Approve Join Requests"
+                                                    ? "Request Join Access"
+                                                    : room_data.join_pref === "Anyone Can Join"
+                                                        ? "Join Room"
+                                                        : "Join Room"
+                                            }
+                                        </button>
+                                    )
+                                    :
+                                    (
+                                        user_details.id !== room_data.id
+                                        &&
+                                        <button
+                                            className={styles.leaveBtn}
+                                            onClick={handleLeave}
+                                        >Leave Room</button>
+                                    )
                             }
                         </div>
                     </div>

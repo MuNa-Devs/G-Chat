@@ -53,6 +53,15 @@ h5{
     color: #ff5f5f;
 }
 
+.leaveBtn{
+    padding: 8px;
+    background-color: var(--danger);
+    color: var(--button-text);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+}
+
 .roomDisplay{
     width: calc(100% - 48px);
     height: auto;
@@ -210,8 +219,8 @@ h5{
 }
 
 .members .member > img{
-    height: 64px;
-    width: 64px;
+    height: 56px;
+    width: 56px;
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
