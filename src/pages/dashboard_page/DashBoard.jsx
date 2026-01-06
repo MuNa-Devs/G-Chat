@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from "axios";
 
 import SideBar from '../../reusable_component/SideBar';
@@ -6,12 +6,11 @@ import styles from './dashboard.module.css';
 import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
 
-// SOCKET CONNECTIONoo
-const {socket} = useContext(AppContext);
-
 export default function DashBoard() {
-    const { user_details } = useContext(AppContext);
+    const { user_details, socket } = useContext(AppContext);
     const bottomRef = useRef(null);
+    const hasMounted = useRef(false);
+    const prevMsgCount = useRef(0);
 
     // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
@@ -20,7 +19,7 @@ export default function DashBoard() {
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
     const [autoScroll, setAutoScroll] = useState(true);
-    const [showNewMsgBtn, setShowNewMsgBtn] = useState(true);
+    const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
     useEffect(() => {
         if (autoScroll) {
@@ -33,12 +32,18 @@ export default function DashBoard() {
     // RECEIVE MESSAGES
     useEffect(() => {
         socket.on("receive_message", (data) => {
-            setMessages((prev) => [...prev, data]);
+            setMessages(prev => [
+                ...prev,
+                {
+                    ...data,
+                    created_at: data.created_at
+                        ? new Date(data.created_at).toISOString()
+                        : new Date().toISOString()
+                }
+            ]);
         });
 
-        return () => {
-            socket.off("receive_message");
-        };
+        return () => socket.off("receive_message");
     }, []);
 
     useEffect(() => {
@@ -46,13 +51,15 @@ export default function DashBoard() {
             .then(res => {
                 const normalized = res.data.map(msg => ({
                     ...msg,
-                    user_id: Number(msg.user_id)
+                    user_id: Number(msg.user_id),
+                    created_at: msg.created_at
+                        ? new Date(msg.created_at).toISOString()
+                        : new Date().toISOString()
                 }));
                 setMessages(normalized);
             })
             .catch(err => console.error(err));
     }, []);
-
 
     // SEND MESSAGE
     const sendMessage = () => {
@@ -60,10 +67,23 @@ export default function DashBoard() {
 
         socket.emit("send_message", {
             user_id: user_details.id,
-            message: message
+            message: message,
+            created_at: new Date().toISOString()
         });
 
         setMessage('');
+    };
+
+    const formatTime = (time) => {
+        if (!time) return "";
+
+        const date = new Date(time);
+        if (isNaN(date.getTime())) return "";
+
+        return date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
     };
 
     return (
@@ -102,10 +122,6 @@ export default function DashBoard() {
                             el.scrollHeight - el.scrollTop - el.clientHeight < 80;
 
                         setAutoScroll(isNearBottom);
-
-                        if (isNearBottom) {
-                            setShowNewMsgBtn(false);
-                        }
                     }}
                     style={{
                         flex: 1,
@@ -132,7 +148,8 @@ export default function DashBoard() {
                                         padding: "10px 14px",
                                         borderRadius: "14px",
                                         backgroundColor: isMe ? "#4f46e5" : "#e5e7eb",
-                                        color: isMe ? "#ffffff" : "#000000"
+                                        color: isMe ? "#ffffff" : "#000000",
+                                        position: "relative"
                                     }}
                                 >
                                     {!isMe && (
@@ -148,8 +165,20 @@ export default function DashBoard() {
                                         </div>
                                     )}
 
-                                    <div style={{ fontSize: "14px" }}>
+                                    <div style={{ fontSize: "14px", paddingRight: "45px" }}>
                                         {msg.message}
+                                    </div>
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            bottom: "4px",
+                                            right: "8px",
+                                            fontSize: "11px",
+                                            opacity: 0.7,
+                                            color: isMe ? "#e0e7ff" : "#374151"
+                                        }}
+                                    >
+                                        {formatTime(msg.created_at)}
                                     </div>
                                 </div>
                             </div>
