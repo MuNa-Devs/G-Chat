@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { io } from 'socket.io-client';
 import axios from "axios";
 
@@ -13,6 +13,10 @@ const socket = io(server_url);
 export default function DashBoard() {
     const { user_details } = useContext(AppContext);
     const bottomRef = useRef(null);
+    const hasMounted = useRef(false);
+    const prevMsgCount = useRef(0);
+
+
 
     // GET LOGGED-IN USER
     const currentUserId = Number(user_details.id);
@@ -21,46 +25,77 @@ export default function DashBoard() {
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
     const [autoScroll, setAutoScroll] = useState(true);
-    const [showNewMsgBtn, setShowNewMsgBtn] = useState(true);
+    const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
+useLayoutEffect(() => {
+    if (!bottomRef.current) return;
 
+    if (!hasMounted.current && messages.length > 0) {
+        bottomRef.current.scrollIntoView({ behavior: "auto" });
+        hasMounted.current = true;
+        prevMsgCount.current = messages.length;
+    }
+}, [messages]);
 
 
 
 useEffect(() => {
-    if (autoScroll) {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-        setShowNewMsgBtn(true);
+    if (!hasMounted.current) return;
+
+    const newMessageArrived = messages.length > prevMsgCount.current;
+
+    if (newMessageArrived) {
+        if (autoScroll) {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+            setShowNewMsgBtn(false);
+        } else {
+            setShowNewMsgBtn(true);
+        }
     }
-}, [messages]);
+
+    prevMsgCount.current = messages.length;
+}, [messages, autoScroll]);
+
+
+
+
 
 
 
 
 
     // RECEIVE MESSAGES
-    useEffect(() => {
-        socket.on("receive_message", (data) => {
-            setMessages((prev) => [...prev, data]);
-        });
+   useEffect(() => {
+    socket.on("receive_message", (data) => {
+        setMessages(prev => [
+            ...prev,
+            {
+                ...data,
+                created_at: data.created_at
+                    ? new Date(data.created_at).toISOString()
+                    : new Date().toISOString()
+            }
+        ]);
+    });
 
-        return () => {
-            socket.off("receive_message");
-        };
-    }, []);
+    return () => socket.off("receive_message");
+}, []);
 
-    useEffect(() => {
-        axios.get(`${server_url}/g-chat/messages`)
-            .then(res => {
-                const normalized = res.data.map(msg => ({
-                    ...msg,
-                    user_id: Number(msg.user_id)
-                }));
-                setMessages(normalized);
-            })
-            .catch(err => console.error(err));
-    }, []);
+useEffect(() => {
+    axios.get(`${server_url}/g-chat/messages`)
+        .then(res => {
+            const normalized = res.data.map(msg => ({
+                ...msg,
+                user_id: Number(msg.user_id),
+                created_at: msg.created_at
+                    ? new Date(msg.created_at).toISOString()
+                    : new Date().toISOString()
+            }));
+            setMessages(normalized);
+        })
+        .catch(err => console.error(err));
+}, []);
+
 
 
     // SEND MESSAGE
@@ -69,11 +104,26 @@ useEffect(() => {
 
         socket.emit("send_message", {
             user_id: user_details.id,
-            message: message
+            message: message,
+            created_at: new Date().toISOString()
         });
 
         setMessage('');
     };
+
+const formatTime = (time) => {
+    if (!time) return "";
+
+    const date = new Date(time);
+    if (isNaN(date.getTime())) return "";
+
+    return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+};
+
+
 
     return (
         <div className={styles.dashboardMain}>
@@ -112,9 +162,7 @@ useEffect(() => {
 
                         setAutoScroll(isNearBottom);
 
-                        if (isNearBottom) {
-                            setShowNewMsgBtn(false);
-                        }
+
                     }}
                     style={{
                         flex: 1,
@@ -141,7 +189,8 @@ useEffect(() => {
                                         padding: "10px 14px",
                                         borderRadius: "14px",
                                         backgroundColor: isMe ? "#4f46e5" : "#e5e7eb",
-                                        color: isMe ? "#ffffff" : "#000000"
+                                        color: isMe ? "#ffffff" : "#000000",
+                                        position: "relative"
                                     }}
                                 >
                                     {!isMe && (
@@ -157,9 +206,21 @@ useEffect(() => {
                                         </div>
                                     )}
 
-                                    <div style={{ fontSize: "14px" }}>
+                                    <div style={{ fontSize: "14px", paddingRight: "45px" }}>
                                         {msg.message}
                                     </div>
+                                        <div
+        style={{
+            position: "absolute",
+            bottom: "4px",
+            right: "8px",
+            fontSize: "11px",
+            opacity: 0.7,
+            color: isMe ? "#e0e7ff" : "#374151"
+        }}
+    >
+        {formatTime(msg.created_at)}
+    </div>
                                 </div>
                             </div>
                         );
