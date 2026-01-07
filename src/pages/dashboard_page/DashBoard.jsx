@@ -10,13 +10,13 @@ import { UiContext } from '../../utils/UiContext';
 export default function DashBoard() {
     const { user_details, setLoading, socket } = useContext(AppContext);
 
-    const {setOverride} = useContext(UiContext);
+    const { setOverride } = useContext(UiContext);
 
     useEffect(() => {
-        if (socket === null){
+        if (socket === null) {
             setOverride("loading");
         }
-        else{
+        else {
             setOverride(null);
         }
     }, [socket]);
@@ -24,7 +24,7 @@ export default function DashBoard() {
     const bottomRef = useRef(null);
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
-
+    const chatRef = useRef(null);
     const currentUserId = Number(user_details.id);
 
     const [message, setMessage] = useState('');
@@ -64,11 +64,15 @@ export default function DashBoard() {
         if (!socket) return;
 
         socket.on("receive_message", (data) => {
-            setMessages(prev => [...prev, data]);
+            setMessages(prev => [...prev, data].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
         });
 
         return () => socket.off("receive_message");
     }, [socket]);
+
+    useEffect(() => {
+        console.log("Messages updated:", messages);
+    }, [messages]);
 
     /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
@@ -85,7 +89,7 @@ export default function DashBoard() {
 
     /* ---------------- SEND MESSAGE ---------------- */
     const sendMessage = () => {
-        if (! socket) return;
+        // if (! socket) return;
 
         if (!message.trim()) return;
 
@@ -100,6 +104,7 @@ export default function DashBoard() {
 
     /* ---------------- FORMAT TIME ---------------- */
     const formatTime = (time) => {
+        console.log("Formatting time:", time);
         if (!time) return "";
         const date = new Date(time);
         if (isNaN(date.getTime())) return "";
@@ -142,6 +147,7 @@ export default function DashBoard() {
                         overflowY: "auto",
                         padding: "12px"
                     }}
+                    id='chatspace'
                 >
                     {messages.map((msg, index) => {
                         const isMe = Number(msg.user_id) === currentUserId;
@@ -224,21 +230,36 @@ export default function DashBoard() {
                 {/* FOOTER */}
                 <div className={styles.footer}>
                     <div className={styles.footerBox}>
-                        <input
-                            className={styles.messageInput}
-                            placeholder="Type a message..."
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                        />
-                        <button
-                            className={styles.sendButton}
-                            onClick={sendMessage}
-                        >
-                            Send
-                        </button>
+                        <div className={styles.messageContainer}>
+                            <input
+                                className={styles.messageInput}
+                                placeholder='Type a message...'
+                                type='text'
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                            />
+                        </div>
+
+                        <div className={styles.footerButtons}>
+                            <div className={styles.smiley}>
+                                <i className={`fa-regular fa-face-smile ${styles.smile}`}></i>
+                            </div>
+
+                            <div className={styles.attach}>
+                                <i className={`fa-solid fa-paperclip ${styles.smile}`}></i>
+                            </div>
+
+                            <button
+                                className={styles.sendButton}
+                                onClick={sendMessage}
+                            >
+                                Send
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     );

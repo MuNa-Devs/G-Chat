@@ -110,12 +110,14 @@
     display: flex;
     flex-direction: row;
     border-radius: 15px;
+    align-items: center;
+
 }
 /* .smile{
     color: ;
 } */
 .messageInput{
-    height:70%;
+    height:75%;
     width:90%;
     background-color: transparent;
     border-radius: 7px;
@@ -169,4 +171,15 @@
     background-color: var(--border);
     margin-top: 10px;
     margin-left: 30px;
+}
+.smiley,.attach{
+    cursor: pointer;
+    transition: all 0.3s ease
+}
+.smiley:hover{
+    transform: scale(1.15);
+}
+.attach:hover{
+    transform: scale(1.15);
+
 }
