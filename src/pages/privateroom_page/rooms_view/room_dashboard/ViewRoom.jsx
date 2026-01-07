@@ -1,13 +1,13 @@
 import styles from "./view_room.module.css";
-import SideBar from "../../../reusable_component/SideBar";
+import SideBar from "../../../../reusable_component/SideBar";
 import RoomMember from "./RoomMember";
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
-import { server_url } from "../../../../creds/server_url";
-import { AppContext } from "../../../Contexts";
+import { server_url } from "../../../../../creds/server_url";
+import { AppContext } from "../../../../Contexts";
 
 export default function ViewRoom() {
     const { room_id } = useParams();

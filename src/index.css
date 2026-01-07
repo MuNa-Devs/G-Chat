@@ -38,13 +38,13 @@ h1{
 }
 
 h2{
-	font-size: 1.2em;
+	font-size: 1.15em;
 	margin: 1px;
 	color: var(--text-primary);
 }
 
 h3{
-	font-size: 0.95em;
+	font-size: 0.9em;
 	margin: 0px;
 	color: var(--text-primary);
 	opacity: 0.9;

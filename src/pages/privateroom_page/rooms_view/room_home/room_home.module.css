@@ -1,0 +1,194 @@
+.chatpage{
+    margin: 0;
+    padding: 0;
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow-x: hidden;
+}
+
+.chatContext{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.chatWindow{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.roomControlBar{
+    width: calc(100% - 32px);
+    height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-left: 16px;
+    margin-right: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.room_info{
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.room_info > img{
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    object-fit: cover;
+    object-position: center;
+}
+
+.roomControlBar > button{
+    width: 48px;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    padding-right: 16px;
+}
+
+.roomControlBar .backBtn{
+    background-color: transparent;
+    border: none;
+    width: auto;
+    height: 100%;
+    cursor: pointer;
+}
+
+.backBtn i{
+    color: #ff5f5f;
+}
+
+.roomControlBar > button > i{
+    font-size: 1.2em;
+}
+
+.chatContainer{
+    flex: 1;
+    width: calc(100% - 32px);
+    margin-left: 16px;
+    margin-right: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--bg-lighter);
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.textControls{
+    height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: calc(100% - 40px);
+    margin-left: 16px;
+    margin-right: 24px;
+}
+
+.textControls > button{
+    width: auto;
+    height: auto;
+    padding: 8px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.textControls > button > i{
+    color: var(--text-primary);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.textControls .emojis > i{
+    color: var(--warning);
+}
+
+.textControls .files > i{
+    color: var(--text-secondary);
+}
+
+.textControls .send{
+    background-color: var(--accent);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.textControls .send > i{
+    color: var(--button-text);
+    font-size: 1.15em;
+}
+
+.textControls > input{
+    flex: 1;
+    height: 24px;
+    width: calc(100% - 32px);
+    padding: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    outline: none;
+    caret-color: var(--text-primary);
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.roomContents{
+    width: 14rem;
+    height: calc(100% - 48px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.roomContents > h3{
+    margin-bottom: 16px;
+}
+
+.pinnedMsgs, .materials{
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+}

@@ -3,7 +3,8 @@ import SignUpPage from "./pages/signup_page/SignUpPage";
 import DashBoard from "./pages/dashboard_page/DashBoard";
 import RoomPage from "./pages/privateroom_page/RoomPage";
 import FriendsPage from "./pages/friends_page/FriendsPage";
-import ViewRoom from "./pages/privateroom_page/rooms_view/ViewRoom";
+import ViewRoom from "./pages/privateroom_page/rooms_view/room_dashboard/ViewRoom";
+import RoomHome from "./pages/privateroom_page/rooms_view/room_home/RoomHome";
 import Dorakaled from "./pages/page_not_found/404";
 import AprilFool from "./pages/page_not_found/AprilFool";
 
@@ -31,11 +32,18 @@ export default function App() {
 				}
 			/>
 
-			<Route path="/room/:room_id" element={
+			<Route path="/room/dashboard/:room_id" element={
 					<LoginProtector>
 						<ViewRoom />
 					</LoginProtector>
 				} 
+			/>
+
+			<Route path="/room/home/:room_id" element={
+				<LoginProtector>
+					<RoomHome />
+				</LoginProtector>
+				}
 			/>
 
 			<Route

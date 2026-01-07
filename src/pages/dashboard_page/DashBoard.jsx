@@ -70,6 +70,7 @@ export default function DashBoard() {
         return () => socket.off("receive_message");
     }, [socket]);
 
+    
     useEffect(() => {
         console.log("Messages updated:", messages);
     }, [messages]);

@@ -56,9 +56,11 @@ export default function Rooms(props){
 
             <div className={styles.buttons}>
                 <button
-                    onClick={async () => {
-                        await getMembership();
-                        navigate(`/room/${r_id}`, {state: {is_member: is_member}});
+                    onClick={async (e) => {
+                        if (props.room_btn === "View Room")
+                            navigate(`/room/dashboard/${r_id}`, {state: {is_member: is_member}});
+                        else
+                            navigate(`/room/home/${r_id}`);
                     }}
                 >{props.room_btn}</button>
             </div>
