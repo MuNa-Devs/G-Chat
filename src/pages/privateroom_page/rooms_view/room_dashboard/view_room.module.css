@@ -1,4 +1,4 @@
-.viewRoom{
+.viewRoom {
     margin: 0;
     padding: 0;
     width: 100dvw;
@@ -8,12 +8,12 @@
     justify-content: space-between;
 }
 
-h5{
+h5 {
     margin: 0;
     color: var(--text-secondary);
 }
 
-.roomInfo{
+.roomInfo {
     flex: 1;
     max-height: calc(100% - 24px);
     display: flex;
@@ -31,7 +31,7 @@ h5{
     overflow-x: hidden;
 }
 
-.header{
+.header {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -41,7 +41,7 @@ h5{
     background-color: var(--bg);
 }
 
-.backBtn{
+.backBtn {
     background-color: transparent;
     border: none;
     width: auto;
@@ -49,11 +49,12 @@ h5{
     cursor: pointer;
 }
 
-.backBtn i, .backBtn span{
+.backBtn i,
+.backBtn span {
     color: #ff5f5f;
 }
 
-.leaveBtn{
+.leaveBtn {
     padding: 8px;
     background-color: var(--danger);
     color: var(--button-text);
@@ -62,7 +63,7 @@ h5{
     border-radius: 8px;
 }
 
-.roomDisplay{
+.roomDisplay {
     width: calc(100% - 48px);
     height: auto;
     max-width: 800px;
@@ -76,7 +77,7 @@ h5{
     border-bottom: 1px solid var(--border-light);
 }
 
-.wrappersWrapper{
+.wrappersWrapper {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -84,7 +85,7 @@ h5{
     width: 100%;
 }
 
-.displayWrapper{
+.displayWrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -92,7 +93,7 @@ h5{
     gap: 16px;
 }
 
-.otherInfo{
+.otherInfo {
     display: flex;
     flex-direction: row;
     width: auto;
@@ -101,12 +102,12 @@ h5{
     justify-content: space-between;
 }
 
-.otherInfo > h5 > span > i{
+.otherInfo>h5>span>i {
     color: var(--accent);
     cursor: pointer;
 }
 
-.otherInfo2{
+.otherInfo2 {
     display: flex;
     flex-direction: row;
     width: auto;
@@ -115,7 +116,7 @@ h5{
     gap: 16px;
 }
 
-.icon{
+.icon {
     height: 160px;
     width: 160px;
     border-radius: 16px;
@@ -127,7 +128,7 @@ h5{
     border: 1px solid var(--border-light);
 }
 
-.icon img{
+.icon img {
     height: 160px;
     width: 160px;
     border-radius: 16px;
@@ -135,7 +136,7 @@ h5{
     object-position: center;
 }
 
-.roomDetails{
+.roomDetails {
     width: 100%;
     height: auto;
     max-width: 850px;
@@ -149,7 +150,7 @@ h5{
     border-bottom: 1px solid var(--border-light);
 }
 
-.roomDesc{
+.roomDesc {
     background-color: var(--bg-light);
     border-radius: 16px;
     border: 1px solid var(--border-light);
@@ -163,11 +164,11 @@ h5{
     gap: 12px;
 }
 
-.roomDesc > h3 > i{
+.roomDesc>h3>i {
     color: var(--warning-light);
 }
 
-.members{
+.members {
     margin-top: 8px;
     height: auto;
     width: 100%;
@@ -179,12 +180,12 @@ h5{
     gap: 8px;
 }
 
-.members > h3{
+.members>h3 {
     margin-bottom: 12px;
     margin-left: 24px;
 }
 
-.members .member{
+.members .member {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -195,14 +196,14 @@ h5{
     padding: 6px;
     padding-left: 16px;
     padding-right: 16px;
-    
+
     border: 1px solid var(--border-light);
     border-radius: 16px;
 
     cursor: pointer;
 }
 
-.member .adminTag{
+.member .adminTag {
     flex: 1;
     height: auto;
     display: flex;
@@ -210,7 +211,7 @@ h5{
     justify-content: flex-end;
 }
 
-.adminTag .amAdmin{
+.adminTag .amAdmin {
     border-radius: 8px;
     background-color: var(--warning-bg);
     color: var(--warning-light);
@@ -218,7 +219,7 @@ h5{
     padding: 6px;
 }
 
-.members .member > img{
+.members .member>img {
     height: 56px;
     width: 56px;
     border-radius: 50%;
@@ -226,6 +227,23 @@ h5{
     object-position: center;
 }
 
-.buffer{
+.buffer {
     height: 200px;
+}
+
+/* Media Queries */
+@media (max-width: 560px) {
+    .viewRoom {
+        margin: 0;
+        padding: 0;
+        width: 100dvw;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .roomInfo{
+        margin-right: 8px;
+    }
 }

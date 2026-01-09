@@ -1,0 +1,133 @@
+.messageDiv {
+    margin: 0;
+    height: auto;
+    width: calc(100% - 16px);
+    padding: 8px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
+.senderMsg {
+    margin: 0;
+    padding: 0px;
+    padding-left: 8px;
+    width: calc(100% - 8px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.myMsg {
+    margin: 0;
+    padding: 0px;
+    padding-right: 8px;
+    width: calc(100% - 8px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.conseqMsg>img {
+    display: none;
+}
+
+.senderMsg.conseqMsg .message {
+    margin-left: 54px;
+}
+
+.myMsg.conseqMsg .message {
+    margin-right: 54px;
+}
+
+.senderMsg>img,
+.myMsg>img {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.senderMsg>img {
+    margin-right: 8px;
+}
+
+.myMsg>img {
+    margin-left: 8px;
+}
+
+.senderMsg .message,
+.myMsg .message {
+    width: auto;
+    height: auto;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    border-radius: 8px;
+    color: var(--button-text);
+    max-width: 65%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap; 
+}
+
+.senderMsg .message {
+    background-color: var(--accent);
+}
+
+.myMsg .message {
+    background-color: var(--card-bg);
+}
+
+.message>p {
+    flex: 1;
+    padding: 4px;
+    font-size: 0.8em;
+    letter-spacing: 0.8px;
+    word-break: break-word;
+}
+
+.message .time {
+    padding: 4px;
+    padding-top: 6px;
+    padding-bottom: 0px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: auto;
+    height: calc(100% - 8px);
+}
+
+.myMsg .time>p {
+    font-size: 0.6em;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.senderMsg .time>p {
+    font-size: 0.6em;
+    letter-spacing: 0.5px;
+    color: var(--primary-light);
+}
+
+/* Media Queries */
+@media (max-width: 630px) {
+    .messageDiv {
+        margin: 0;
+        height: auto;
+        width: calc(100% - 4px);
+        padding: 2px;
+        padding-bottom: 4px;
+        padding-top: 4px;
+    }
+
+    .myMsg > img{
+        margin-left: 4px;
+    }
+
+    .senderMsg > img{
+        margin-right: 4px;
+    }
+}

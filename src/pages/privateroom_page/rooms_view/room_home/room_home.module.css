@@ -1,8 +1,8 @@
-.chatpage{
+.chatpage {
     margin: 0;
     padding: 0;
     width: 100dvw;
-    height: 100dvh;
+    min-height: 0;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -10,7 +10,7 @@
     overflow-x: hidden;
 }
 
-.chatContext{
+.chatContext {
     flex: 1;
     height: 100%;
     display: flex;
@@ -19,16 +19,17 @@
     justify-content: space-between;
 }
 
-.chatWindow{
+.chatWindow {
     flex: 1;
     height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
 }
 
-.roomControlBar{
+.roomControlBar {
     width: calc(100% - 32px);
     height: 56px;
     padding-top: 8px;
@@ -41,7 +42,7 @@
     justify-content: space-between;
 }
 
-.room_info{
+.room_info {
     display: flex;
     flex: 1;
     flex-direction: row;
@@ -50,7 +51,7 @@
     gap: 16px;
 }
 
-.room_info > img{
+.room_info>img {
     height: 48px;
     width: 48px;
     border-radius: 50%;
@@ -59,7 +60,7 @@
     object-position: center;
 }
 
-.roomControlBar > button{
+.roomControlBar>button {
     width: 48px;
     height: 100%;
     background-color: transparent;
@@ -71,7 +72,7 @@
     padding-right: 16px;
 }
 
-.roomControlBar .backBtn{
+.roomControlBar .backBtn {
     background-color: transparent;
     border: none;
     width: auto;
@@ -79,26 +80,28 @@
     cursor: pointer;
 }
 
-.backBtn i{
+.backBtn i {
     color: #ff5f5f;
 }
 
-.roomControlBar > button > i{
+.roomControlBar>button>i {
     font-size: 1.2em;
 }
 
-.chatContainer{
+.chatContainer {
     flex: 1;
     width: calc(100% - 32px);
     margin-left: 16px;
     margin-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     border-radius: 8px;
     border: 1px solid var(--bg-lighter);
     max-height: 100%;
     overflow-y: auto;
 }
 
-.textControls{
+.textControls {
     height: 56px;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -111,7 +114,7 @@
     margin-right: 24px;
 }
 
-.textControls > button{
+.textControls>button {
     width: auto;
     height: auto;
     padding: 8px;
@@ -124,32 +127,32 @@
     justify-content: center;
 }
 
-.textControls > button > i{
+.textControls>button>i {
     color: var(--text-primary);
     font-size: 1.3em;
     font-weight: 600;
 }
 
-.textControls .emojis > i{
+.textControls .emojis>i {
     color: var(--warning);
 }
 
-.textControls .files > i{
+.textControls .files>i {
     color: var(--text-secondary);
 }
 
-.textControls .send{
+.textControls .send {
     background-color: var(--accent);
     padding: 12px;
     border-radius: 8px;
 }
 
-.textControls .send > i{
+.textControls .send>i {
     color: var(--button-text);
     font-size: 1.15em;
 }
 
-.textControls > input{
+.textControls>input {
     flex: 1;
     height: 24px;
     width: calc(100% - 32px);
@@ -165,7 +168,7 @@
     letter-spacing: 0.5px;
 }
 
-.roomContents{
+.roomContents {
     width: 14rem;
     height: calc(100% - 48px);
     display: flex;
@@ -178,11 +181,12 @@
     padding-bottom: 16px;
 }
 
-.roomContents > h3{
+.roomContents>h3 {
     margin-bottom: 16px;
 }
 
-.pinnedMsgs, .materials{
+.pinnedMsgs,
+.materials {
     width: auto;
     height: auto;
     display: flex;
@@ -191,4 +195,58 @@
     justify-content: flex-start;
     gap: 8px;
     margin-bottom: 8px;
+}
+
+/* Media Queries */
+@media (max-width: 1120px) {
+    .roomContents {
+        display: none;
+    }
+}
+
+@media (max-width: 630px) {
+    .chatContainer {
+        flex: 1;
+        width: calc(100% - 16px);
+        margin-left: 8px;
+        margin-right: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-radius: 8px;
+        border: 1px solid var(--bg-lighter);
+        max-height: 100%;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 560px) {
+    .chatpage {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .chatContext {
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+    }
+}
+
+@media (max-width: 490px) {
+    .roomControlBar .roomOptions {
+        display: none;
+    }
+
+    .roomControlBar .room_info {
+        gap: 8px;
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    .roomControlBar .room_info > h2{
+        word-break: break-word;
+    }
 }
