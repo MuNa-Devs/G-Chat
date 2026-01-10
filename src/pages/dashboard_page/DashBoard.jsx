@@ -70,11 +70,6 @@ export default function DashBoard() {
         return () => socket.off("receive_message");
     }, [socket]);
 
-    
-    useEffect(() => {
-        console.log("Messages updated:", messages);
-    }, [messages]);
-
     /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
         axios.get(`${server_url}/g-chat/messages`)

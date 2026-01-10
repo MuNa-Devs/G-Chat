@@ -22,7 +22,7 @@ export default function Message(props) {
                     ?
                     <div className={`${props.conseq_msgs && styles.conseqMsg} ${styles.senderMsg}`}>
                         <img
-                            src={server_url + `/files/${props.pfp}`}
+                            src={server_url + `/files/${props.sender_pfp}`}
                             onError={(e) => {
                                 e.target.onError = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";

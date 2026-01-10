@@ -9,7 +9,8 @@ import { AppContext } from "../../../../Contexts";
 import Message from "../../../../reusable_component/message_dev/Message";
 
 export default function RoomHome() {
-    const chatPageRef = useRef(null);
+    const bottom_ref = useRef(null);
+    const input_ref = useRef(null);
 
     const { socket, user_details } = useContext(AppContext);
     const { room_id } = useParams();
@@ -18,30 +19,14 @@ export default function RoomHome() {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [room_data, setRoomData] = useState({});
+    const [input_height, setInputHeight] = useState(0);
 
     const [sidebar_view, setSidebarView] = useState(true);
 
     useEffect(() => {
-        const resize = () => setSidebarView(window.innerWidth >= 560);
-
-        window.addEventListener("resize", resize);
-
-        return () => window.removeEventListener("resize", resize);
-    }, []);
-
-    useEffect(() => {
-        const chatPageResize = () => {
-            if (chatPageRef.current){
-                chatPageRef.current.style.height = `${window.innerHeight}px`;
-                console.log("window size:", window.innerHeight);
-            }
-        };
-
-        chatPageResize();
-
-        window.addEventListener("resize", chatPageResize);
-
-        return () => window.removeEventListener("resize", chatPageResize);
+        setSidebarView(window.innerWidth >= 560);
+        input_ref?.current?.focus();
+        setInputHeight(input_ref?.current?.scrollHeight);
     }, []);
 
     useEffect(() => {
@@ -60,8 +45,20 @@ export default function RoomHome() {
 
         socket.emit("join-room", { room_id });
 
+        return () => {
+            socket.emit("leave-room", { room_id });
+        };
+    }, [socket, room_id]);
+
+    useEffect(() => {
+        if (!socket || !room_id) return;
+
         const handleMessage = (res) => {
-            setMessages(prev => [...prev, res]);
+            setMessages(
+                prev => [...prev, res].sort(
+                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || a.sent_at)
+                )
+            );
         };
 
         socket.on("get-room-message", handleMessage);
@@ -81,30 +78,52 @@ export default function RoomHome() {
             .catch(err => console.log(err));
     }, [room_id]);
 
+    useEffect(() => {
+        bottom_ref?.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    const autoReHeight = (e) => {
+        const el = e.target;
+        el.style.height = "auto";
+        el.style.height = Math.min(el.scrollHeight - 24, 150) + "px";
+    };
+
     const sendMessage = async () => {
-        if (message === "") return;
+        if (message.trim() === "") {
+            setMessage("");
+            input_ref.current.style.height = "auto";
+            input_ref.current?.focus();
+
+            return;
+        }
 
         const local_message = {
-            message: message,
+            message: message.trim(),
             user_id: user_details.id,
             sender_name: user_details.username,
             sender_pfp: user_details.pfp,
             timestamp: new Date()
         };
 
-        setMessages(prev => [...prev, local_message]);
+        setMessages(
+            prev => [...prev, local_message].sort(
+                (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
+            )
+        );
 
         socket.emit("send-room-message", {
             user_id: user_details?.id,
             room_id: room_id,
-            message: message
+            message: message.trim()
         });
 
         setMessage("");
+        input_ref.current?.focus();
+        input_ref.current.style.height = "auto";
     }
 
     return (
-        <div ref={chatPageRef} className={styles.chatpage}>
+        <div className={styles.chatpage}>
             {
                 sidebar_view &&
                 <SideBar
@@ -141,6 +160,7 @@ export default function RoomHome() {
 
                     <div className={styles.chatContainer}>
                         {
+                            messages.length ?
                             messages.map((msg, index) => (
                                 <Message
                                     key={index}
@@ -151,8 +171,11 @@ export default function RoomHome() {
                                     sender_pfp={msg.sender_details?.pfp || msg.pfp}
                                     timestamp={msg.timestamp || msg.sent_at}
                                 />
-                            ))
+                            )) :
+                            <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
                         }
+
+                        <div ref={bottom_ref}></div>
                     </div>
 
                     <div className={styles.textControls}>
@@ -160,11 +183,22 @@ export default function RoomHome() {
 
                         <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
 
-                        <input
+                        <textarea
+                            rows={1}
+                            ref={input_ref}
                             value={message}
                             type="text"
-                            placeholder="Type your message here..."
-                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Type a message"
+                            onChange={(e) => {
+                                setMessage(e.target.value)
+                                autoReHeight(e);
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    sendMessage();
+                                    e.preventDefault();
+                                }
+                            }}
                         />
 
                         <button
