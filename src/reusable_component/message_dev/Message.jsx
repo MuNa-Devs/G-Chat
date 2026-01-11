@@ -24,7 +24,7 @@ export default function Message(props) {
                         <img
                             src={server_url + `/files/${props.sender_pfp}`}
                             onError={(e) => {
-                                e.target.onError = null;
+                                e.target.onerror = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
                             }}
                         />

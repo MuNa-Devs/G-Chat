@@ -43,7 +43,7 @@ export default function SideBar(props) {
                             ${props.active_page == "dms" && styles.activeBtn}
                         `}
                         onClick={() => navigate("/direct-messages")}
-                    ><i className="fa-solid fa-message"></i> <span>Direct Messages</span></button>
+                    ><i className="fa-solid fa-message"></i> <span>Messages</span></button>
 
                     <button
                         className={`

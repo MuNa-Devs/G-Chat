@@ -1,0 +1,406 @@
+.dmDashboard{
+    margin: 0;
+    padding: 0;
+    width: 100dvw;
+    height: 100dvh;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow-x: hidden;
+}
+
+.dmDashboard .noConv{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.noConv > img{
+    height: 56px;
+    width: 56px;
+}
+
+.dmDashboard .chatPage{
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.personControlBar{
+    width: calc(100% - 32px);
+    height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-left: 16px;
+    margin-right: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.personControlBar .person_info{
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.person_info > img{
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    margin-left: 8px;
+}
+
+.personControlBar > button{
+    width: 48px;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    padding-right: 16px;
+}
+
+.dmDashboard .messages{
+    width: 32rem;
+    height: calc(100% - 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 16px;
+    padding-bottom: 16px;
+
+    border-left: 1px solid var(--border-light);
+    background-color: var(--bg-light);
+}
+
+.chatContainer {
+    flex: 1;
+    width: calc(100% - 32px);
+    margin-left: 16px;
+    margin-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--bg-lighter);
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.noMsgs{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.textControls {
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: calc(100% - 40px);
+    margin-left: 16px;
+    margin-right: 24px;
+
+    flex-shrink: 0;
+}
+
+.textControls>button {
+    width: auto;
+    height: auto;
+    padding: 8px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.textControls>button>i {
+    color: var(--text-primary);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.textControls .emojis>i {
+    color: var(--warning);
+}
+
+.textControls .files>i {
+    color: var(--text-secondary);
+}
+
+.textControls .send {
+    background-color: var(--accent);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.textControls .send>i {
+    color: var(--button-text);
+    font-size: 1.15em;
+}
+
+.textControls>textarea {
+    flex: 1;
+    width: calc(100% - 32px);
+    padding: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    outline: none;
+    caret-color: var(--text-primary);
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+
+    resize: none;
+    max-height: 150px;
+    line-height: 1.4;
+} .textControls > textarea::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messages > h2{
+    margin-left: 16px;
+    padding: 8px;
+}
+
+.messages .searchBar{
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    height: auto;
+    width: calc(100% - 32px);
+    display: flex;
+    
+    margin: 16px;
+}
+
+.searchBar div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    width: 24px;
+    padding: 8px;
+}
+
+.searchBar div i{
+    color: var(--button-text);
+}
+
+.searchBar input{
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    caret-color: var(--text-primary);
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.divider{
+    width: calc(100% - 40px);
+    height: 1px;
+    border: none;
+    background-color: var(--border-light);
+    margin: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.messages .chatFilters{
+    width: calc(100% - 32px);
+    max-width: 500px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    margin: 16px;
+}
+
+.chatFilters > button{
+    background-color: transparent;
+    height: 100%;
+    width: 33%;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75em;
+}
+
+.chatFilters .activeFilter{
+    background-color: var(--bg-light);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.contacts{
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.noChats{
+    width: calc(100% - 80px);
+    height: auto;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+
+    max-width: 500px;
+}
+
+.contact{
+    width: calc(100% - 32px);
+    height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.selectedContact{
+    width: calc(100% - 33px);
+    border: 1px solid var(--border-light);
+    border-left: 2px solid var(--primary);
+    background-color: var(--bg);
+}
+
+.contact .details{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-width: 0;
+}
+
+.details > img{
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.details > div{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+}
+
+.details h4,
+.details h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.details h4{
+    font-weight: 600;
+}
+
+.contact .meta{
+    width: auto;
+    height: 32px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.meta > p{
+    color: var(--text-secondary);
+    font-size: 0.7em;
+}
+
+.meta > div{
+    height: auto;
+    width: auto;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 50%;
+    background-color: var(--success);
+}
+
+.buffer{
+    height: 100px;
+    width: 100%;
+}
+
+.newContact{
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99;
+    
+    height: 48px;
+    width: 48px;
+    font-size: 1.4em;
+    color: var(--accent);
+    cursor: pointer;
+
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    background-color: var(--primary-bg);
+    filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

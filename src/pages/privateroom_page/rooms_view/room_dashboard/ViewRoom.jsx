@@ -13,6 +13,7 @@ export default function ViewRoom() {
     const { room_id } = useParams();
     const location = useLocation();
     const is_member = location.state?.is_member;
+    const from = location.state?.from || "/rooms";
 
     const [room_members, setRoomMembers] = useState([]);
     const { user_details, socket } = useContext(AppContext);
@@ -75,6 +76,9 @@ export default function ViewRoom() {
         });
     }
 
+    console.log("Room data:", room_data);
+    console.log("Room members:", room_members);
+
     return (
         <div className={styles.viewRoom}>
             <SideBar
@@ -86,7 +90,7 @@ export default function ViewRoom() {
                 <div className={styles.header}>
                     <button
                         className={styles.backBtn}
-                        onClick={() => navigate("/rooms")}
+                        onClick={() => navigate(from)}
                     >
                         <i className="fa-solid fa-chevron-left"></i>
                         <span> Back</span>
@@ -132,9 +136,23 @@ export default function ViewRoom() {
 
                         <div className={styles.joinBtn}>
                             {
+                                (
+                                    from.startsWith("/rooms")
+                                    && 
+                                    is_member
+                                )
+                                &&
+                                <button
+                                    className="utilBtn"
+                                    style={{marginRight: "16px"}}
+                                    onClick={() => navigate(`/room/home/${room_id}`)}
+                                >Open Room</button>
+                            }
+                            {
                                 !room_members.some(
-                                    member => member.id == c_user_id
-                                ) ?
+                                    member => member.id === c_user_id
+                                )
+                                ?
                                     (
                                         room_data.join_pref !== "Invite Only" &&
                                         <button className="utilBtn"
@@ -149,7 +167,7 @@ export default function ViewRoom() {
                                             }
                                         </button>
                                     )
-                                    :
+                                :
                                     (
                                         user_details.id !== room_data.id
                                         &&
@@ -167,7 +185,7 @@ export default function ViewRoom() {
                     <div className={styles.roomDesc}>
                         <h3><i className="fa-solid fa-circle-info"></i> About this room</h3>
 
-                        <h5>{room_data.r_desc}</h5>
+                        <h5>{room_data.r_desc || "No Description Available"}</h5>
                     </div>
                 </div>
 
@@ -183,7 +201,9 @@ export default function ViewRoom() {
 
                     {
                         room_members?.length > 0 && room_members.map(member => (
-                            member.id !== room_data.id && <RoomMember
+                            member.id !== room_data.id 
+                            && 
+                            <RoomMember
                                 key={member.id}
                                 admin={false}
                                 name={member.username}

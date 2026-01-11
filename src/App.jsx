@@ -14,6 +14,7 @@ import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
+import DM from "./pages/direct-messages/DM";
 
 export default function App() {
 	return (
@@ -40,9 +41,9 @@ export default function App() {
 			/>
 
 			<Route path="/room/home/:room_id" element={
-				<LoginProtector>
-					<RoomHome />
-				</LoginProtector>
+					<LoginProtector>
+						<RoomHome />
+					</LoginProtector>
 				}
 			/>
 
@@ -58,6 +59,14 @@ export default function App() {
 				path="/friends" element={
 					<LoginProtector>
 						<FriendsPage />
+					</LoginProtector>
+				}
+			/>
+
+			<Route 
+				path="/direct-messages" element={
+					<LoginProtector>
+						<DM />
 					</LoginProtector>
 				}
 			/>

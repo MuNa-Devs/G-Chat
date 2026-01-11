@@ -96,7 +96,7 @@ export default function RoomPage() {
                         <div className={styles.searchBar}>
                             <div><i className="fa-solid fa-magnifying-glass"></i></div>
 
-                            <input type="text" placeholder="Search by room name, room ID, admin..." />
+                            <input type="text" placeholder="Search by room name, admin..." />
                         </div>
 
                         <div className={styles.filter}>

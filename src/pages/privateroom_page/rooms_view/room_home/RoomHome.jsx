@@ -83,9 +83,9 @@ export default function RoomHome() {
     }, [messages]);
 
     const autoReHeight = (e) => {
-        const el = e.target;
-        el.style.height = "auto";
-        el.style.height = Math.min(el.scrollHeight - 24, 150) + "px";
+        const thing = e.target;
+        thing.style.height = "auto";
+        thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
     };
 
     const sendMessage = async () => {
@@ -101,7 +101,7 @@ export default function RoomHome() {
             message: message.trim(),
             user_id: user_details.id,
             sender_name: user_details.username,
-            sender_pfp: user_details.pfp,
+            pfp: user_details.pfp,
             timestamp: new Date()
         };
 
@@ -155,7 +155,17 @@ export default function RoomHome() {
                             <h2>{room_data.r_name}</h2>
                         </div>
 
-                        <button className={styles.roomOptions}><i className="fa-solid fa-bars"></i></button>
+                        <button
+                            className={styles.roomOptions}
+                            onClick={() => navigate(
+                                `/room/dashboard/${room_id}`,
+                                {
+                                    state: {
+                                        from: `/room/home/${room_id}`
+                                    } 
+                                }
+                            )}
+                        ><i className="fa-solid fa-bars"></i></button>
                     </div>
 
                     <div className={styles.chatContainer}>

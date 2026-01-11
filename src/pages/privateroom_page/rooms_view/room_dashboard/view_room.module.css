@@ -231,6 +231,10 @@ h5 {
     height: 200px;
 }
 
+.openRoom{
+    margin-right: 16px;
+}
+
 /* Media Queries */
 @media (max-width: 560px) {
     .viewRoom {

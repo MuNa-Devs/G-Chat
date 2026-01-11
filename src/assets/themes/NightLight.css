@@ -20,7 +20,7 @@ body.NightLight{
 
     /* Extra Colors (NEW Variables) */
     --primary-light: #f2f7ff;
-    --primary-dark: #1a5f94;
+    --primary-bg: #1a5f949f;
 
     --success: #2eb67d;
     --success-light: #65d0a1;
