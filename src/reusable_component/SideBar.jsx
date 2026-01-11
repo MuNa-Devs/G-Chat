@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import styles from './sidebar.module.css'
 
 import { useNavigate } from 'react-router-dom';
@@ -9,9 +9,20 @@ export default function SideBar(props) {
     const navigate = useNavigate();
     const { user_details, setLogOut } = useContext(AppContext);
 
+    const [open_left, setOpenLeft] = useState(false);
+
     return (
         <>
-            <div className={styles.sidebarAtLeft}>
+            {
+                open_left 
+                && 
+                <div 
+                    className={styles.backDrop}
+                    onClick={() => setOpenLeft(prev => !prev)}
+                ></div>
+            }
+
+            <div className={`${styles.sidebarAtLeft} ${open_left && styles.sidebarOpenedLeft}`}>
                 <div className={styles.userProfile} onClick={() => navigate("/user-settings", { state: { from: props.location } })}>
                     <div className={styles.logo}>
                         <img
@@ -31,6 +42,10 @@ export default function SideBar(props) {
                 </div>
 
                 <div className={styles.sidebarOptions}>
+                    <button
+                        className={styles.openSidebar}
+                    ><i className="fa-solid fa-expand"></i></button>
+
                     <button
                         className={`
                             ${props.active_page == "dashboard" && styles.activeBtn}
@@ -73,6 +88,70 @@ export default function SideBar(props) {
                 </div>
             </div>
 
+            <div className={styles.sidebarAtLeftMin}>
+                <div
+                    className={styles.userProfile}
+                    onClick={() => navigate("/user-settings", { state: { from: props.location } })}
+                >
+                    <div className={styles.logo}>
+                        <img
+                            src={server_url + "/files/" + user_details.pfp}
+                            onError={e => {
+                                e.target.onError = null;
+                                e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className={styles.sidebarOptions}>
+                    <button
+                        className={styles.openSidebar}
+                        onClick={() => setOpenLeft(prev => !prev)}
+                    ><i className="fa-solid fa-expand"></i></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "dashboard" && styles.activeBtn}
+                        `}
+                        onClick={() => navigate("/dashboard")}
+                    ><i className="fa-solid fa-table-columns"></i></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "dms" && styles.activeBtn}
+                        `}
+                        onClick={() => navigate("/direct-messages")}
+                    ><i className="fa-solid fa-message"></i></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "privaterooms" && styles.activeBtn}
+                        `}
+                        onClick={() => navigate("/rooms")}
+                    ><i className="fa-solid fa-people-roof"></i></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "friends" && styles.activeBtn}
+                        `}
+                        onClick={() => navigate("/friends")}
+                    ><i className="fa-solid fa-user-group"></i></button>
+                </div>
+
+                <div className={styles.sidebarUtils}>
+                    <button
+                        className={styles.settings}
+                        onClick={() => navigate("/settings", { state: { from: props.location } })}
+                    ><i className="fa-solid fa-gear"></i></button>
+
+                    <button
+                        className={styles.logout}
+                        onClick={() => setLogOut()}
+                    ><i className="fa-solid fa-arrow-right-from-bracket"></i></button>
+                </div>
+            </div>
+
             <div className={styles.sidebarAtTop}>
                 <div className={styles.userProfile} onClick={() => navigate("/user-settings", { state: { from: props.location } })}>
                     <div className={styles.logo}>
@@ -95,6 +174,7 @@ export default function SideBar(props) {
                 <div className={styles.sidebarUtils}>
                     <button
                         className={styles.utilsBtn}
+                        onClick={() => setOpenLeft(prev => !prev)}
                     ><i className="fa-solid fa-bars"></i></button>
 
                     <button

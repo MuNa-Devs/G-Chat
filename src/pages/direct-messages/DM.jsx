@@ -128,6 +128,15 @@ export default function DM() {
 
     return (
         <div className={styles.dmDashboard}>
+            {
+                show_contacts
+                &&
+                <div
+                    className={styles.backDrop}
+                    onClick={() => setShowContacts(prev => !prev)}
+                ></div>
+            }
+
             <SideBar
                 active_page="dms"
                 location="/direct-messages"

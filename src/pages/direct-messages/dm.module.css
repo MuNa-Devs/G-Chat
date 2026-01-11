@@ -431,6 +431,18 @@
     justify-content: center;
 }
 
+.backDrop{
+    width: 100dvw;
+    height: 100dvh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+}
+
 /* Media Queries */
 @media (max-width: 1340px) {
     .dmDashboard .messages {
@@ -474,21 +486,6 @@
 
     .dmDashboard .messages.showContacts {
         transform: translateX(0);
-    }
-
-    .dmDashboard::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s ease;
-    }
-
-    .dmDashboard:has(.messages.showContacts)::after {
-        opacity: 1;
-        pointer-events: auto;
     }
 
     .dmDashboard .messagesCollapsed {
@@ -554,6 +551,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
+    }
+
+    .dmDashboard .messages{
+        width: 19rem;
     }
 
     .dmDashboard .chatPage{
