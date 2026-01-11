@@ -21,9 +21,6 @@ export default function Rooms(props) {
             server_url + `/g-chat/rooms/is_member?room_id=${r_id}&user_id=${user_id}`
         ).then(res => {
             setMembership(res.data.is_member);
-            console.log(r_id);
-            console.log(user_id);
-            console.log(res.data);
         }).catch(err => {
             console.log(err);
         });

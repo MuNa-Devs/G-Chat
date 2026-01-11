@@ -20,14 +20,20 @@ export default function Message(props) {
             {
                 Number(localStorage.getItem("user_id")) !== props.sender_id
                     ?
-                    <div className={`${props.conseq_msgs && styles.conseqMsg} ${styles.senderMsg}`}>
-                        <img
-                            src={server_url + `/files/${props.sender_pfp}`}
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
-                            }}
-                        />
+                    <div className={`${(
+                        props.conseq_msgs && props.constraint !== "no-logo"
+                        ) && styles.conseqMsg} ${styles.senderMsg}`}>
+                        {
+                            props.constraint !== "no-logo"
+                            &&
+                            <img
+                                src={server_url + `/files/${props.sender_pfp}`}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                }}
+                            />
+                        }
 
                         <div className={styles.message}>
                             <p>{props.message}</p>
@@ -38,7 +44,7 @@ export default function Message(props) {
                         </div>
                     </div>
                     :
-                    <div className={`${props.conseq_msgs && styles.conseqMsg} ${styles.myMsg}`}>
+                    <div className={`${(props.conseq_msgs && props.constraint !== "no-logo") && styles.conseqMsg} ${styles.myMsg}`}>
                         <div className={styles.message}>
                             <p>{props.message}</p>
 
@@ -47,13 +53,17 @@ export default function Message(props) {
                             </div>
                         </div>
 
-                        <img
-                            src={server_url + `/files/${props.sender_pfp}`}
-                            onError={(e) => {
-                                e.target.onError = null;
-                                e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
-                            }}
-                        />
+                        {
+                            props.constraint !== "no-logo"
+                            &&
+                            <img
+                                src={server_url + `/files/${props.sender_pfp}`}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                }}
+                            />
+                        }
                     </div>
             }
         </div>

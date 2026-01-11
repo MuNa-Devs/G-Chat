@@ -62,12 +62,12 @@
     height: auto;
     padding: 8px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 2px;
+    gap: 8px;
     border-radius: 8px;
     color: var(--button-text);
-    max-width: 65%;
+    max-width: 56%;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap; 
@@ -84,26 +84,25 @@
 .message>p {
     flex: 1;
     padding: 4px;
-    font-size: 0.8em;
-    letter-spacing: 0.8px;
+    font-size: 0.85em;
+    letter-spacing: 0.85px;
+    line-height: 1.4;
     word-break: break-word;
 }
 
 .message .time {
-    padding: 4px;
-    padding-top: 6px;
-    padding-bottom: 0px;
     display: flex;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: flex-end;
     width: auto;
-    height: calc(100% - 8px);
+    height: auto;
 }
 
 .myMsg .time>p {
     font-size: 0.6em;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
+    opacity: 0.85;
 }
 
 .senderMsg .time>p {

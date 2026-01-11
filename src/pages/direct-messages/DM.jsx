@@ -22,7 +22,7 @@ export default function DM() {
     const [contact_details, setContactDetails] = useState({});
 
     useEffect(() => {
-        bottom_ref?.current?.scrollIntoView({ behavior: "smooth" });
+        bottom_ref?.current?.scrollIntoView();
     }, [messages]);
 
     useEffect(() => {
@@ -31,14 +31,13 @@ export default function DM() {
         ).then(res => {
             const data = res.data;
             setChats(data.contacts);
-            console.log(data.contacts);
         }).catch(err => {
             console.log(err);
         });
     }, []);
 
     useEffect(() => {
-        if (! chat_selected || ! selected_contactID) return;
+        if (!chat_selected || !selected_contactID) return;
 
         input_ref?.current?.focus();
 
@@ -53,17 +52,17 @@ export default function DM() {
     }, [selected_contactID]);
 
     useEffect(() => {
-        if (! socket || ! selected_contactID) return;
+        if (!socket || !selected_contactID) return;
 
-        socket.emit("connect-dm", {selected_contactID});
+        socket.emit("connect-dm", { selected_contactID });
 
         return () => {
-            socket.emit("disconnect-dm", {selected_contactID});
+            socket.emit("disconnect-dm", { selected_contactID });
         }
     }, [socket, selected_contactID]);
 
     useEffect(() => {
-        if (! socket || ! selected_contactID) return;
+        if (!socket || !selected_contactID) return;
 
         const handleMessage = (res) => {
             setMessages(
@@ -87,7 +86,7 @@ export default function DM() {
     }
 
     const sendMessage = () => {
-        if (message.trim() === ""){
+        if (message.trim() === "") {
             setMessage("");
             input_ref.current.style.height = "auto";
             input_ref.current?.focus();
@@ -125,6 +124,8 @@ export default function DM() {
         input_ref.current.style.height = "auto";
     }
 
+    const [show_contacts, setShowContacts] = useState(false);
+
     return (
         <div className={styles.dmDashboard}>
             <SideBar
@@ -134,88 +135,95 @@ export default function DM() {
 
             {
                 chat_selected
-                ?
-                <div className={styles.chatPage}>
-                    <div className={styles.personControlBar}>
-                        <div className={styles.person_info}>
-                            <img
-                                src={server_url + `/files/${contact_details.pfp}`}
-                                onError={(e) => {
-                                    e.target.onError = null;
-                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                    ?
+                    <div className={styles.chatPage}>
+                        <div className={styles.personControlBar}>
+                            <div className={styles.person_info}>
+                                <img
+                                    src={server_url + `/files/${contact_details.pfp}`}
+                                    onError={(e) => {
+                                        e.target.onError = null;
+                                        e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                    }}
+                                />
+
+                                <h2>{contact_details.username}</h2>
+                            </div>
+
+                            <button
+                                className={styles.roomOptions}
+                            ><i className="fa-solid fa-bars"></i></button>
+                        </div>
+
+                        <div className={styles.chatContainer}>
+                            {
+                                messages.length
+                                    ? messages.map((msg, index) => (
+                                        <Message
+                                            key={index}
+                                            constraint="no-logo"
+                                            conseq_msgs={messages[index - 1]?.sent_by === msg.sent_by}
+                                            message={msg.message}
+                                            sender_id={msg.sent_by}
+                                            sender_name={msg.username}
+                                            sender_pfp={msg.pfp}
+                                            timestamp={msg.sent_at}
+                                        />
+                                    ))
+
+                                    : <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                            }
+
+                            <div ref={bottom_ref}></div>
+                        </div>
+
+                        <div className={styles.textControls}>
+                            <button className={styles.emojis}><i className="fa-regular fa-face-grin-wide"></i></button>
+
+                            <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
+
+                            <textarea
+                                rows={1}
+                                ref={input_ref}
+                                value={message}
+                                type="text"
+                                placeholder="Type a message"
+                                onChange={(e) => {
+                                    setMessage(e.target.value)
+                                    autoReHeight(e);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        sendMessage();
+                                        e.preventDefault();
+                                    }
                                 }}
                             />
 
-                            <h2>{contact_details.username}</h2>
+                            <button
+                                className={styles.send}
+                                onClick={sendMessage}
+                            ><i className="fa-solid fa-paper-plane"></i></button>
                         </div>
-
-                        <button
-                            className={styles.roomOptions}
-                        ><i className="fa-solid fa-bars"></i></button>
                     </div>
+                    :
+                    <div className={styles.noConv}>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2903/2903501.png" alt="" />
 
-                    <div className={styles.chatContainer}>
-                        {
-                            messages.length
-                            ? messages.map((msg, index) => (
-                                    <Message
-                                        key={index}
-                                        conseq_msgs={messages[index - 1]?.sent_by === msg.sent_by}
-                                        message={msg.message}
-                                        sender_id={msg.sent_by}
-                                        sender_name={msg.username}
-                                        sender_pfp={msg.pfp}
-                                        timestamp={msg.sent_at}
-                                    />
-                                ))
-                            
-                            : <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
-                        }
+                        <h3>Select a conversation</h3>
 
-                        <div ref={bottom_ref}></div>
+                        <h5>Choose a contact to start messaging.</h5>
                     </div>
-
-                    <div className={styles.textControls}>
-                        <button className={styles.emojis}><i className="fa-regular fa-face-grin-wide"></i></button>
-
-                        <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
-
-                        <textarea
-                            rows={1}
-                            ref={input_ref}
-                            value={message}
-                            type="text"
-                            placeholder="Type a message"
-                            onChange={(e) => {
-                                setMessage(e.target.value)
-                                autoReHeight(e);
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    sendMessage();
-                                    e.preventDefault();
-                                }
-                            }}
-                        />
-
-                        <button
-                            className={styles.send}
-                            onClick={sendMessage}
-                        ><i className="fa-solid fa-paper-plane"></i></button>
-                    </div>
-                </div>
-                :
-                <div className={styles.noConv}>
-                    <img src="https://cdn-icons-png.flaticon.com/512/2903/2903501.png" alt="" />
-
-                    <h3>Select a conversation</h3>
-
-                    <h5>Choose a contact to start messaging.</h5>
-                </div>
             }
 
-            <div className={styles.messages}>
-                <h2>Chats</h2>
+            <div className={`${styles.messages} ${show_contacts && styles.showContacts}`}>
+                <div className={styles.header}>
+                    <h2>Chats</h2>
+
+                    <button
+                        onClick={() => setShowContacts(false)}
+                    ><i className="fa-solid fa-xmark"></i></button>
+                </div>
 
                 <div className={styles.searchBar}>
                     <div><i className="fa-solid fa-magnifying-glass"></i></div>
@@ -241,6 +249,7 @@ export default function DM() {
                                     setChatSelected={setChatSelected}
                                     setSelectedCID={setSelectedCID}
                                     setContactDetails={setContactDetails}
+                                    setShowContacts={setShowContacts}
                                     selected_CID={selected_contactID}
                                     contact_id={chat.contact_id}
                                     pfp={chat.pfp}
@@ -266,6 +275,18 @@ export default function DM() {
                 <div className={styles.newContact}>
                     <i className="fa-solid fa-plus"></i>
                 </div>
+            </div>
+
+            <div className={styles.messagesCollapsed}>
+                <div>
+                    <button><i className="fa-solid fa-magnifying-glass"></i></button>
+
+                    <button
+                        onClick={() => setShowContacts(prev => !prev)}
+                    ><i className="fa-solid fa-address-book"></i></button>
+                </div>
+
+                <button><i className="fa-solid fa-plus"></i></button>
             </div>
         </div>
     );
@@ -298,6 +319,7 @@ function Contact(props) {
                     username: props.username,
                     pfp: props.pfp
                 });
+                props.setShowContacts(false);
             }}
         >
             <div className={styles.details}>
@@ -317,8 +339,8 @@ function Contact(props) {
                             props.selected_CID !== props.contact_id &&
                             (
                                 props.transaction
-                                ? "You: " + props.recent_message
-                                : props.recent_message
+                                    ? "You: " + props.recent_message
+                                    : props.recent_message
                             )
                         }
                     </h5>
