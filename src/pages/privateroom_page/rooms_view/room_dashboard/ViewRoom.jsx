@@ -58,7 +58,6 @@ export default function ViewRoom() {
                     server_url + `/g-chat/rooms/join?room_id=${room_data.r_id}&user_id=${user_details.id}`
                 ).then(res => {
                     setRefreshState(prev => prev + 1);
-                    console.log(res.data);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -66,18 +65,12 @@ export default function ViewRoom() {
     };
 
     const handleLeave = async (e) => {
-        axios.get(
+        await axios.get(
             server_url + `/g-chat/rooms/leave?room_id=${room_data.r_id}&user_id=${user_details.id}`
-        ).then(res => {
-            setRefreshState(prev => prev + 1);
-            console.log(res.data);
-        }).catch(err => {
+        ).catch(err => {
             console.log(err);
         });
     }
-
-    console.log("Room data:", room_data);
-    console.log("Room members:", room_members);
 
     return (
         <div className={styles.viewRoom}>
@@ -173,7 +166,10 @@ export default function ViewRoom() {
                                         &&
                                         <button
                                             className={styles.leaveBtn}
-                                            onClick={handleLeave}
+                                            onClick={async () => {
+                                                await handleLeave();
+                                                navigate("/rooms");
+                                            }}
                                         >Leave Room</button>
                                     )
                             }

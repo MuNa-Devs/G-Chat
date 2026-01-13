@@ -11,7 +11,7 @@ import { server_url } from "../../../creds/server_url";
 import { UiContext } from "../../utils/UiContext";
 
 export default function RoomPage() {
-    const {room_filter, setRoomFilter} = useContext(UiContext);
+    const { room_filter, setRoomFilter } = useContext(UiContext);
 
     const [is_empty, setEmpty] = useState(true);
     const [empty_placeholder, setPlaceHolder] = useState("No Roooms Available");
@@ -24,16 +24,50 @@ export default function RoomPage() {
     const [all_rooms_count, setAllRoomsCount] = useState(0);
     const [my_rooms_count, setMyRoomsCount] = useState(0);
 
-    const {is_loading, user_details} = useContext(AppContext);
+    const { is_loading, user_details } = useContext(AppContext);
+
+    // Search rooms functionality state vars:
+    const [search_query, setSearchQuery] = useState("");
+    const [search_res, setSearchRes] = useState([]);
+    const [did_search, setSearched] = useState(false);
+
+    // Search rooms call-back:
+    useEffect(() => {
+        if (!search_query) {
+            setSearched(false);
+            //
+            return;
+        }
+
+        setSearched(true);
+        const query = new AbortController();
+
+        const search = setTimeout(() => {
+            axios.get(
+                server_url + `/g-chat/rooms/search-rooms?search_query=${search_query}`,
+                { signal: query.signal }
+            ).then(res => {
+                setSearchRes(res.data.rooms_info);
+            }).catch(err => {
+                console.log(err);
+                setSearchRes([]);
+            });
+        }, 500);
+
+        return () => {
+            query.abort();
+            clearTimeout(search);
+        }
+    }, [search_query]);
 
     useEffect(() => {
 
         if (is_loading) return;
 
         setPlaceHolder("Loading available rooms...")
-        
+
         if (room_filter === "my") loadMyRooms();
-        else loadAllRooms();
+        else if (room_filter === "all") loadAllRooms();
     }, [user_details?.id]);
 
     const loadMyRooms = async () => {
@@ -41,6 +75,7 @@ export default function RoomPage() {
         if (is_loading || !user_details.id) return;
 
         setRoomFilter("my");
+        setSearched(false);
         const rooms = await getMyRooms(user_details.id, my_rooms_count);
 
         if (!rooms.length && !my_rooms_count) {
@@ -57,6 +92,7 @@ export default function RoomPage() {
 
     const loadAllRooms = async () => {
         setRoomFilter("all");
+        setSearched(false);
         const rooms = await getAllRooms(all_rooms_count);
 
         if (!rooms.length && !all_rooms_count) {
@@ -99,30 +135,40 @@ export default function RoomPage() {
                         <div className={styles.searchBar}>
                             <div><i className="fa-solid fa-magnifying-glass"></i></div>
 
-                            <input type="text" placeholder="Search by room name, admin..." />
+                            <input
+                                value={search_query}
+                                type="text"
+                                placeholder="Search by room name, admin..."
+                                onChange={e => {
+                                    setSearchQuery(e.target.value);
+                                }}
+                            />
                         </div>
 
-                        <div className={styles.filter}>
-                            <button
-                                className={`${room_filter === "my" && styles.activeBtn} ${styles.filterBtn}`}
-                                onClick={loadMyRooms}
-                            >My Rooms</button>
+                        {
+                            !did_search
+                            &&
+                            <div className={styles.filter}>
+                                <button
+                                    className={`${room_filter === "my" && styles.activeBtn} ${styles.filterBtn}`}
+                                    onClick={loadMyRooms}
+                                >My Rooms</button>
 
-                            <button
-                                className={`${room_filter === "all" && styles.activeBtn} ${styles.filterBtn}`}
-                                onClick={loadAllRooms}
-                            >All Rooms</button>
-                        </div>
+                                <button
+                                    className={`${room_filter === "all" && styles.activeBtn} ${styles.filterBtn}`}
+                                    onClick={loadAllRooms}
+                                >All Rooms</button>
+                            </div>
+                        }
                     </div>
 
                     <div className={styles.rooms}>
                         {is_empty && <h4>{empty_placeholder}</h4>}
 
                         {
-                            !is_empty &&
-                            (
-                                room_filter === "all" ?
-                                all_rooms
+                            did_search
+                            &&
+                            search_res
                                 .filter(room => room.r_type !== "private")
                                 .map(room => (
                                     <Rooms
@@ -136,21 +182,41 @@ export default function RoomPage() {
                                         room_btn="View Room"
                                     />
                                 ))
+                        }
 
-                                :
-                                my_rooms
-                                .map(room => (
-                                    <Rooms
-                                        key={room.r_id}
-                                        room_id={room.r_id}
-                                        logo={`${server_url}/files/${room.icon_url}`}
-                                        room_title={capitalize(room.r_name)}
-                                        prof_name={capitalize(room.username)}
-                                        join={true}
-                                        join_pref={capitalize(room.join_pref)}
-                                        room_btn="Open Room"
-                                    />
-                                ))
+                        {
+                            (!is_empty && !did_search) &&
+                            (
+                                room_filter === "all"
+                                    ?
+                                    all_rooms
+                                        .filter(room => room.r_type !== "private")
+                                        .map(room => (
+                                            <Rooms
+                                                key={room.r_id}
+                                                room_id={room.r_id}
+                                                logo={`${server_url}/files/${room.icon_url}`}
+                                                room_title={capitalize(room.r_name)}
+                                                prof_name={capitalize(room.username)}
+                                                join={true}
+                                                join_pref={capitalize(room.join_pref)}
+                                                room_btn="View Room"
+                                            />
+                                        ))
+                                    :
+                                    my_rooms
+                                        .map(room => (
+                                            <Rooms
+                                                key={room.r_id}
+                                                room_id={room.r_id}
+                                                logo={`${server_url}/files/${room.icon_url}`}
+                                                room_title={capitalize(room.r_name)}
+                                                prof_name={capitalize(room.username)}
+                                                join={true}
+                                                join_pref={capitalize(room.join_pref)}
+                                                room_btn="Open Room"
+                                            />
+                                        ))
                             )
                         }
 
@@ -169,7 +235,7 @@ export default function RoomPage() {
     )
 }
 
-const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+const capitalize = (string) => string?.charAt(0).toUpperCase() + string?.slice(1);
 
 const getMyRooms = async (uid, my_rooms_count) => {
     try {

@@ -2,13 +2,25 @@ const themeFiles = import.meta.glob("../assets/themes/*.css", { eager: true });
 
 import { useState, useEffect, createContext, useContext } from "react";
 
-const ThemeContext = createContext();
+export const ThemeContext = createContext();
 
-export default function ThemeManager({ children }){
+export default function ThemeManager({ children }) {
     const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "NightLight");
 
+    const pickerTheme = {
+        backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-light'),
+        categoryLabelColor: getComputedStyle(document.body).getPropertyValue('--text-primary'),
+        searchBackgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-lighter'),
+        searchColor: getComputedStyle(document.body).getPropertyValue('--text-primary'),
+        emojiHoverBackgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-lighter'),
+        emojiSize: 24,
+        borderRadius: 8,
+        previewBackgroundColor: getComputedStyle(document.body).getPropertyValue('--card-bg'),
+        previewBorderColor: getComputedStyle(document.body).getPropertyValue('--border-light'),
+    };
+
     useEffect(() => {
-        document.body.className = theme;
+        document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
 
@@ -16,7 +28,8 @@ export default function ThemeManager({ children }){
         <ThemeContext.Provider
             value={{
                 theme,
-                setTheme
+                setTheme,
+                pickerTheme
             }}
         >
             {children}
@@ -24,6 +37,6 @@ export default function ThemeManager({ children }){
     );
 }
 
-export function getThemeSetter(){
+export function getThemeSetter() {
     return useContext(ThemeContext);
 }

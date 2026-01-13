@@ -188,6 +188,57 @@
     text-overflow: ellipsis;
 }
 
+.emojiPicker{
+    background-color: transparent;
+    width: calc(100% - 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 16px;
+    margin-right: 16px;
+    height: auto;
+}
+
+.emojiPicker .emojiBox{
+    background-color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 2px;
+
+    width: 100% !important;
+    height: 340px !important;
+    max-width: 900px !important;
+
+    --epr-bg-color: var(--bg);
+    --epr-category-label-bg-color: var(--card-bg);
+}
+
+.emojiBox input {
+    background-color: var(--bg-lighter);
+    color: var(--text);
+    outline: none;
+    border: 1px solid var(--border-light);
+}.emojiBox input:focus{
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    outline: none;
+    caret-color: var(--text-secondary);
+    color: var(--text-secondary);
+}
+
+.emojiBox .EmojiPickerReact {
+    background-color: var(--bg);
+    border: 1px solid var(--border-light);
+}
+
+.emojiBox h2{
+    font-size: 0.9em;
+	margin: 0px;
+	color: var(--text-primary);
+	opacity: 0.9;
+}
+
 .roomContents {
     width: 14rem;
     height: calc(100% - 48px);

@@ -100,7 +100,6 @@ export default function DashBoard() {
 
     /* ---------------- FORMAT TIME ---------------- */
     const formatTime = (time) => {
-        console.log("Formatting time:", time);
         if (!time) return "";
         const date = new Date(time);
         if (isNaN(date.getTime())) return "";

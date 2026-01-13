@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useContext, useRef } from "react";
+import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 
 import SideBar from "../../../../reusable_component/SideBar";
@@ -22,6 +23,15 @@ export default function RoomHome() {
     const [input_height, setInputHeight] = useState(0);
 
     const [sidebar_view, setSidebarView] = useState(true);
+
+    // Emoji Picker:
+    const [show_picker, setShowPicker] = useState(false);
+
+    // Emoji picker call-back:
+    const setEmoji = (emoji_data) => {
+        setMessage(prev => prev + emoji_data.emoji);
+        input_ref?.current?.focus();
+    }
 
     useEffect(() => {
         setSidebarView(window.innerWidth >= 560);
@@ -55,9 +65,7 @@ export default function RoomHome() {
 
         const handleMessage = (res) => {
             setMessages(
-                prev => [...prev, res].sort(
-                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || a.sent_at)
-                )
+                prev => [...prev, res]
             );
         };
 
@@ -106,9 +114,7 @@ export default function RoomHome() {
         };
 
         setMessages(
-            prev => [...prev, local_message].sort(
-                (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
-            )
+            prev => [...prev, local_message]
         );
 
         socket.emit("send-room-message", {
@@ -118,6 +124,7 @@ export default function RoomHome() {
         });
 
         setMessage("");
+        setShowPicker(false);
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
     }
@@ -162,7 +169,7 @@ export default function RoomHome() {
                                 {
                                     state: {
                                         from: `/room/home/${room_id}`
-                                    } 
+                                    }
                                 }
                             )}
                         ><i className="fa-solid fa-bars"></i></button>
@@ -171,25 +178,28 @@ export default function RoomHome() {
                     <div className={styles.chatContainer}>
                         {
                             messages.length ?
-                            messages.map((msg, index) => (
-                                <Message
-                                    key={index}
-                                    conseq_msgs={messages[index - 1]?.user_id === msg.user_id}
-                                    message={msg.message}
-                                    sender_id={msg.user_id}
-                                    sender_name={msg.sender_details?.username || msg.username}
-                                    sender_pfp={msg.sender_details?.pfp || msg.pfp}
-                                    timestamp={msg.timestamp || msg.sent_at}
-                                />
-                            )) :
-                            <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                                messages.map((msg, index) => (
+                                    <Message
+                                        key={index}
+                                        conseq_msgs={messages[index - 1]?.user_id === msg.user_id}
+                                        message={msg.message}
+                                        sender_id={msg.user_id}
+                                        sender_name={msg.sender_details?.username || msg.username}
+                                        sender_pfp={msg.sender_details?.pfp || msg.pfp}
+                                        timestamp={msg.timestamp || msg.sent_at}
+                                    />
+                                )) :
+                                <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
                         }
 
                         <div ref={bottom_ref}></div>
                     </div>
 
                     <div className={styles.textControls}>
-                        <button className={styles.emojis}><i className="fa-regular fa-face-grin-wide"></i></button>
+                        <button
+                            onClick={() => setShowPicker(prev => !prev)}
+                            className={styles.emojis}
+                        ><i className="fa-solid fa-face-laugh"></i></button>
 
                         <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
 
@@ -216,6 +226,24 @@ export default function RoomHome() {
                             onClick={sendMessage}
                         ><i className="fa-solid fa-paper-plane"></i></button>
                     </div>
+
+                    {
+                        show_picker
+                        &&
+                        <div className={styles.emojiPicker}>
+                            <EmojiPicker
+                                className={styles.emojiBox}
+                                onEmojiClick={setEmoji}
+                                autoFocusSearch={false}
+                                searchDisabled={true}
+                                emojiStyle="twitter"
+                                previewConfig={{
+                                    showPreview: false
+                                }}
+                                lazyLoadEmojis={true}
+                            />
+                        </div>
+                    }
                 </div>
 
                 <div className={styles.roomContents}>

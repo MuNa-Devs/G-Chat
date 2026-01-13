@@ -112,7 +112,7 @@ export default function SideBar(props) {
                         <img
                             src={server_url + "/files/" + user_details.pfp}
                             onError={e => {
-                                e.target.onError = null;
+                                e.target.onerror = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
                             }}
                         />

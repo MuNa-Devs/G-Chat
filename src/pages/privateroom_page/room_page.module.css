@@ -344,7 +344,7 @@
     }
 }
 
-@media (max-width: 470px){
+/* @media (max-width: 470px){
     .searchBar input{
         display: none;
     }
@@ -358,7 +358,7 @@
         flex: 0;
         width: auto;
     }
-}
+} */
 
 @media (max-width: 390px){
     .rooms{
