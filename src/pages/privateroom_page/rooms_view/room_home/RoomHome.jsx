@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useContext, useRef } from "react";
-import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 
 import SideBar from "../../../../reusable_component/SideBar";
@@ -8,6 +7,7 @@ import styles from "./room_home.module.css";
 import { server_url } from "../../../../../creds/server_url";
 import { AppContext } from "../../../../Contexts";
 import Message from "../../../../reusable_component/message_dev/Message";
+import EmojiBox from "../../../../reusable_component/emoji_box/EmojiBox";
 
 export default function RoomHome() {
     const bottom_ref = useRef(null);
@@ -209,8 +209,11 @@ export default function RoomHome() {
                             value={message}
                             type="text"
                             placeholder="Type a message"
+                            onClick={() => {
+                                setShowPicker(false);
+                            }}
                             onChange={(e) => {
-                                setMessage(e.target.value)
+                                setMessage(e.target.value);
                                 autoReHeight(e);
                             }}
                             onKeyDown={(e) => {
@@ -231,16 +234,8 @@ export default function RoomHome() {
                         show_picker
                         &&
                         <div className={styles.emojiPicker}>
-                            <EmojiPicker
+                            <EmojiBox
                                 className={styles.emojiBox}
-                                onEmojiClick={setEmoji}
-                                autoFocusSearch={false}
-                                searchDisabled={true}
-                                emojiStyle="twitter"
-                                previewConfig={{
-                                    showPreview: false
-                                }}
-                                lazyLoadEmojis={true}
                             />
                         </div>
                     }

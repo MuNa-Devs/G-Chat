@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     width: 100dvw;
-    height: 100dvh;
+    height: 100svh;
     min-height: 0;
     display: flex;
     flex-direction: row;
@@ -102,7 +102,7 @@
     overflow-y: auto;
 }
 
-.noMsgs{
+.noMsgs {
     width: 100%;
     height: 100%;
     display: flex;
@@ -182,61 +182,21 @@
     resize: none;
     max-height: 150px;
     line-height: 1.4;
-} .textControls > textarea::placeholder {
+}
+
+.textControls>textarea::placeholder {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.emojiPicker{
+.emojiPicker {
     background-color: transparent;
-    width: calc(100% - 32px);
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 16px;
-    margin-right: 16px;
     height: auto;
-}
-
-.emojiPicker .emojiBox{
-    background-color: var(--bg);
-    border: none;
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: 2px;
-
-    width: 100% !important;
-    height: 340px !important;
-    max-width: 900px !important;
-
-    --epr-bg-color: var(--bg);
-    --epr-category-label-bg-color: var(--card-bg);
-}
-
-.emojiBox input {
-    background-color: var(--bg-lighter);
-    color: var(--text);
-    outline: none;
-    border: 1px solid var(--border-light);
-}.emojiBox input:focus{
-    background-color: var(--bg-light);
-    border: 1px solid var(--border-light);
-    outline: none;
-    caret-color: var(--text-secondary);
-    color: var(--text-secondary);
-}
-
-.emojiBox .EmojiPickerReact {
-    background-color: var(--bg);
-    border: 1px solid var(--border-light);
-}
-
-.emojiBox h2{
-    font-size: 0.9em;
-	margin: 0px;
-	color: var(--text-primary);
-	opacity: 0.9;
 }
 
 .roomContents {
@@ -302,6 +262,12 @@
         width: 100%;
         min-height: 0;
     }
+
+    .emojiPicker {
+        margin-left: 4px;
+        margin-right: 4px;
+        width: calc(100% - 8px);
+    }
 }
 
 @media (max-width: 490px) {
@@ -317,18 +283,18 @@
         white-space: pre-wrap;
     }
 
-    .roomControlBar .room_info > h2{
+    .roomControlBar .room_info>h2 {
         word-break: break-word;
     }
 }
 
-@media (max-width: 380px){
-    .textControls>textarea{
+@media (max-width: 380px) {
+    .textControls>textarea {
         padding-left: 4px;
         padding-right: 4px;
     }
 
-    .textControls{
+    .textControls {
         margin: 0px 16px 0px 8px;
     }
 }
