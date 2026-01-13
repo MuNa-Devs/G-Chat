@@ -19,6 +19,10 @@ export default function FriendsPage() {
     const [received, setReceived] = useState([]);
     const [sent, setSent] = useState([]);
     const [activeTab, setActiveTab] = useState("received");
+    const [activeMenu, setActiveMenu] = useState(null);
+    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [showProfile, setShowProfile] = useState(false);
+
 
 
     const searchFriends = async (query) => {
@@ -66,6 +70,26 @@ export default function FriendsPage() {
         setReceived(prev => prev.filter(r => r.id !== requestId));
     };
 
+const openProfile = async (friendId) => {
+    try {
+        const res = await axios.get(
+            `${server_url}/g-chat/users/${friendId}/profile`
+        );
+
+        setSelectedFriend(res.data);
+        setShowProfile(true);
+    } catch (err) {
+        if (err.response?.status === 404) {
+            console.error("User profile not found");
+        } else {
+            console.error(err);
+        }
+    }
+};
+
+
+
+
 
 
     useEffect(() => {
@@ -105,12 +129,17 @@ export default function FriendsPage() {
             .catch(console.error);
 
     }, [showRequests, user_details]);
+    useEffect(() => {
+    const closeMenu = () => setActiveMenu(null);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+}, []);
 
 
 
     return (
         <div className={styles.friendsMain}>
-            <SideBar
+            <SideBar className={styles.sidebar}
                 logo="#"
                 active_page={'friends'}
             />
@@ -188,15 +217,90 @@ export default function FriendsPage() {
 
                     {friends.map((f) => (
                         <div key={f.id} className={styles.friendItem}>
-                            <div className={styles.avatar}>
-                                {f.username.charAt(0).toUpperCase()}
-                            </div>
+    <div className={styles.avatar}>
+        {f.username.charAt(0).toUpperCase()}
+    </div>
 
-                            <div className={styles.userInfo}>
-                                <div className={styles.username}>{f.username}</div>
-                                <div className={styles.subText}>Friend</div>
-                            </div>
-                        </div>
+    <div className={styles.userInfo}>
+        <div className={styles.username}>{f.username}</div>
+        <div className={styles.subText}>Friend</div>
+    </div>
+
+    <div
+        className={styles.menuIcon}
+        onClick={(e) => {
+            e.stopPropagation();
+            setActiveMenu(f.id);
+        }}
+    >
+        ⋮
+    </div>
+
+    {showProfile && selectedFriend && (
+    <div
+        className={styles.profileOverlay}
+        onClick={() => setShowProfile(false)}
+    >
+        <div
+            className={styles.profileModal}
+            onClick={(e) => e.stopPropagation()}
+        >
+           <img
+    src={
+        selectedFriend.pfp
+            ? `${server_url}/files/${selectedFriend.pfp}`
+            : "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
+    }
+    onError={(e) => {
+        e.currentTarget.src =
+            "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+    }}
+    className={styles.profilePic}
+    alt="profile"
+/>
+
+            <div className={styles.fname}>
+            <h3>{selectedFriend.username}</h3>
+            </div>
+            <div className={styles.fdept}>
+            <p className={styles.department}>
+                {selectedFriend.department || "No department"}
+            </p>
+            </div>
+            <div className={styles.fabout}>
+            <p className={styles.about}>
+                {selectedFriend.about || "No bio available"}
+            </p>
+            </div>
+
+            <button
+                className={styles.messageBtn}
+                onClick={() => {
+                    setShowProfile(false);
+                    navigate(`/dm/${selectedFriend.id}`);
+                }}
+            >
+                Message
+            </button>
+        </div>
+    </div>
+)}
+
+
+    {activeMenu === f.id && (
+        <div className={styles.menu}>
+            <div onClick={() => openChat(f.id)}>Message</div>
+            <div onClick={() => openProfile(f.id)}>View Profile</div>
+            <div
+                className={styles.danger}
+                onClick={() => removeFriend(f.id)}
+            >
+                Remove Friend
+            </div>
+        </div>
+    )}
+</div>
+    
                     ))}
                 </div>
 
