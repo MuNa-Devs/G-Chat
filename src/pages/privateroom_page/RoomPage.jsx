@@ -4,12 +4,15 @@ import SideBar from "../../reusable_component/SideBar"
 
 import { useState, useEffect, useContext } from "react"
 import NewRoom from "./CreateRoom";
-import axios from "axios";
+import axios, { all } from "axios";
 import { AppContext } from "../../Contexts";
 import LoadingScreen from "../loading_screen/LoadingScreen";
 import { server_url } from "../../../creds/server_url";
+import { UiContext } from "../../utils/UiContext";
 
 export default function RoomPage() {
+    const {room_filter, setRoomFilter} = useContext(UiContext);
+
     const [is_empty, setEmpty] = useState(true);
     const [empty_placeholder, setPlaceHolder] = useState("No Roooms Available");
 
@@ -21,8 +24,6 @@ export default function RoomPage() {
     const [all_rooms_count, setAllRoomsCount] = useState(0);
     const [my_rooms_count, setMyRoomsCount] = useState(0);
 
-    const [room_filter, setFilter] = useState("my");
-
     const {is_loading, user_details} = useContext(AppContext);
 
     useEffect(() => {
@@ -30,14 +31,16 @@ export default function RoomPage() {
         if (is_loading) return;
 
         setPlaceHolder("Loading available rooms...")
-        loadMyRooms();
+        
+        if (room_filter === "my") loadMyRooms();
+        else loadAllRooms();
     }, [user_details?.id]);
 
     const loadMyRooms = async () => {
 
         if (is_loading || !user_details.id) return;
 
-        setFilter("my");
+        setRoomFilter("my");
         const rooms = await getMyRooms(user_details.id, my_rooms_count);
 
         if (!rooms.length && !my_rooms_count) {
@@ -53,7 +56,7 @@ export default function RoomPage() {
     }
 
     const loadAllRooms = async () => {
-        setFilter("all");
+        setRoomFilter("all");
         const rooms = await getAllRooms(all_rooms_count);
 
         if (!rooms.length && !all_rooms_count) {
@@ -80,7 +83,7 @@ export default function RoomPage() {
             <div className={styles.mainLayout}>
                 <div className={styles.header}>
                     <div className={styles.heading}>
-                        <h2>Private Rooms</h2>
+                        <h2>Rooms</h2>
 
                         <p>A list of all GITAM chat rooms you can join.</p>
                     </div>
@@ -104,6 +107,7 @@ export default function RoomPage() {
                                 className={`${room_filter === "my" && styles.activeBtn} ${styles.filterBtn}`}
                                 onClick={loadMyRooms}
                             >My Rooms</button>
+
                             <button
                                 className={`${room_filter === "all" && styles.activeBtn} ${styles.filterBtn}`}
                                 onClick={loadAllRooms}
@@ -183,6 +187,7 @@ const getMyRooms = async (uid, my_rooms_count) => {
 
 const getAllRooms = async (all_rooms_count) => {
     try {
+        console.log(all_rooms_count);
         const res = await axios.get(
             `${server_url}/g-chat/rooms/get_all_rooms?rooms_count=${all_rooms_count}`
         );

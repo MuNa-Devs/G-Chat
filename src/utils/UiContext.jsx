@@ -6,11 +6,16 @@ export const UiContext = createContext();
 export default function UiContextProvider({ children }){
     const [override, setOverride] = useState(null);
 
+    // Room Filter:
+    const [room_filter, setRoomFilter] = useState("my");
+
     return (
         <UiContext.Provider
             value={{
                 override,
-                setOverride
+                setOverride,
+                room_filter,
+                setRoomFilter
             }}
         >
             {children}

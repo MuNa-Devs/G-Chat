@@ -50,35 +50,50 @@ export default function SideBar(props) {
                         className={`
                             ${props.active_page == "dashboard" && styles.activeBtn}
                         `}
-                        onClick={() => navigate("/dashboard")}
+                        onClick={() => {
+                            navigate("/dashboard");
+                            setOpenLeft(false);
+                        }}
                     ><i className="fa-solid fa-table-columns"></i> <span>Dashboard</span></button>
 
                     <button
                         className={`
                             ${props.active_page == "dms" && styles.activeBtn}
                         `}
-                        onClick={() => navigate("/direct-messages")}
+                        onClick={() => {
+                            navigate("/direct-messages");
+                            setOpenLeft(false);
+                        }}
                     ><i className="fa-solid fa-message"></i> <span>Messages</span></button>
 
                     <button
                         className={`
                             ${props.active_page == "privaterooms" && styles.activeBtn}
                         `}
-                        onClick={() => navigate("/rooms")}
+                        onClick={() => {
+                            navigate("/rooms");
+                            setOpenLeft(false);
+                        }}
                     ><i className="fa-solid fa-people-roof"></i> <span>Rooms</span></button>
 
                     <button
                         className={`
                             ${props.active_page == "friends" && styles.activeBtn}
                         `}
-                        onClick={() => navigate("/friends")}
+                        onClick={() => {
+                            navigate("/friends");
+                            setOpenLeft(false);
+                        }}
                     ><i className="fa-solid fa-user-group"></i> <span>Friends</span></button>
                 </div>
 
                 <div className={styles.sidebarUtils}>
                     <button
                         className={styles.settings}
-                        onClick={() => navigate("/settings", { state: { from: props.location } })}
+                        onClick={() => {
+                            navigate("/settings", { state: { from: props.location } });
+                            setOpenLeft(false);
+                        }}
                     ><i className="fa-solid fa-gear"></i> <span>Settings</span></button>
 
                     <button

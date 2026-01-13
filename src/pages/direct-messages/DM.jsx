@@ -45,7 +45,10 @@ export default function DM() {
             server_url + `/g-chat/dms/get-chats?contact_id=${selected_contactID}`
         ).then(res => {
             const data = res.data;
-            setMessages(data.chats);
+            setMessages(data.chats.sort(
+                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
+                )
+            );
         }).catch(err => {
             console.log(err);
         });
@@ -66,9 +69,7 @@ export default function DM() {
 
         const handleMessage = (res) => {
             setMessages(
-                prev => [...prev, res].sort(
-                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || a.sent_at)
-                )
+                prev => [...prev, res]
             );
         };
 
@@ -106,9 +107,7 @@ export default function DM() {
         }
 
         setMessages(
-            prev => [...prev, local_message].sort(
-                (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
-            )
+            prev => [...prev, local_message]
         );
 
         socket.emit("send-dm", {
@@ -176,7 +175,7 @@ export default function DM() {
                                             sender_id={msg.sent_by}
                                             sender_name={msg.username}
                                             sender_pfp={msg.pfp}
-                                            timestamp={msg.sent_at}
+                                            timestamp={msg.sent_at || msg.timestamp}
                                         />
                                     ))
 
@@ -364,3 +363,8 @@ function Contact(props) {
         </div>
     );
 }
+
+const normalizeMessage = (msg) => ({
+    ...msg,
+    time: new Date(msg.sent_at || msg.timestamp).getTime()
+});
