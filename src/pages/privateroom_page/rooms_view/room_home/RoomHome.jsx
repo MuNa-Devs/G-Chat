@@ -31,6 +31,7 @@ export default function RoomHome() {
     const setEmoji = (emoji_data) => {
         setMessage(prev => prev + emoji_data.emoji);
         input_ref?.current?.focus();
+        console.log("hello");
     }
 
     useEffect(() => {
@@ -235,7 +236,7 @@ export default function RoomHome() {
                         &&
                         <div className={styles.emojiPicker}>
                             <EmojiBox
-                                className={styles.emojiBox}
+                                setEmoji={setEmoji}
                             />
                         </div>
                     }

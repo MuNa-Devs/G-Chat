@@ -5,12 +5,13 @@ import styles from "./picker.module.css";
 export default function EmojiBox(props) {
 
     return (
-        <div className={styles.emojiPicker}>
+        <div className={styles.emojiPickerContainer}>
             <EmojiPicker
                 className={styles.emojiBox}
-                onEmojiClicked={props.onEmojiClicked}
+                onEmojiClick={props.setEmoji}
                 autoFocusSearch={false}
                 searchDisabled={true}
+                suggestedEmojisMode="recent"
                 emojiStyle="google"
                 previewConfig={{
                     showPreview: false

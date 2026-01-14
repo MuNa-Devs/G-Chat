@@ -1,6 +1,6 @@
 /* Sidebar at left */
 .sidebarAtLeft {
-    height: 100dvh;
+    height: var(--vh);
     width: 15rem;
     display: flex;
     flex-direction: column;

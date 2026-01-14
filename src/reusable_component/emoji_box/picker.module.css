@@ -1,4 +1,4 @@
-.emojiPicker {
+.emojiPickerContainer {
     background-color: transparent;
     width: calc(100% - 32px);
     display: flex;
@@ -9,7 +9,7 @@
     height: auto;
 }
 
-.emojiPicker .emojiBox {
+.emojiPickerContainer .emojiBox {
     background-color: var(--bg);
     border: none;
     border-radius: 8px;
@@ -52,13 +52,13 @@
 }
 
 @media (max-width: 560px){
-    .emojiPicker {
+    .emojiPickerContainer {
         margin-left: 1px;
         margin-right: 1px;
         width: calc(100% - 2px);
     }
 
-    .emojiPicker .emojiBox{
+    .emojiPickerContainer .emojiBox{
         padding: 0px !important;
     }
 }
