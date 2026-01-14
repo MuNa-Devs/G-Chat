@@ -88,6 +88,20 @@ const openProfile = async (friendId) => {
 };
 
 
+const removeFriend = async (friendId) => {
+    try {
+        await axios.post(`${server_url}/g-chat/remove-friend`, {
+            userId: user_details.id,
+            friendId
+        });
+
+        setFriends(prev => prev.filter(f => f.id !== friendId));
+    } catch (err) {
+        console.error(err);
+        alert("Failed to remove friend");
+    }
+};
+
 
 
 
