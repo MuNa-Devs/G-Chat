@@ -8,6 +8,7 @@ import { server_url } from "../../../../../creds/server_url";
 import { AppContext } from "../../../../Contexts";
 import Message from "../../../../reusable_component/message_dev/Message";
 import EmojiBox from "../../../../reusable_component/emoji_box/EmojiBox";
+import FileObject from "../../../../reusable_component/file_object/FileObject";
 
 export default function RoomHome() {
     const bottom_ref = useRef(null);
@@ -24,6 +25,16 @@ export default function RoomHome() {
 
     const [sidebar_view, setSidebarView] = useState(true);
 
+    // File Picker:
+    const [show_file_object, setShowFileObject] = useState(false);
+    const [files, setFiles] = useState([]);
+
+    // File input handler:
+    const handleFiles = (e) => {
+        setFiles(Array.from(e.target.files));
+        setShowFileObject(true);
+    }
+
     // Emoji Picker:
     const [show_picker, setShowPicker] = useState(false);
 
@@ -31,7 +42,6 @@ export default function RoomHome() {
     const setEmoji = (emoji_data) => {
         setMessage(prev => prev + emoji_data.emoji);
         input_ref?.current?.focus();
-        console.log("hello");
     }
 
     useEffect(() => {
@@ -98,34 +108,62 @@ export default function RoomHome() {
     };
 
     const sendMessage = async () => {
-        if (message.trim() === "") {
+        if (!message.trim() && files.length === 0) {
             setMessage("");
+            setFiles([]);
             input_ref.current.style.height = "auto";
             input_ref.current?.focus();
 
             return;
         }
 
-        const local_message = {
-            message: message.trim(),
-            user_id: user_details.id,
-            sender_name: user_details.username,
-            pfp: user_details.pfp,
-            timestamp: new Date()
-        };
+        // const local_message = {
+        //     message: message.trim(),
+        //     user_id: user_details.id,
+        //     sender_name: user_details.username,
+        //     pfp: user_details.pfp,
+        //     timestamp: new Date()
+        // };
 
-        setMessages(
-            prev => [...prev, local_message]
+        // setMessages(
+        //     prev => [...prev, local_message]
+        // );
+
+        // socket.emit("send-room-message", {
+        //     user_id: user_details?.id,
+        //     room_id: room_id,
+        //     message: message.trim()
+        // });
+
+        const form = new FormData();
+
+        form.append("room_id", room_id);
+        form.append("user_id", user_details?.id || localStorage.getItem("user_id"));
+        form.append("sender_name", user_details?.username);
+        form.append("pfp", user_details?.pfp);
+        form.append("timestamp", new Date());
+        form.append("message", message.trim());
+        files.forEach(file => form.append("files", file));
+
+        axios.post(
+            server_url + "/g-chat/rooms/room-message",
+            form,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
         );
 
-        socket.emit("send-room-message", {
-            user_id: user_details?.id,
-            room_id: room_id,
-            message: message.trim()
-        });
+        // const local_message = Object.fromEntries(form.entries());
 
         setMessage("");
         setShowPicker(false);
+        setFiles([]);
+        setShowFileObject(false);
+
+        document.getElementById("file").value = "";
+
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
     }
@@ -196,13 +234,36 @@ export default function RoomHome() {
                         <div ref={bottom_ref}></div>
                     </div>
 
+                    {
+                        show_file_object
+                        &&
+                        <FileObject
+                            files={files}
+                        />
+                    }
+
                     <div className={styles.textControls}>
                         <button
                             onClick={() => setShowPicker(prev => !prev)}
                             className={styles.emojis}
                         ><i className="fa-solid fa-face-laugh"></i></button>
 
-                        <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
+                        <button 
+                            className={styles.files}
+                            onClick={() => {
+                                document.getElementById("file").click();
+                            }}
+                        ><i className="fa-solid fa-paperclip"></i></button>
+
+                        <input
+                            id="file"
+                            type="file"
+                            multiple
+                            onChange={handleFiles}
+                            style={{
+                                display: "none"
+                            }}
+                        />
 
                         <textarea
                             rows={1}

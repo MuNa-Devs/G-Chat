@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     width: 100dvw;
-    height: var(--vh);
+    height: 100dvh;
     min-height: 0;
     display: flex;
     flex-direction: row;
@@ -245,8 +245,6 @@
         padding-bottom: 8px;
         border-radius: 8px;
         border: 1px solid var(--bg-lighter);
-        max-height: 100%;
-        overflow-y: auto;
     }
 }
 

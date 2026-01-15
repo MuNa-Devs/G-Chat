@@ -1,7 +1,6 @@
 body{
 	margin: 0;
 	padding: 0;
-	height: var(--vh);
 	background-color: var(--bg);
 	letter-spacing: 0.3px;
 }
@@ -14,11 +13,12 @@ body{
 	margin: 0;
 	padding: 0;
     width: 4px;
+	height: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: var(--card-bg);
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-track {

@@ -33,4 +33,16 @@
     --danger-light: #e67b78;
 
     --shadow: rgba(0, 0, 0, 0.05);
+
+    --icon-fg: #f5f5f5;
+    --image-icon-bg: #4e4d4d;
+    --ppt-icon-bg: #D24726;
+    --spr-icon-bg: #217346;
+    --word-icon-bg: #2B579A;
+    --audio-icon-bg: #AF52DE;
+    --video-icon-bg: #800080;
+    --pdf-icon-bg: #E41F26;
+    --csv-icon-bg: #0F9D58;
+    --text-icon-bg: rgb(17, 165, 165);
+    --file-icon-bg: #9E9E9E;
 }

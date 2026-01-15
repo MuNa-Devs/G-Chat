@@ -1,0 +1,81 @@
+.filesDiv{
+    width: calc(100% - 32px);
+    height: auto;
+    padding: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.fileObject{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 8px;
+    padding: 8px;
+}
+
+.icon{
+    background-color: var(--file-icon-bg);
+    padding: 8px;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 24px;
+    width: 24px;
+}
+
+.icon i{
+    color: var(--icon-fg);
+    font-size: 1.2em;
+}
+
+/* File type based styles */
+.image{
+    background-color: var(--image-icon-bg);
+}
+
+.presentation{
+    background-color: var(--ppt-icon-bg);
+}
+
+.spreadsheet{
+    background-color: var(--spr-icon-bg);
+}
+
+.word{
+    background-color: var(--word-icon-bg);
+}
+
+.audio{
+    background-color: var(--audio-icon-bg);
+}
+
+.video{
+    background-color: var(--video-icon-bg);
+}
+
+.pdf{
+    background-color: var(--pdf-icon-bg);
+}
+
+.csv{
+    background-color: var(--csv-icon-bg);
+}
+
+.text{
+    background-color: var(--text-icon-bg);
+}
