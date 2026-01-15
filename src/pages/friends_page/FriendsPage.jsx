@@ -54,16 +54,36 @@ export default function FriendsPage() {
     };
 
 
-    const acceptRequest = async (requestId) => {
-        await axios.post(`${server_url}/g-chat/accept-request`, { requestId: requestId, userId: user_details.id });
+const acceptRequest = async (requestId) => {
+    try {
+        await axios.post(
+            `${server_url}/g-chat/accept-request`,
+            {
+                requestId,
+                userId: user_details.id
+            }
+        );
 
+        // remove from received UI
         setReceived(prev => prev.filter(r => r.id !== requestId));
 
-        const res = await axios.get(
+        // refresh sent requests (opposite request deleted in backend)
+        const sentRes = await axios.get(
+            `${server_url}/g-chat/requests/sent/${user_details.id}`
+        );
+        setSent(sentRes.data);
+
+        // refresh friends list
+        const friendsRes = await axios.get(
             `${server_url}/g-chat/friends/${user_details.id}`
         );
-        setFriends(res.data);
-    };
+        setFriends(friendsRes.data);
+
+    } catch (err) {
+        console.error("Accept request failed:", err);
+    }
+};
+
 
     const rejectRequest = async (requestId) => {
         await axios.post(`${server_url}/g-chat/reject-request`, { requestId: requestId, userId: user_details.id });
@@ -101,6 +121,14 @@ const removeFriend = async (friendId) => {
         alert("Failed to remove friend");
     }
 };
+
+     const isFriend = (userId) =>
+    friends.some(f => f.id === userId);
+
+const isPending = (userId) =>
+    sent.some(s => s.receiver_id === userId) ||
+    received.some(r => r.sender_id === userId);
+
 
 
 
@@ -194,21 +222,32 @@ const removeFriend = async (friendId) => {
                     )}
 
                     {!loading && results.map((u) => (
-                        <div key={u.id} className={styles.friendItem}>
-                            <div className={styles.avatar}>
-                                {u.username.charAt(0).toUpperCase()}
-                            </div>
+    <div key={u.id} className={styles.friendItem}>
+        <div className={styles.avatar}>
+            {u.username.charAt(0).toUpperCase()}
+        </div>
 
-                            <div className={styles.userInfo}>
-                                <div className={styles.username}>{u.username}</div>
-                                <div className={styles.subText}>Click to add friend</div>
-                            </div>
+        <div className={styles.userInfo}>
+            <div className={styles.username}>{u.username}</div>
+        </div>
 
-                            <button
-                                onClick={() => sendRequest(u.id)}
-                                className={styles.addBtn}>Add</button>
-                        </div>
-                    ))}
+        <div className={styles.action}>
+            {isFriend(u.id) ? (
+                <span className={styles.connected}>Connected</span>
+            ) : isPending(u.id) ? (
+                <span className={styles.pending}>Pending</span>
+            ) : (
+                <button
+                    onClick={() => sendRequest(u.id)}
+                    className={styles.addBtn}
+                >
+                    Add Friend
+                </button>
+            )}
+        </div>
+    </div>
+))}
+
 
                     {!loading && hasSearched && results.length === 0 && (
                         <div className={styles.emptyState}>
@@ -357,7 +396,7 @@ const removeFriend = async (friendId) => {
 
                                             <div>
                                                 <button
-                                                    onClick={() => acceptRequest(r.id)}
+                                                    onClick={() => acceptRequest(r.id,r.sender_id)}
                                                     className={styles.accept}
                                                 >
                                                     Accept
