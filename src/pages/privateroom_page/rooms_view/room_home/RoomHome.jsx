@@ -33,6 +33,7 @@ export default function RoomHome() {
     const handleFiles = (e) => {
         setFiles(Array.from(e.target.files));
         setShowFileObject(true);
+        input_ref?.current?.focus();
     }
 
     // Emoji Picker:
@@ -75,6 +76,7 @@ export default function RoomHome() {
         if (!socket || !room_id) return;
 
         const handleMessage = (res) => {
+            console.log(res);
             setMessages(
                 prev => [...prev, res]
             );
@@ -141,9 +143,13 @@ export default function RoomHome() {
         form.append("user_id", user_details?.id || localStorage.getItem("user_id"));
         form.append("sender_name", user_details?.username);
         form.append("pfp", user_details?.pfp);
-        form.append("timestamp", new Date());
         form.append("message", message.trim());
         files.forEach(file => form.append("files", file));
+        
+        const local_message = Object.fromEntries(form.entries());
+        local_message["files"] = [];
+
+        for (const file of files)
 
         axios.post(
             server_url + "/g-chat/rooms/room-message",
@@ -154,8 +160,6 @@ export default function RoomHome() {
                 }
             }
         );
-
-        // const local_message = Object.fromEntries(form.entries());
 
         setMessage("");
         setShowPicker(false);
