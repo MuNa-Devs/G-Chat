@@ -2,7 +2,7 @@ import styles from "./dm.module.css";
 import SideBar from "../../reusable_component/SideBar";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
-import Message from "../../reusable_component/message_dev/Message";
+import {Message} from "../../reusable_component/message_dev/Message";
 
 import { useContext, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,17 +14,30 @@ export default function DM() {
     const bottom_ref = useRef(null);
     const input_ref = useRef(null);
 
+    // To set all messages
     const [messages, setMessages] = useState([]);
+
+    // To set current message
     const [message, setMessage] = useState("");
+
+    // To set chat contacts
     const [chats, setChats] = useState([]);
+
+    // To set contact selected or not
     const [chat_selected, setChatSelected] = useState(false);
+
+    // To set selected contact's ID
     const [selected_contactID, setSelectedCID] = useState(null);
+
+    // To set selected contact's details
     const [contact_details, setContactDetails] = useState({});
 
+    // To get to the bottom of the chats
     useEffect(() => {
         bottom_ref?.current?.scrollIntoView();
     }, [messages]);
 
+    // To get all the contacts of the user
     useEffect(() => {
         axios.get(
             server_url + `/g-chat/dms/get-contacts?user_id=${user_details?.id || localStorage.getItem("user_id")}`
@@ -36,6 +49,7 @@ export default function DM() {
         });
     }, []);
 
+    // To fetch all the messages of a particular contact
     useEffect(() => {
         if (!chat_selected || !selected_contactID) return;
 
@@ -54,16 +68,18 @@ export default function DM() {
         });
     }, [selected_contactID]);
 
+    // To open socket room with selected contact
     useEffect(() => {
         if (!socket || !selected_contactID) return;
 
-        socket.emit("connect-dm", { selected_contactID });
+        socket.emit("connect-dm", { contact_id: selected_contactID });
 
         return () => {
-            socket.emit("disconnect-dm", { selected_contactID });
+            socket.emit("disconnect-dm", { contact_id: selected_contactID });
         }
     }, [socket, selected_contactID]);
 
+    // To get the messages when active
     useEffect(() => {
         if (!socket || !selected_contactID) return;
 
@@ -86,6 +102,7 @@ export default function DM() {
         thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
     }
 
+    // To send message + optimistic UI update
     const sendMessage = () => {
         if (message.trim() === "") {
             setMessage("");

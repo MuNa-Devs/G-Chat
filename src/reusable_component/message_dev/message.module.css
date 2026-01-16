@@ -1,46 +1,39 @@
-.messageDiv {
+/* Main Div Wrappers */
+.messageDiv,
+.fileDiv {
     margin: 0;
     height: auto;
     width: calc(100% - 16px);
-    padding: 8px;
-    padding-bottom: 4px;
-    padding-top: 4px;
+    padding: 4px 8px;
 }
 
-.senderMsg {
+/* Sender message and file wrapper */
+.senderMsg, 
+.senderFile {
     margin: 0;
     padding: 0px;
-    padding-left: 8px;
-    width: calc(100% - 8px);
+    width: calc(100%);
     display: flex;
     align-items: center;
     justify-content: flex-start;
 }
 
-.myMsg {
+/* My message and file wrapper */
+.myMsg,
+.myFile {
     margin: 0;
     padding: 0px;
-    padding-right: 8px;
-    width: calc(100% - 8px);
+    width: calc(100%);
     display: flex;
     align-items: center;
     justify-content: flex-end;
 }
 
-.conseqMsg>img {
-    display: none;
-}
-
-.senderMsg.conseqMsg .message {
-    margin-left: 56px;
-}
-
-.myMsg.conseqMsg .message {
-    margin-right: 56px;
-}
-
+/* Avatar styles */
 .senderMsg>img,
-.myMsg>img {
+.myMsg>img,
+.senderFile>img,
+.myFile>img {
     height: 48px;
     width: 48px;
     border-radius: 50%;
@@ -48,16 +41,23 @@
     object-position: center;
 }
 
-.senderMsg>img {
+/* Sender Avatar */
+.senderMsg>img,
+.senderFile>img {
     margin-right: 8px;
 }
 
-.myMsg>img {
+/* My avatar */
+.myMsg>img,
+.myFile>img {
     margin-left: 8px;
 }
 
+/* Message & File div styles */
 .senderMsg .message,
-.myMsg .message {
+.myMsg .message,
+.senderFile .file,
+.myFile .file {
     width: auto;
     height: auto;
     padding: 8px;
@@ -66,22 +66,30 @@
     justify-content: space-between;
     gap: 8px;
     border-radius: 8px;
-    color: var(--button-text);
     max-width: 56%;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap; 
 }
 
-.senderMsg .message {
+/* Sender message & file div styles */
+.senderMsg .message,
+.senderFile .file{
     background-color: var(--accent);
+    color: var(--text-primary);
 }
 
-.myMsg .message {
+/* My message & file div styles */
+.myMsg .message,
+.myFile .file {
     background-color: var(--card-bg);
+    color: var(--button-text);
 }
 
-.message>p {
+/* Message text styles */
+.message>p,
+.senderFile .file .fileInfo>h3,
+.myFile .file .fileInfo>h3 {
     flex: 1;
     padding: 4px;
     font-size: 0.85em;
@@ -90,7 +98,9 @@
     word-break: break-word;
 }
 
-.message .time {
+/* Message time styles */
+.message .time,
+.file .time {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
@@ -98,22 +108,66 @@
     height: auto;
 }
 
-.myMsg .time>p {
+.myMsg .time>p,
+.file .time>p {
     font-size: 0.6em;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
     opacity: 0.85;
 }
 
-.senderMsg .time>p {
+.senderMsg .message .time>p,
+.senderFile .file .time>p {
     font-size: 0.6em;
     letter-spacing: 0.5px;
     color: var(--primary-light);
 }
 
+/* File info block (inside file div) styles */
+.senderFile .file .fileInfo,
+.myFile .file .fileInfo{
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    height: auto;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+/* File icon styles */
+.icon{
+    background-color: var(--file-icon-bg);
+    padding: 8px;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 24px;
+    width: 24px;
+}
+
+.icon i{
+    color: var(--icon-fg);
+    font-size: 1.2em;
+}
+
+.senderFile .file .fileInfo,
+.myFile .file .fileInfo{
+    cursor: pointer;
+}
+
+.messageLoader{
+    font-size: 0.75em;
+    color: var(--text-secondary);
+}
+
 /* Media Queries */
 @media (max-width: 630px) {
-    .messageDiv {
+    .messageDiv,
+    .fileDiv {
         margin: 0;
         height: auto;
         width: calc(100% - 4px);
@@ -122,11 +176,13 @@
         padding-top: 4px;
     }
 
-    .myMsg > img{
+    .myMsg > img,
+    .myFile > img{
         margin-left: 4px;
     }
 
-    .senderMsg > img{
+    .senderMsg > img,
+    .senderFile > img{
         margin-right: 4px;
     }
 }

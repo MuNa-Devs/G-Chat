@@ -1,7 +1,7 @@
 import styles from "./fileobject.module.css";
 
 export const getIcon = (file) => {
-    const ext = file.name.split('.').pop().toLowerCase();
+    const ext = file?.name?.split('.').pop().toLowerCase() || file?.split('.').pop().toLowerCase();
 
     if (["png", "jpeg", "jpg", "webp", "svg", "ico"].includes(ext))
         return {
@@ -54,7 +54,10 @@ export const getIcon = (file) => {
         classname: styles.text
     };
 
-    return { element: <i className="fa-solid fa-file"></i> };
+    return { 
+        element: <i className="fa-solid fa-file"></i>,
+        classname: styles.file
+    };
 };
 
 export default function FileObject(props) {

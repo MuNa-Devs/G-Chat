@@ -8,6 +8,7 @@ import axios from "axios";
 
 import { server_url } from "../../../../../creds/server_url";
 import { AppContext } from "../../../../Contexts";
+import NewRoom from "../../CreateRoom";
 
 export default function ViewRoom() {
     const { room_id } = useParams();
@@ -36,6 +37,7 @@ export default function ViewRoom() {
         ).then(res => {
             const data = res.data;
             setRoomData(data.room_info);
+            console.log(data.room_info);
         }).catch(err => {
             console.log(err);
         });
@@ -71,6 +73,8 @@ export default function ViewRoom() {
             console.log(err);
         });
     }
+
+    const [show_settings, setShowSettings] = useState(false);
 
     return (
         <div className={styles.viewRoom}>
@@ -131,13 +135,13 @@ export default function ViewRoom() {
                             {
                                 (
                                     from.startsWith("/rooms")
-                                    && 
+                                    &&
                                     is_member
                                 )
                                 &&
                                 <button
                                     className="utilBtn"
-                                    style={{marginRight: "16px"}}
+                                    style={{ marginRight: "16px" }}
                                     onClick={() => navigate(`/room/home/${room_id}`)}
                                 >Open Room</button>
                             }
@@ -145,7 +149,7 @@ export default function ViewRoom() {
                                 !room_members.some(
                                     member => member.id === c_user_id
                                 )
-                                ?
+                                    ?
                                     (
                                         room_data.join_pref !== "Invite Only" &&
                                         <button className="utilBtn"
@@ -160,7 +164,7 @@ export default function ViewRoom() {
                                             }
                                         </button>
                                     )
-                                :
+                                    :
                                     (
                                         user_details.id !== room_data.id
                                         &&
@@ -185,6 +189,15 @@ export default function ViewRoom() {
                     </div>
                 </div>
 
+                {
+                    c_user_id === room_data.id
+                    &&
+                    <button
+                        className="utilBtn"
+                        onClick={() => setShowSettings(true)}
+                    >Change Room Settings</button>
+                }
+
                 <div className={styles.members}>
                     <h3>Room Members</h3>
 
@@ -197,8 +210,8 @@ export default function ViewRoom() {
 
                     {
                         room_members?.length > 0 && room_members.map(member => (
-                            member.id !== room_data.id 
-                            && 
+                            member.id !== room_data.id
+                            &&
                             <RoomMember
                                 key={member.id}
                                 admin={false}
@@ -211,6 +224,25 @@ export default function ViewRoom() {
 
                 <div className={styles.buffer}></div>
             </div>
+
+            {
+                show_settings
+                &&
+                <div className={styles.roomSettings}>
+                    <NewRoom
+                        header="Change Room Settings"
+                        btn_text="Update"
+                        icon_url={room_data.icon_url}
+                        image_upload_text="Update Logo"
+                        alter="Update"
+                        altering="Updating..."
+                        room_data={room_data}
+                        api="update"
+                        closeHook={setShowSettings}
+                        setRefreshState={setRefreshState}
+                    />
+                </div>
+            }
         </div>
     );
 }

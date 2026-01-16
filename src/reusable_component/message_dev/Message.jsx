@@ -1,19 +1,21 @@
 import styles from "./message.module.css";
 import { server_url } from "../../../creds/server_url";
+import { getIcon } from "../file_object/FileObject";
+import { useRef, useState } from "react";
 
-export default function Message(props) {
+const formatTime = (time) => {
+    if (!time) return "";
 
-    const formatTime = (time) => {
-        if (!time) return "";
+    const date = new Date(time);
+    if (isNaN(date.getTime())) return "";
 
-        const date = new Date(time);
-        if (isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+};
 
-        return date.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    };
+export function Message(props) {
 
     return (
         <div className={styles.messageDiv}>
@@ -22,7 +24,7 @@ export default function Message(props) {
                     ?
                     <div className={`${(
                         props.conseq_msgs && props.constraint !== "no-logo"
-                        ) && styles.conseqMsg} ${styles.senderMsg}`}>
+                    ) && styles.conseqMsg} ${styles.senderMsg}`}>
                         {
                             props.constraint !== "no-logo"
                             &&
@@ -49,7 +51,106 @@ export default function Message(props) {
                             <p>{props.message}</p>
 
                             <div className={styles.time}>
+                                {
+                                    props.status === "pending"
+                                    ?
+                                    <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
+                                    :
+                                    <p>{formatTime(props.timestamp)}</p>
+                                }
+                            </div>
+                        </div>
+
+                        {
+                            props.constraint !== "no-logo"
+                            &&
+                            <img
+                                src={server_url + `/files/${props.sender_pfp}`}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                }}
+                            />
+                        }
+                    </div>
+            }
+        </div>
+    );
+}
+
+export function File(props) {
+    const [url, setURL] = useState("#");
+    const download_ref = useRef(null);
+
+    const handleDownload = () => {
+        const link = download_ref.current;
+        link.href = server_url + "/files/" + props.file_url;
+        link.click();
+    };
+
+    return (
+        <div className={styles.fileDiv}>
+            <a
+                href={url}
+                ref={download_ref}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "none" }}
+            ></a>
+
+            {
+                Number(localStorage.getItem("user_id")) !== props.sender_id
+                    ?
+                    <div
+                        className={`${(
+                            props.conseq_msgs && props.constraint !== "no-logo"
+                        ) && styles.conseqFile} ${styles.senderFile}`}
+                    >
+                        {
+                            props.constraint !== "no-logo"
+                            &&
+                            <img
+                                src={server_url + `/files/${props.sender_pfp}`}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                }}
+                            />
+                        }
+
+                        <div className={styles.file}>
+                            <div className={`${styles.fileInfo}`} onClick={handleDownload}>
+                                <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
+                                    {getIcon(props.filename).element}
+                                </div>
+
+                                <h3>{props.filename}</h3>
+                            </div>
+
+                            <div className={styles.time}>
                                 <p>{formatTime(props.timestamp)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    <div className={`${(props.conseq_msgs && props.constraint !== "no-logo") && styles.conseqFile} ${styles.myFile}`}>
+                        <div className={styles.file}>
+                            <div className={`${styles.fileInfo}`} onClick={handleDownload}>
+                                <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
+                                    {getIcon(props.filename).element}
+                                </div>
+
+                                <h3>{props.filename}</h3>
+                            </div>
+
+                            <div className={styles.time}>
+                                {
+                                    props.status === "pending"
+                                    ?
+                                    <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
+                                    :
+                                    <p>{formatTime(props.timestamp)}</p>
+                                }
                             </div>
                         </div>
 

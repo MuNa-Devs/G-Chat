@@ -85,3 +85,40 @@ button{
     border-radius: 8px;
     border: none;
 }
+
+/* File type based styles */
+.image{
+    background-color: var(--image-icon-bg);
+}
+
+.presentation{
+    background-color: var(--ppt-icon-bg);
+}
+
+.spreadsheet{
+    background-color: var(--spr-icon-bg);
+}
+
+.word{
+    background-color: var(--word-icon-bg);
+}
+
+.audio{
+    background-color: var(--audio-icon-bg);
+}
+
+.video{
+    background-color: var(--video-icon-bg);
+}
+
+.pdf{
+    background-color: var(--pdf-icon-bg);
+}
+
+.csv{
+    background-color: var(--csv-icon-bg);
+}
+
+.text{
+    background-color: var(--text-icon-bg);
+}

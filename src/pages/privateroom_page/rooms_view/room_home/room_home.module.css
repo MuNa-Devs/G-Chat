@@ -273,6 +273,10 @@
         display: none;
     }
 
+    .roomControlBar{
+        cursor: pointer;
+    }
+
     .roomControlBar .room_info {
         gap: 8px;
         max-width: 100%;

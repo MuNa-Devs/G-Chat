@@ -235,6 +235,20 @@ h5 {
     margin-right: 16px;
 }
 
+/* Room settings */
+.roomSettings{
+    height: 100dvh;
+    width: 100dvw;
+    z-index: 99;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
 /* Media Queries */
 @media (max-width: 560px) {
     .viewRoom {

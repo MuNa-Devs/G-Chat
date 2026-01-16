@@ -6,12 +6,15 @@ import SideBar from "../../../../reusable_component/SideBar";
 import styles from "./room_home.module.css";
 import { server_url } from "../../../../../creds/server_url";
 import { AppContext } from "../../../../Contexts";
-import Message from "../../../../reusable_component/message_dev/Message";
+import { File, Message } from "../../../../reusable_component/message_dev/Message";
 import EmojiBox from "../../../../reusable_component/emoji_box/EmojiBox";
 import FileObject from "../../../../reusable_component/file_object/FileObject";
 
 export default function RoomHome() {
+    // Ref to auto scroll to bottom of the messages
     const bottom_ref = useRef(null);
+
+    // Ref to control the message input
     const input_ref = useRef(null);
 
     const { socket, user_details } = useContext(AppContext);
@@ -21,8 +24,8 @@ export default function RoomHome() {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [room_data, setRoomData] = useState({});
-    const [input_height, setInputHeight] = useState(0);
 
+    // Controls opening sidebar at lower sreen width
     const [sidebar_view, setSidebarView] = useState(true);
 
     // File Picker:
@@ -45,12 +48,13 @@ export default function RoomHome() {
         input_ref?.current?.focus();
     }
 
+    // To control sidebar visibility, input focus, input height
     useEffect(() => {
         setSidebarView(window.innerWidth >= 560);
         input_ref?.current?.focus();
-        setInputHeight(input_ref?.current?.scrollHeight);
     }, []);
 
+    // To fetch the room details
     useEffect(() => {
         axios.get(
             server_url + `/g-chat/rooms/get-room?room_id=${room_id}`
@@ -62,6 +66,7 @@ export default function RoomHome() {
         });
     }, [room_id]);
 
+    // To send join room signal to server side socket
     useEffect(() => {
         if (!socket || !room_id) return;
 
@@ -72,11 +77,13 @@ export default function RoomHome() {
         };
     }, [socket, room_id]);
 
+    // To receive the messages sent when active
     useEffect(() => {
         if (!socket || !room_id) return;
 
         const handleMessage = (res) => {
-            console.log(res);
+            if (user_details?.id === Number(res.user_id)) return;
+
             setMessages(
                 prev => [...prev, res]
             );
@@ -89,6 +96,7 @@ export default function RoomHome() {
         };
     }, [socket, room_id]);
 
+    // To fetch all the messages of the room at startup
     useEffect(() => {
         if (!room_id) return;
 
@@ -99,8 +107,9 @@ export default function RoomHome() {
             .catch(err => console.log(err));
     }, [room_id]);
 
+    // Get to the bottom of the messages everytime {messages} changes
     useEffect(() => {
-        bottom_ref?.current?.scrollIntoView({ behavior: "smooth" });
+        bottom_ref?.current?.scrollIntoView();
     }, [messages]);
 
     const autoReHeight = (e) => {
@@ -109,6 +118,7 @@ export default function RoomHome() {
         thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
     };
 
+    // Send message to other room members + optimistic UI update
     const sendMessage = async () => {
         if (!message.trim() && files.length === 0) {
             setMessage("");
@@ -119,37 +129,30 @@ export default function RoomHome() {
             return;
         }
 
-        // const local_message = {
-        //     message: message.trim(),
-        //     user_id: user_details.id,
-        //     sender_name: user_details.username,
-        //     pfp: user_details.pfp,
-        //     timestamp: new Date()
-        // };
+        const msg_id = generateUUID();
 
-        // setMessages(
-        //     prev => [...prev, local_message]
-        // );
+        const local_message = {
+            msg_id,
+            message: message.trim(),
+            user_id: user_details?.id || localStorage.getItem("user_id"),
+            username: user_details.username,
+            pfp: user_details.pfp,
+            sent_at: null,
+            status: "pending",
+            files: files
+        }
 
-        // socket.emit("send-room-message", {
-        //     user_id: user_details?.id,
-        //     room_id: room_id,
-        //     message: message.trim()
-        // });
+        setMessages(prev => [...prev, local_message]);
 
         const form = new FormData();
 
+        form.append("msg_id", msg_id);
         form.append("room_id", room_id);
         form.append("user_id", user_details?.id || localStorage.getItem("user_id"));
         form.append("sender_name", user_details?.username);
         form.append("pfp", user_details?.pfp);
         form.append("message", message.trim());
         files.forEach(file => form.append("files", file));
-        
-        const local_message = Object.fromEntries(form.entries());
-        local_message["files"] = [];
-
-        for (const file of files)
 
         axios.post(
             server_url + "/g-chat/rooms/room-message",
@@ -159,7 +162,24 @@ export default function RoomHome() {
                     "Content-Type": "multipart/form-data"
                 }
             }
-        );
+        ).then(res => {
+            const data = res.data;
+
+            setMessages(prev =>
+                prev.map((message, index) => (
+                    message.msg_id === data.msg_id
+                        ?
+                        prev[index] = {
+                            ...message,
+                            sent_at: data.sent_at,
+                            status: "complete",
+                            files: data.files
+                        }
+                        :
+                        message
+                ))
+            );
+        });
 
         setMessage("");
         setShowPicker(false);
@@ -185,7 +205,21 @@ export default function RoomHome() {
 
             <div className={styles.chatContext}>
                 <div className={styles.chatWindow}>
-                    <div className={styles.roomControlBar}>
+                    <div
+                        className={styles.roomControlBar}
+                        onClick={() => {
+                            if (window.innerWidth > 490) return;
+                            
+                            navigate(
+                                `/room/dashboard/${room_id}`,
+                                {
+                                    state: {
+                                        from: `/room/home/${room_id}`
+                                    }
+                                }
+                            );
+                        }}
+                    >
                         <button
                             className={styles.backBtn}
                             onClick={() => navigate("/rooms")}
@@ -222,15 +256,36 @@ export default function RoomHome() {
                         {
                             messages.length ?
                                 messages.map((msg, index) => (
-                                    <Message
-                                        key={index}
-                                        conseq_msgs={messages[index - 1]?.user_id === msg.user_id}
-                                        message={msg.message}
-                                        sender_id={msg.user_id}
-                                        sender_name={msg.sender_details?.username || msg.username}
-                                        sender_pfp={msg.sender_details?.pfp || msg.pfp}
-                                        timestamp={msg.timestamp || msg.sent_at}
-                                    />
+                                    <div key={index}>
+                                        {
+                                            msg.files.map((file, index) => (
+                                                <File
+                                                    key={index}
+                                                    sender_id={msg.user_id}
+                                                    filename={file.filename || file.name}
+                                                    file_url={file.file_url}
+                                                    timestamp={msg.sent_at}
+                                                    status={msg.status || "complete"}
+                                                />
+                                            ))
+                                        }
+
+                                        {
+                                            msg.message
+                                            &&
+                                            <Message
+                                                key={index}
+                                                conseq_msgs={messages[index - 1]?.user_id === msg.user_id}
+                                                message={msg.message}
+                                                sender_id={msg.user_id}
+                                                sender_name={msg.sender_details?.username || msg.username}
+                                                sender_pfp={msg.sender_details?.pfp || msg.pfp}
+                                                timestamp={msg.timestamp || msg.sent_at}
+                                                files={msg.files}
+                                                status={msg.status || "complete"}
+                                            />
+                                        }
+                                    </div>
                                 )) :
                                 <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
                         }
@@ -252,7 +307,7 @@ export default function RoomHome() {
                             className={styles.emojis}
                         ><i className="fa-solid fa-face-laugh"></i></button>
 
-                        <button 
+                        <button
                             className={styles.files}
                             onClick={() => {
                                 document.getElementById("file").click();
@@ -326,3 +381,12 @@ export default function RoomHome() {
         </div>
     );
 }
+
+const generateUUID = () => {
+    if (crypto?.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    // fallback
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+};

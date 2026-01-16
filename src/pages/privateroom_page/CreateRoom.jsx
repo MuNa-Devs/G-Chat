@@ -1,7 +1,7 @@
 import styles from "./new_room.module.css";
 import ScrollDownBox from "../../reusable_component/scroll_downs/ScrollDownBox";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
@@ -16,7 +16,17 @@ export default function NewRoom(props) {
     const [join_pref, setJoinPref] = useState("Anyone Can Join");
     const [room_size, setRoomSize] = useState(10);
 
-    const [btn_text, setBtnText] = useState("Create");
+    useEffect(() => {
+        if (props.btn_text === "Update") {
+            setRoomName(props.room_data.r_name);
+            setRoomDesc(props.room_data.r_desc);
+            setRoomType(props.room_data.r_type);
+            setJoinPref(props.room_data.join_pref);
+            setRoomSize(props.room_data.r_size);
+        }
+    }, [])
+
+    const [btn_text, setBtnText] = useState(props.btn_text || "Create");
 
     const upload = (e) => document.getElementById("logo").click();
 
@@ -27,7 +37,7 @@ export default function NewRoom(props) {
     }
 
     const createRoom = () => {
-        setBtnText("Creating...");
+        setBtnText(props.altering || "Creating...");
         document.getElementById("save").disabled = true;
         const form = new FormData();
 
@@ -38,9 +48,11 @@ export default function NewRoom(props) {
         form.append("join_pref", join_pref);
         form.append("room_size", room_size);
         form.append("room_aid", user_details.id);
+        
+        if (props.api === "update") form.append("room_id", props.room_data.r_id);
 
         axios.post(
-            `${server_url}/g-chat/rooms/create`,
+            `${server_url}/g-chat/rooms/${props.api || "create"}`,
             form,
             {
                 headers: {
@@ -49,8 +61,9 @@ export default function NewRoom(props) {
             }
         ).then(res => {
             const data = res.data;
-            setBtnText("Create");
+            setBtnText(btn_text);
             document.getElementById("save").disabled = false;
+            if (props.api === "update") props.setRefreshState(prev => prev + 1);
             props.closeHook(false);
         }).catch(err => {
             console.log(err);
@@ -60,7 +73,7 @@ export default function NewRoom(props) {
     return (
         <div className={styles.newRoom}>
             <div className={styles.titlebar}>
-                <h3>Create New Room</h3>
+                <h3>{props.header || "Create New Room"}</h3>
 
                 <div className={styles.topButtons}>
                     <button className={styles.cancel}
@@ -79,7 +92,15 @@ export default function NewRoom(props) {
                         <div className={styles.image}>
                             <img
                                 id="icon"
-                                src="https://www.shutterstock.com/image-vector/blank-image-photo-placeholder-icon-600nw-2501054919.jpg"
+                                src={
+                                    props.btn_text === "Update"
+                                        ? server_url + "/files/" + props.icon_url
+                                        : "https://www.shutterstock.com/image-vector/blank-image-photo-placeholder-icon-600nw-2501054919.jpg"
+                                }
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/8184/8184182.png";
+                                }}
                             />
                         </div>
 
@@ -95,7 +116,7 @@ export default function NewRoom(props) {
                         <div className={styles.uploadBtn}>
                             <button
                                 onClick={upload}
-                            ><i className="fa-regular fa-image"></i> Upload Photo</button>
+                            ><i className="fa-regular fa-image"></i> {props.image_upload_text || "Upload Photo"}</button>
 
                             <p>PNG or JPEG, max 2MB.</p>
                         </div>
@@ -103,7 +124,7 @@ export default function NewRoom(props) {
 
                     <div className={styles.details}>
                         <div className={styles.roomName}>
-                            <h5>Room Name</h5>
+                            <h5>{props.alter || ""} Room Name</h5>
 
                             <input
                                 type="text"
@@ -114,7 +135,7 @@ export default function NewRoom(props) {
                         </div>
 
                         <div className={styles.roomDesc}>
-                            <h5>Room Description</h5>
+                            <h5>{props.alter || ""} Room Description</h5>
 
                             <textarea
                                 placeholder="Tell us something about the room..."
@@ -125,7 +146,7 @@ export default function NewRoom(props) {
                         </div>
 
                         <div className={styles.roomType}>
-                            <h5>Room Type</h5>
+                            <h5>{props.alter || ""} Room Type</h5>
 
                             <div>
                                 <label htmlFor="private">Private</label>
@@ -153,7 +174,7 @@ export default function NewRoom(props) {
                         </div>
 
                         <div className={styles.joinPref}>
-                            <h5>Join Preference</h5>
+                            <h5>{props.alter || ""} Join Preference</h5>
 
                             <ScrollDownBox label={join_pref} options={[
                                 "Anyone Can Join",
