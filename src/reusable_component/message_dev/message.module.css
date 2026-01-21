@@ -8,7 +8,7 @@
 }
 
 /* Sender message and file wrapper */
-.senderMsg, 
+.senderMsg,
 .senderFile {
     margin: 0;
     padding: 0px;
@@ -69,12 +69,12 @@
     max-width: 56%;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
 }
 
 /* Sender message & file div styles */
 .senderMsg .message,
-.senderFile .file{
+.senderFile .file {
     background-color: var(--accent);
     color: var(--text-primary);
 }
@@ -123,9 +123,26 @@
     color: var(--primary-light);
 }
 
+/* Conseq Messages */
+.conseqMsg {
+    width: calc(100% - 56px);
+}
+
+.conseqMsg>img {
+    display: none;
+}
+
+.conseqMsg.senderMsg {
+    padding-left: 56px;
+}
+
+.conseqMsg.myMsg {
+    padding-right: 56px;
+}
+
 /* File info block (inside file div) styles */
 .senderFile .file .fileInfo,
-.myFile .file .fileInfo{
+.myFile .file .fileInfo {
     display: flex;
     flex-direction: row;
     width: auto;
@@ -136,7 +153,7 @@
 }
 
 /* File icon styles */
-.icon{
+.icon {
     background-color: var(--file-icon-bg);
     padding: 8px;
     border-radius: 8px;
@@ -149,23 +166,24 @@
     width: 24px;
 }
 
-.icon i{
+.icon i {
     color: var(--icon-fg);
     font-size: 1.2em;
 }
 
 .senderFile .file .fileInfo,
-.myFile .file .fileInfo{
+.myFile .file .fileInfo {
     cursor: pointer;
 }
 
-.messageLoader{
+.messageLoader {
     font-size: 0.75em;
     color: var(--text-secondary);
 }
 
 /* Media Queries */
 @media (max-width: 630px) {
+
     .messageDiv,
     .fileDiv {
         margin: 0;
@@ -176,13 +194,29 @@
         padding-top: 4px;
     }
 
-    .myMsg > img,
-    .myFile > img{
+    .myMsg>img,
+    .myFile>img {
         margin-left: 4px;
     }
 
-    .senderMsg > img,
-    .senderFile > img{
+    .senderMsg>img,
+    .senderFile>img {
         margin-right: 4px;
+    }
+
+    .conseqMsg {
+        width: calc(100% - 52px);
+    }
+
+    .conseqMsg>img {
+        display: none;
+    }
+
+    .conseqMsg.senderMsg {
+        padding-left: 52px;
+    }
+
+    .conseqMsg.myMsg {
+        padding-right: 52px;
     }
 }

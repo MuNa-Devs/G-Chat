@@ -262,6 +262,7 @@ export default function RoomHome() {
                                                 <File
                                                     key={index}
                                                     sender_id={msg.user_id}
+                                                    sender_pfp={msg.pfp}
                                                     filename={file.filename || file.name}
                                                     file_url={file.file_url}
                                                     timestamp={msg.sent_at}

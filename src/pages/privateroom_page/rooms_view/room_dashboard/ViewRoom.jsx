@@ -37,7 +37,6 @@ export default function ViewRoom() {
         ).then(res => {
             const data = res.data;
             setRoomData(data.room_info);
-            console.log(data.room_info);
         }).catch(err => {
             console.log(err);
         });
@@ -52,10 +51,9 @@ export default function ViewRoom() {
     }, [room_id, refreshData]);
 
     const handleJoin = async (e) => {
-        const mode = e.target.textContent;
 
-        switch (mode) {
-            case "Join Room":
+        switch (room_data.join_pref) {
+            case "Anyone Can Join":
                 axios.get(
                     server_url + `/g-chat/rooms/join?room_id=${room_data.r_id}&user_id=${user_details.id}`
                 ).then(res => {
@@ -105,10 +103,10 @@ export default function ViewRoom() {
                         />
                     </div>
 
+                    <h1>{room_data.r_name}</h1>
+
                     <div className={styles.wrappersWrapper}>
                         <div className={styles.displayWrapper}>
-                            <h2>{room_data.r_name}</h2>
-
                             <div className={styles.otherInfo}>
                                 <h5><i className="fa-solid fa-user-tie"></i> Admin:</h5>
 
@@ -128,10 +126,33 @@ export default function ViewRoom() {
                                 <h5>
                                     <i className="fa-solid fa-shield-halved"></i> {room_data.r_type}
                                 </h5>
+
+                                <h5>
+                                    {
+                                        room_data.join_pref === "Anyone Can Join"
+                                        ? <i className="fa-solid fa-globe"></i>
+                                        :
+                                            room_data.join_pref === "Invite Only"
+                                            ?
+                                            <i className="fa-solid fa-lock"></i>
+                                            :
+                                            <i className="fa-solid fa-person-circle-check"></i>                              
+                                    }
+                                    {" " + room_data.join_pref}
+                                </h5>
                             </div>
                         </div>
 
-                        <div className={styles.joinBtn}>
+                        <div className={styles.roomButtons}>
+                            {
+                                c_user_id === room_data.id
+                                &&
+                                <button
+                                    className={styles.editRoom}
+                                    onClick={() => setShowSettings(true)}
+                                ><i className="fa-regular fa-pen-to-square"></i></button>
+                            }
+
                             {
                                 (
                                     from.startsWith("/rooms")
@@ -140,11 +161,12 @@ export default function ViewRoom() {
                                 )
                                 &&
                                 <button
-                                    className="utilBtn"
+                                    className={styles.openBtn}
                                     style={{ marginRight: "16px" }}
                                     onClick={() => navigate(`/room/home/${room_id}`)}
-                                >Open Room</button>
+                                ><i className="fa-solid fa-door-open"></i></button>
                             }
+
                             {
                                 !room_members.some(
                                     member => member.id === c_user_id
@@ -152,15 +174,16 @@ export default function ViewRoom() {
                                     ?
                                     (
                                         room_data.join_pref !== "Invite Only" &&
-                                        <button className="utilBtn"
+                                        <button
+                                            className={styles.joinBtnn}
                                             onClick={handleJoin}
                                         >
                                             {
                                                 room_data.join_pref === "Approve Join Requests"
                                                     ? "Request Join Access"
                                                     : room_data.join_pref === "Anyone Can Join"
-                                                        ? "Join Room"
-                                                        : "Join Room"
+                                                        ? <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                                                        : <i className="fa-solid fa-arrow-right-to-bracket"></i>
                                             }
                                         </button>
                                     )
@@ -174,7 +197,7 @@ export default function ViewRoom() {
                                                 await handleLeave();
                                                 navigate("/rooms");
                                             }}
-                                        >Leave Room</button>
+                                        ><i className="fa-solid fa-arrow-right-from-bracket"></i></button>
                                     )
                             }
                         </div>
@@ -188,15 +211,6 @@ export default function ViewRoom() {
                         <h5>{room_data.r_desc || "No Description Available"}</h5>
                     </div>
                 </div>
-
-                {
-                    c_user_id === room_data.id
-                    &&
-                    <button
-                        className="utilBtn"
-                        onClick={() => setShowSettings(true)}
-                    >Change Room Settings</button>
-                }
 
                 <div className={styles.members}>
                     <h3>Room Members</h3>

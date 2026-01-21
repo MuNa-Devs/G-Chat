@@ -1,3 +1,4 @@
+/* Base div */
 .viewRoom {
     margin: 0;
     padding: 0;
@@ -8,11 +9,13 @@
     justify-content: space-between;
 }
 
+/* Module level h5 style */
 h5 {
     margin: 0;
     color: var(--text-secondary);
 }
 
+/* Sibling of sidebar */
 .roomInfo {
     flex: 1;
     max-height: calc(100% - 24px);
@@ -31,6 +34,7 @@ h5 {
     overflow-x: hidden;
 }
 
+/* Header part of the roomInfo (contains back button) */
 .header {
     display: flex;
     flex-direction: row;
@@ -54,15 +58,7 @@ h5 {
     color: #ff5f5f;
 }
 
-.leaveBtn {
-    padding: 8px;
-    background-color: var(--danger);
-    color: var(--button-text);
-    border: none;
-    outline: none;
-    border-radius: 8px;
-}
-
+/* Remaining content inside roomInfo */
 .roomDisplay {
     width: calc(100% - 48px);
     height: auto;
@@ -71,12 +67,40 @@ h5 {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
 
     border-bottom: 1px solid var(--border-light);
 }
 
+.roomDisplay>h1{
+    margin-bottom: 8px;
+}
+
+/* Room icon */
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    border: 1px solid var(--border-light);
+    height: 168px;
+    width: 168px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: linear-gradient(112deg, var(--bg-lighter), var(--bg), var(--bg-lighter));
+}
+
+.icon img {
+    height: 160px;
+    width: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Other stuff wrapper */
 .wrappersWrapper {
     display: flex;
     flex-direction: row;
@@ -85,6 +109,7 @@ h5 {
     width: 100%;
 }
 
+/* Wrapper for roo display */
 .displayWrapper {
     display: flex;
     flex-direction: column;
@@ -93,6 +118,7 @@ h5 {
     gap: 16px;
 }
 
+/* Room info */
 .otherInfo {
     display: flex;
     flex-direction: row;
@@ -109,33 +135,77 @@ h5 {
 
 .otherInfo2 {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: auto;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     gap: 16px;
 }
 
-.icon {
-    height: 160px;
-    width: 160px;
-    border-radius: 16px;
+/* Buttons Container */
+.roomButtons{
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-
-    border: 1px solid var(--border-light);
+    flex-direction: row;
+    gap: 8px;
+    width: auto;
 }
 
-.icon img {
-    height: 160px;
-    width: 160px;
-    border-radius: 16px;
-    object-fit: cover;
-    object-position: center;
+/* Open Button */
+.openBtn{
+    padding: 10px;
+    background-color: var(--primary-bg);
+    outline: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
 }
 
+.openBtn>i{
+    color: var(--primary);
+    font-size: 1.1em;
+}
+
+/* Join Button */
+.joinBtnn{
+    padding: 10px;
+    background-color: var(--primary-bg);
+    outline: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.joinBtnn>i{
+    color: var(--primary);
+    font-size: 1.1em;
+}
+
+.editRoom{
+    padding: 10px;
+    background-color: var(--primary-bg);
+    outline: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.editRoom>i{
+    color: var(--primary);
+    font-size: 1.1em;
+}
+
+/* Leave Button */
+.leaveBtn {
+    padding: 10px;
+    background-color: var(--danger-light-bg);
+    border: 1px solid var(--border);
+    outline: none;
+    border-radius: 8px;
+}
+
+.leaveBtn>i{
+    font-size: 1.1em;
+    color: var(--danger);
+}
+
+/* COntainer of About */
 .roomDetails {
     width: 100%;
     height: auto;
@@ -231,10 +301,6 @@ h5 {
     height: 200px;
 }
 
-.openRoom{
-    margin-right: 16px;
-}
-
 /* Room settings */
 .roomSettings{
     height: 100dvh;
@@ -263,5 +329,13 @@ h5 {
 
     .roomInfo{
         margin-right: 8px;
+    }
+}
+
+@media (max-width: 480px){
+    .wrappersWrapper{
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
     }
 }
