@@ -107,6 +107,8 @@ h5 {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+
+    margin-top: 16px;
 }
 
 /* Wrapper for roo display */
@@ -171,6 +173,7 @@ h5 {
     outline: none;
     border: 1px solid var(--border);
     border-radius: 8px;
+    color: var(--text-primary);
 }
 
 .joinBtnn>i{
@@ -269,8 +272,6 @@ h5 {
 
     border: 1px solid var(--border-light);
     border-radius: 16px;
-
-    cursor: pointer;
 }
 
 .member .adminTag {
@@ -299,6 +300,13 @@ h5 {
 
 .buffer {
     height: 200px;
+}
+
+/* Options on member tag */
+.options>i{
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    cursor: pointer;
 }
 
 /* Room settings */

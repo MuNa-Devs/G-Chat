@@ -15,6 +15,8 @@ const formatTime = (time) => {
     });
 };
 
+const isSingleEmoji = (text) => (/^\p{Extended_Pictographic}$/u.test(text))
+
 export function Message(props) {
 
     return (
@@ -38,9 +40,15 @@ export function Message(props) {
                         }
 
                         <div className={styles.message}>
-                            <p>{props.message}</p>
+                            <p
+                                style={isSingleEmoji(props.message) ? {fontSize: "1.5em"} : {}}
+                            >{props.message}</p>
 
                             <div className={styles.time}>
+                                <div className={styles.msgInfo}>
+                                    <i className="fa-solid fa-angle-down"></i>
+                                </div>
+
                                 <p>{formatTime(props.timestamp)}</p>
                             </div>
                         </div>
@@ -48,9 +56,15 @@ export function Message(props) {
                     :
                     <div className={`${(props.conseq_msgs && props.constraint !== "no-logo") && styles.conseqMsg} ${styles.myMsg}`}>
                         <div className={styles.message}>
-                            <p>{props.message}</p>
+                            <p
+                                style={isSingleEmoji(props.message) ? {fontSize: "1.5em"} : {}}
+                            >{props.message}</p>
 
                             <div className={styles.time}>
+                                <div className={styles.msgInfo}>
+                                    <i className="fa-solid fa-angle-down"></i>
+                                </div>
+
                                 {
                                     props.status === "pending"
                                     ?
@@ -128,6 +142,10 @@ export function File(props) {
                             </div>
 
                             <div className={styles.time}>
+                                <div className={styles.msgInfo}>
+                                    <i className="fa-solid fa-angle-down"></i>
+                                </div>
+
                                 <p>{formatTime(props.timestamp)}</p>
                             </div>
                         </div>
@@ -144,6 +162,10 @@ export function File(props) {
                             </div>
 
                             <div className={styles.time}>
+                                <div className={styles.msgInfo}>
+                                    <i className="fa-solid fa-angle-down"></i>
+                                </div>
+
                                 {
                                     props.status === "pending"
                                     ?

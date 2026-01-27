@@ -180,7 +180,7 @@ export default function ViewRoom() {
                                         >
                                             {
                                                 room_data.join_pref === "Approve Join Requests"
-                                                    ? "Request Join Access"
+                                                    ? "Request Join"
                                                     : room_data.join_pref === "Anyone Can Join"
                                                         ? <i className="fa-solid fa-arrow-right-to-bracket"></i>
                                                         : <i className="fa-solid fa-arrow-right-to-bracket"></i>
@@ -231,6 +231,7 @@ export default function ViewRoom() {
                                 admin={false}
                                 name={member.username}
                                 pfp={member.pfp}
+                                amiadmin={user_details.id === room_data.id}
                             />
                         ))
                     }

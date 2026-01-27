@@ -72,6 +72,13 @@
     white-space: pre-wrap;
 }
 
+.senderMsg .message:hover .msgInfo,
+.myMsg .message:hover .msgInfo,
+.senderFile .file:hover .msgInfo,
+.myFile .file:hover .msgInfo{
+    display: block;
+}
+
 /* Sender message & file div styles */
 .senderMsg .message,
 .senderFile .file {
@@ -102,10 +109,11 @@
 .message .time,
 .file .time {
     display: flex;
+    flex-direction: column;
     align-items: flex-end;
     justify-content: flex-end;
     width: auto;
-    height: auto;
+    height: 24px;
 }
 
 .myMsg .time>p,
@@ -121,6 +129,27 @@
     font-size: 0.6em;
     letter-spacing: 0.5px;
     color: var(--primary-light);
+}
+
+.senderMsg .message .time .msgInfo>i,
+.senderFile .message .time .msgInfo>i,
+.myMsg .message .time .msgInfo>i,
+.myFile .message .time .msgInfo>i{
+    font-size: .8em;
+}
+
+.senderMsg .message .time .msgInfo>i,
+.senderFile .message .time .msgInfo>i{
+    color: var(--primary-light);
+}
+
+.myMsg .message .time .msgInfo>i,
+.myFile .message .time .msgInfo>i{
+    color: var(--text-secondary);
+}
+
+.msgInfo{
+    display: none;
 }
 
 /* Conseq Messages */

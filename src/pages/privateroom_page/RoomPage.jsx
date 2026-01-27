@@ -120,8 +120,6 @@ export default function RoomPage() {
                 <div className={styles.header}>
                     <div className={styles.heading}>
                         <h2>Rooms</h2>
-
-                        <p>A list of all GITAM chat rooms you can join.</p>
                     </div>
 
                     <button

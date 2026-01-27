@@ -1,8 +1,8 @@
 import { server_url } from "../../../../../creds/server_url";
 import styles from "./view_room.module.css";
 
-export default function RoomMember(props){
-    
+export default function RoomMember(props) {
+
     return (
         <div className={styles.member}>
             <img
@@ -18,6 +18,14 @@ export default function RoomMember(props){
             <div className={styles.adminTag}>
                 {props.admin && <div className={styles.amAdmin}><i className="fa-brands fa-black-tie"></i> Admin</div>}
             </div>
+
+            {
+                props.amiadmin
+                &&
+                <div className={styles.options}>
+                    <i className="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+            }
         </div>
     );
 }
