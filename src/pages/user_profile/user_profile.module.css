@@ -1,0 +1,107 @@
+.wrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileMainDiv{
+    width: auto;
+    max-width: 768px;
+    min-width: 400px;
+    height: auto;
+    max-height: 520px;
+    min-height: 304px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    overflow-y: auto;
+    background-color: var(--bg-lighter);
+    outline: 1px solid var(--border);
+
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.userProfileInfo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.userProfileInfo .pfp{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-light);
+    padding: 0;
+    margin: 0;
+    height: 116px;
+    width: 116px;
+    border-radius: 50%;
+}
+
+.userProfileInfo .pfp>img{
+    height: 100%;
+    width: 100%;
+}
+
+.userProfileInfo .profileName{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileMainDiv>hr{
+    height: 1px;
+    width: 100%;
+    background-color: var(--border-light);
+    border: none;
+    outline: none;
+}
+
+.about{
+    width: calc(100% - 16px);
+    max-width: 400px;
+    align-self: stretch;
+    padding: 8px;
+    border-radius: 8px;
+    outline: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.about>h5{
+    width: 100%;
+    display: block;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.bottomBtns{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 4px;
+}
+
+.bottomBtns>button{
+    flex: 1;
+    background-color: var(--accent);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    outline: 1px solid var(--border-light);
+    padding: 8px;
+}

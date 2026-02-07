@@ -15,7 +15,6 @@ import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
-import UserProfile from "./pages/user_profile/UserProfile";
 
 export default function App() {
 	return (
@@ -84,14 +83,6 @@ export default function App() {
 				path="/user-settings" element={
 					<LoginProtector>
 						<UserSettings />
-					</LoginProtector>
-				}
-			/>
-
-			<Route
-				path="/user/profile:user_id" element={
-					<LoginProtector>
-						<UserProfile />
 					</LoginProtector>
 				}
 			/>
