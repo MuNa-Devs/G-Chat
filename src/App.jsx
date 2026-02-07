@@ -89,7 +89,7 @@ export default function App() {
 			/>
 
 			<Route
-				path="/user/profile:user_id" element={
+				path="/user/profile/:user_id" element={
 					<LoginProtector>
 						<UserProfile />
 					</LoginProtector>

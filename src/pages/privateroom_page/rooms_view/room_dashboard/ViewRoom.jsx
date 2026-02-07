@@ -164,7 +164,7 @@ export default function ViewRoom() {
                                     className={styles.openBtn}
                                     style={{ marginRight: "16px" }}
                                     onClick={() => navigate(`/room/home/${room_id}`)}
-                                ><i className="fa-solid fa-door-open"></i></button>
+                                ><i className="fa-solid fa-comment"></i></button>
                             }
 
                             {
