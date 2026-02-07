@@ -310,7 +310,8 @@ h5 {
 }
 
 /* Room settings */
-.roomSettings{
+.roomSettings,
+.adminProfile{
     height: 100dvh;
     width: 100dvw;
     z-index: 99;

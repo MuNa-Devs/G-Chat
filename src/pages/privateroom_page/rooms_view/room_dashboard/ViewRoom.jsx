@@ -9,6 +9,7 @@ import axios from "axios";
 import { server_url } from "../../../../../creds/server_url";
 import { AppContext } from "../../../../Contexts";
 import NewRoom from "../../CreateRoom";
+import UserProfile from "../../../user_profile/UserProfile";
 
 export default function ViewRoom() {
     const { room_id } = useParams();
@@ -73,6 +74,7 @@ export default function ViewRoom() {
     }
 
     const [show_settings, setShowSettings] = useState(false);
+    const [show_profile, setShowProfile] = useState(false);
 
     return (
         <div className={styles.viewRoom}>
@@ -113,7 +115,9 @@ export default function ViewRoom() {
                                 <h5>
                                     {room_data.admin_name}
                                     <span
-                                        onClick={() => console.log("Admin profile accessed")}
+                                        onClick={() => {
+                                            setShowProfile(true);
+                                        }}
                                     >{"  "}<i className="fa-solid fa-link"></i></span>
                                 </h5>
                             </div>
@@ -130,13 +134,13 @@ export default function ViewRoom() {
                                 <h5>
                                     {
                                         room_data.join_pref === "Anyone Can Join"
-                                        ? <i className="fa-solid fa-globe"></i>
-                                        :
-                                            room_data.join_pref === "Invite Only"
-                                            ?
-                                            <i className="fa-solid fa-lock"></i>
+                                            ? <i className="fa-solid fa-globe"></i>
                                             :
-                                            <i className="fa-solid fa-person-circle-check"></i>                              
+                                            room_data.join_pref === "Invite Only"
+                                                ?
+                                                <i className="fa-solid fa-lock"></i>
+                                                :
+                                                <i className="fa-solid fa-person-circle-check"></i>
                                     }
                                     {" " + room_data.join_pref}
                                 </h5>
@@ -243,7 +247,9 @@ export default function ViewRoom() {
             {
                 show_settings
                 &&
-                <div className={styles.roomSettings}>
+                <div className={styles.roomSettings}
+                    onClick={() => setShowSettings(false)}
+                >
                     <NewRoom
                         header="Change Room Settings"
                         btn_text="Update"
@@ -255,6 +261,19 @@ export default function ViewRoom() {
                         api="update"
                         closeHook={setShowSettings}
                         setRefreshState={setRefreshState}
+                    />
+                </div>
+            }
+
+            {
+                show_profile
+                &&
+                <div className={styles.adminProfile}
+                    onClick={() => setShowProfile(false)}
+                >
+                    <UserProfile
+                        user_id={room_data.id}
+                        closeHook={setShowProfile}
                     />
                 </div>
             }

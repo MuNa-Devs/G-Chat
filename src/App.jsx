@@ -15,7 +15,6 @@ import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
-import UserProfile from "./pages/user_profile/UserProfile";
 
 export default function App() {
 	return (
@@ -89,6 +88,7 @@ export default function App() {
 			/>
 
 			<Route
+<<<<<<< HEAD
 				path="/user/profile/:user_id" element={
 					<LoginProtector>
 						<UserProfile />
@@ -97,6 +97,8 @@ export default function App() {
 			/>
 
 			<Route
+=======
+>>>>>>> bdd657a8efeaad6f20607de36fbbfae902aa1df0
 				path="/aprilfool" element={
 					<LoginProtector>
 						<AprilFool />
