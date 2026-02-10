@@ -4,18 +4,22 @@ import { checkValidity } from '../page_utils/AuthPageUtils';
 import { AppContext } from '../../Contexts.jsx';
 import { loadUserDetails } from '../../loadUserDetails.js';
 import { UiContext } from '../../utils/UiContext';
+import Alert from '../../reusable_component/alert_div/Alert.jsx';
+import { server_url } from '../../../creds/server_url';
+import codeAlertMapper from '../page_utils/code_alert_mapper.js';
 
 // Package imports
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from "react";
 import axios from 'axios';
-import { server_url } from '../../../creds/server_url';
 
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
-    const {setLogin, setUserDetails, setLoading} = useContext(AppContext);
-    const {setOverride} = useContext(UiContext);
+    const { setLogin, setUserDetails, setLoading } = useContext(AppContext);
+    const { setOverride } = useContext(UiContext);
+    const [alert, setAlert] = useState(false);
+    const [reg_status, setReg] = useState(false);
 
     const [inputs, setInputs] = useState({
         username: "",
@@ -41,17 +45,25 @@ export default function SignUpPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (inputs.password !== inputs.conf_password) {
-            alert("Passwords do not match");
+        if (inputs.password !== "" && inputs.password !== inputs.conf_password) {
+            setAlert("Passwords DO NOT match!");
+            setInpErrStatus({
+                ...input_err_status,
+                password: true,
+                conf_password: true
+            });
 
             return;
         }
 
-        if (! checkValidity({ form: inputs, setInpErrStatus: setInpErrStatus })) {
-            alert("All the fields are required");
+        if (!checkValidity({ form: inputs, setInpErrStatus: setInpErrStatus })) {
+            setAlert("All the fields are required!");
 
             return;
         }
+
+        setAlert(false);
+        setReg(true);
 
         try {
             const response = await axios.post(`${server_url}/g-chat/signup`, inputs);
@@ -61,12 +73,16 @@ export default function SignUpPage() {
                 await loadUserDetails(setUserDetails, setLoading, setOverride);
                 setLogin(true);
                 navigate("/dashboard");
-            } else {
-                console.log(response.data.message);
             }
+
+            else
+                setAlert(codeAlertMapper(response.data.code));
         } catch (error) {
-            alert(error.message);
+            console.log(error);
+            setAlert(codeAlertMapper(error.response.data.code));
         }
+
+        setReg(false);
     };
 
     return (
@@ -90,6 +106,7 @@ export default function SignUpPage() {
                         onChange={handlechange}
                         value={inputs.username}
                         style={{ outline: input_err_status.username ? '1px solid red' : 'none' }}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
                     />
                 </div>
 
@@ -103,6 +120,7 @@ export default function SignUpPage() {
                         onChange={handlechange}
                         value={inputs.email}
                         style={{ outline: input_err_status.email ? '1px solid red' : 'none' }}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
                     />
                 </div>
 
@@ -116,6 +134,7 @@ export default function SignUpPage() {
                         onChange={handlechange}
                         value={inputs.password}
                         style={{ outline: input_err_status.password ? '1px solid red' : 'none' }}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
                     />
                 </div>
 
@@ -129,13 +148,22 @@ export default function SignUpPage() {
                         onChange={handlechange}
                         value={inputs.conf_password}
                         style={{ outline: input_err_status.conf_password ? '1px solid red' : 'none' }}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
                     />
                 </div>
 
                 <button className={styles.signupBtn}
                     onClick={handleSubmit}
                 >
-                    Sign Up
+                    {
+                        reg_status
+                        ?
+                        <div className={styles.registering}>
+                            <i className="fa-solid fa-spinner"></i>
+                        </div>
+                        :
+                        "Register"
+                    }
                 </button>
             </div>
 
@@ -144,6 +172,15 @@ export default function SignUpPage() {
                     Already have an account? <Link to="/signin">Sign In</Link>
                 </p>
             </div>
+
+            {
+                alert
+                &&
+                <Alert
+                    text={alert}
+                    closeHook={setAlert}
+                />
+            }
         </div>
     );
 }

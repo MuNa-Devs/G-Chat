@@ -88,17 +88,6 @@ export default function App() {
 			/>
 
 			<Route
-<<<<<<< HEAD
-				path="/user/profile/:user_id" element={
-					<LoginProtector>
-						<UserProfile />
-					</LoginProtector>
-				}
-			/>
-
-			<Route
-=======
->>>>>>> bdd657a8efeaad6f20607de36fbbfae902aa1df0
 				path="/aprilfool" element={
 					<LoginProtector>
 						<AprilFool />

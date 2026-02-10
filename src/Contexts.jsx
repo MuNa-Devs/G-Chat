@@ -35,8 +35,8 @@ export function AppProvider({ children }) {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        loadUserDetails(setUserDetails, setLoading, setOverride);
-    }, []);
+        is_logged_in && loadUserDetails(setUserDetails, setLoading, setOverride);
+    }, [is_logged_in]);
 
     useEffect(() => {
         if (socket === null) setSocket(io(server_url));

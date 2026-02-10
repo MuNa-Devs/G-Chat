@@ -151,8 +151,27 @@ a {
     cursor: not-allowed;
 }
 
-/* Media queries */
+@keyframes load{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
 
+.registering{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} .registering>i{
+    font-size: .975em;
+    transform: translate(-50%, -50%);
+    animation: load 0.85s linear 0s infinite forwards;
+}
+
+/* Media queries */
 @media (max-height: 500px) {
     .signupBody {
         flex-direction: row;
