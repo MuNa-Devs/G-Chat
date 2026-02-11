@@ -16,7 +16,7 @@ import axios from 'axios';
 // Signup page component
 export default function SignUpPage() {
     const navigate = useNavigate();
-    const { setLogin, setUserDetails, setLoading } = useContext(AppContext);
+    const { setLogin, setUserDetails, setLoading, setLogOut } = useContext(AppContext);
     const { setOverride } = useContext(UiContext);
     const [alert, setAlert] = useState(false);
     const [reg_status, setReg] = useState(false);
@@ -76,7 +76,10 @@ export default function SignUpPage() {
 
             if (response.data.success) {
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setLoading, setOverride);
+                localStorage.setItem("token", response.data.token);
+
+                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
+                
                 setLogin(true);
                 navigate("/dashboard");
             }

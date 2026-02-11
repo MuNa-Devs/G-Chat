@@ -15,7 +15,7 @@ import { server_url } from '../../../creds/server_url';
 
 function SignInPage() {
     const navigate = useNavigate();
-    const { setLogin, setUserDetails, setLoading } = useContext(AppContext);
+    const { setLogin, setUserDetails, setLoading, setLogOut } = useContext(AppContext);
     const { setOverride } = useContext(UiContext);
     const [alert, setAlert] = useState(false);
     const [load_status, setSignin] = useState(false);
@@ -54,7 +54,10 @@ function SignInPage() {
 
             if (response.data.success) {
                 localStorage.setItem("user_id", response.data.user.id);
-                await loadUserDetails(setUserDetails, setLoading, setOverride);
+                localStorage.setItem("token", response.data.token);
+
+                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
+                
                 setLogin(true);
                 navigate("/dashboard");
             } else

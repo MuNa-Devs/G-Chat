@@ -1,7 +1,7 @@
 import axios from "axios";
 import { server_url } from "../creds/server_url";
 
-export const loadUserDetails = async (setUserDetails, setLoading, setOverride) => {
+export const loadUserDetails = async (setUserDetails, setLoading, setOverride, setLogOut) => {
     setLoading(true);
     setOverride("loading");
 
@@ -13,9 +13,20 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride) =
             return;
         }
 
+        const token = localStorage.getItem("token");
+
+        if (!token) setLogOut();
+
         const res = await axios.get(
-            `${server_url}/g-chat/users/get-user?user_id=${user_id}`
+            `${server_url}/g-chat/users/get-user?user_id=${user_id}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${token}`
+                }
+            }
         );
+
+        if (res.data.code === "INVALID_JWT") setLogOut();
 
         setUserDetails(res.data.user_details);
     } catch (err) {

@@ -35,7 +35,7 @@ export function AppProvider({ children }) {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        is_logged_in && loadUserDetails(setUserDetails, setLoading, setOverride);
+        is_logged_in && loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
     }, [is_logged_in]);
 
     useEffect(() => {
