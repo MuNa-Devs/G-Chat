@@ -6,11 +6,11 @@ import { loadUserDetails } from '../../loadUserDetails.js';
 import { UiContext } from '../../utils/UiContext';
 import Alert from '../../reusable_component/alert_div/Alert.jsx';
 import { server_url } from '../../../creds/server_url';
-import codeAlertMapper from '../page_utils/code_alert_mapper.js';
+import { code_alert_mapper } from '../page_utils/code_alert_mapper.js';
 
 // Package imports
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import axios from 'axios';
 
 // Signup page component
@@ -44,6 +44,12 @@ export default function SignUpPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setInpErrStatus({
+            username: false,
+            email: false,
+            password: false,
+            conf_password: false
+        });
 
         if (inputs.password !== "" && inputs.password !== inputs.conf_password) {
             setAlert("Passwords DO NOT match!");
@@ -66,7 +72,7 @@ export default function SignUpPage() {
         setReg(true);
 
         try {
-            const response = await axios.post(`${server_url}/g-chat/signup`, inputs);
+            const response = await axios.post(`${server_url}/g-chat/auth/signup`, inputs);
 
             if (response.data.success) {
                 localStorage.setItem("user_id", response.data.user.id);
@@ -76,26 +82,36 @@ export default function SignUpPage() {
             }
 
             else
-                setAlert(codeAlertMapper(response.data.code));
+                setAlert(code_alert_mapper[response.data.code]);
         } catch (error) {
-            console.log(error);
-            setAlert(codeAlertMapper(error.response.data.code));
+            setAlert(code_alert_mapper[error.response.data.code]);
         }
 
         setReg(false);
     };
 
+    const [is_leaving, setIsLeaving] = useState(false);
+
+    const handleTransition = (e) => {
+        e.preventDefault();
+        setIsLeaving(true);
+
+        setTimeout(() => {
+            navigate("/signin");
+        }, 500);
+    }
+
     return (
         <div className={styles.signupBody}>
-            <div className={styles.headerTexts}>
+            <div className={`${styles.headerTexts} ${is_leaving ? styles.evaporate : styles.condensate}`}>
                 <div className="logo">
-                    <h1 className={styles.title}>G-Chat</h1>
+                    <h1 className={styles.title}>G-Connect</h1>
                 </div>
 
-                <p>Create Your G-Chat Account</p>
+                <p>Create Your G-Connect Account</p>
             </div>
 
-            <div className={styles.signupCard}>
+            <div className={`${styles.signupCard} ${is_leaving ? styles.slideOutDiv : styles.slideInDiv}`}>
                 <div className={styles.name}>
                     <h5>Full Name</h5>
 
@@ -111,12 +127,12 @@ export default function SignUpPage() {
                 </div>
 
                 <div className={styles.email}>
-                    <h5>Gitam Email</h5>
+                    <h5>GITAM Email</h5>
 
                     <input className={styles.text}
                         name='email'
                         type="email"
-                        placeholder='Gitam email'
+                        placeholder='GITAM email'
                         onChange={handlechange}
                         value={inputs.email}
                         style={{ outline: input_err_status.email ? '1px solid red' : 'none' }}
@@ -157,21 +173,22 @@ export default function SignUpPage() {
                 >
                     {
                         reg_status
-                        ?
-                        <div className={styles.registering}>
-                            <i className="fa-solid fa-spinner"></i>
-                        </div>
-                        :
-                        "Register"
+                            ?
+                            <div className={styles.registering}>
+                                <i className="fa-solid fa-spinner"></i>
+                            </div>
+                            :
+                            "Register"
                     }
                 </button>
             </div>
 
-            <div className={styles.signinOption}>
+            <div className={`${styles.signinOption} ${is_leaving ? styles.evaporate : styles.condensate}`}>
                 <p>
-                    Already have an account? <Link to="/signin">Sign In</Link>
+                    Already have an account? <Link to="/signin" onClick={handleTransition}>Sign In</Link>
                 </p>
             </div>
+            
 
             {
                 alert

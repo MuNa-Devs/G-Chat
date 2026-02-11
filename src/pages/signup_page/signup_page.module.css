@@ -1,3 +1,43 @@
+@keyframes slide-in{
+	0%{
+		transform: translate(100%, 0%);
+		opacity: 0;
+	}
+	100%{
+		transform: translate(0%, 0%);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out{
+	0%{
+		transform: translate(0%, 0%);
+		opacity: 1;
+	}
+	100%{
+		transform: translate(-100%, 0%);
+		opacity: 0;
+	}
+}
+
+@keyframes evaporate{
+	0%{
+		opacity: 1;
+	}
+	100%{
+		opacity: 0;
+	}
+}
+
+@keyframes condensate{
+	0%{
+		opacity: 0;
+	}
+	100%{
+		opacity: 1;
+	}
+}
+
 .signupBody {
     margin: 0;
     padding: 0;
@@ -12,6 +52,14 @@
 
 .headerTexts {
     text-align: center;
+}
+
+.evaporate{
+    animation: evaporate 0.4s ease-in 0s 1 forwards;
+}
+
+.condensate{
+    animation: condensate .4s ease-out 0s 1 forwards;
 }
 
 .headerTexts h3 {
@@ -55,6 +103,14 @@
     flex-direction: column;
     gap: 12px;
     justify-content: space-evenly;
+}
+
+.slideInDiv{
+    animation: slide-in 0.4s ease-in 0s 1 forwards;
+}
+
+.slideOutDiv{
+    animation: slide-out 0.4s ease-out 0s 1 forwards;
 }
 
 .signupCard div,
