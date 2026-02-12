@@ -101,7 +101,7 @@ export default function SignUpPage() {
 
         setTimeout(() => {
             navigate("/signin");
-        }, 500);
+        }, 300);
     }
 
     return (
@@ -114,7 +114,7 @@ export default function SignUpPage() {
                 <p>Create Your G-Connect Account</p>
             </div>
 
-            <div className={`${styles.signupCard} ${is_leaving ? styles.slideOutDiv : styles.slideInDiv}`}>
+            <div className={`${styles.signupCard} ${is_leaving ? styles.evaporate : styles.condensate}`}>
                 <div className={styles.name}>
                     <h5>Full Name</h5>
 

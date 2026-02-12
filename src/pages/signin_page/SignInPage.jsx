@@ -77,7 +77,7 @@ function SignInPage() {
 
         setTimeout(() => {
             navigate("/signup");
-        }, 500);
+        }, 300);
     }
 
     return (
@@ -90,7 +90,7 @@ function SignInPage() {
                 <p>Login to your G-Connect account</p>
             </div>
 
-            <div className={`${styles.signinCard} ${is_leaving ? styles.slideOutDiv : styles.slideInDiv}`}>
+            <div className={`${styles.signinCard} ${is_leaving ? styles.evaporate : styles.condensate}`}>
                 <div className={styles.email}>
                     <h5>GITAM Email</h5>
 

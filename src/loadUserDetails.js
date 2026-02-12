@@ -28,9 +28,10 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride, s
 
         if (res.data.code === "INVALID_JWT") setLogOut();
 
-        setUserDetails(res.data.user_details);
+        setUserDetails(res.data.user);
     } catch (err) {
         console.log("User details not loaded:", err);
+        setLogOut();
         setUserDetails({
             id: 0,
             username: "",

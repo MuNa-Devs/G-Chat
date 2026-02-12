@@ -13,7 +13,7 @@ export default function UserSettings() {
     const navigate = useNavigate();
     const {user_details} = useContext(AppContext);
 
-    const {setUserDetails, setLoading} = useContext(AppContext);
+    const {setUserDetails, setLoading, setLogOut} = useContext(AppContext);
     const {setOverride} = useContext(UiContext);
 
     const from = location.state?.from || "/dashboard";
@@ -60,15 +60,26 @@ export default function UserSettings() {
         form.append("email", email);
 
         try{
+            const token = localStorage.getItem("token");
+            
             const res = await axios.post(
-                `${server_url}/g-chat/users/save-details?id=${user_details.id}`,
-                form
+                `${server_url}/g-chat/users/save-details?user_id=${user_details.id}`,
+                form,
+                {
+                    headers: {
+                        auth_token: `Bearer ${token}`
+                    }
+                }
             );
 
-            await loadUserDetails(setUserDetails, setLoading, setOverride);
+            if (res.data.success)
+                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
         }
         catch (err){
-            console.log(err);
+            if (
+                err.response.data.code === "INVALID_JWT" ||
+                err.response.data.code === "MISSING_DATA"
+            ) setLogOut();
         }
 
         setSaveStatus(false);

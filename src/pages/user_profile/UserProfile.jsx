@@ -47,7 +47,7 @@ export default function UserProfile(props) {
                         <div className={styles.about}>
                             <h3>About</h3>
 
-                            <h5>{user_data?.about + " hahaha hah ahhhahahah ahhaha hahahahah ahahhahaha hahaha haha"}</h5>
+                            <h5>{user_data?.about}</h5>
                         </div>
 
                         <hr />

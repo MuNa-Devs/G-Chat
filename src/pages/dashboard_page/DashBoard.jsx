@@ -8,7 +8,7 @@ import { server_url } from '../../../creds/server_url';
 import { UiContext } from '../../utils/UiContext';
 
 export default function DashBoard() {
-    const { user_details, setLoading, socket } = useContext(AppContext);
+    const { user_details, setLoading, socket, setLogOut } = useContext(AppContext);
 
     const { setOverride } = useContext(UiContext);
 
@@ -25,12 +25,14 @@ export default function DashBoard() {
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
     const chatRef = useRef(null);
-    const currentUserId = Number(user_details.id);
+    const currentUserId = Number(user_details?.id);
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
+
+    const [offset, setOffset] = useState(0);
 
     /* ---------------- INITIAL LOAD (jump to bottom instantly) ---------------- */
     useLayoutEffect(() => {
@@ -72,15 +74,28 @@ export default function DashBoard() {
 
     /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
-        axios.get(`${server_url}/g-chat/messages`)
+        const token = localStorage.getItem("token");
+
+        axios.get(`${server_url}/g-chat/messages/global?offset=${offset}`, {
+            headers: {
+                auth_token: `Bearer ${token}`
+            }
+        })
             .then(res => {
-                const normalized = res.data.map(msg => ({
+                const normalized = res.data.chats.map(msg => ({
                     ...msg,
                     user_id: Number(msg.user_id)
                 }));
                 setMessages(normalized);
+                console.log(res.data.chats);
+                setOffset(prev => prev + res.data.chats.length);
             })
-            .catch(console.error);
+            .catch(err => {
+                console.log(err);
+
+                if (err.response.data.code === "INVALID_JWT")
+                    setLogOut();
+            });
     }, []);
 
     /* ---------------- SEND MESSAGE ---------------- */
@@ -92,7 +107,6 @@ export default function DashBoard() {
         socket.emit("send_message", {
             user_id: user_details.id,
             message
-            // ⛔ DO NOT send created_at (server handles it)
         });
 
         setMessage('');
