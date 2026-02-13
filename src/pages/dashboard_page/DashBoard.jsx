@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from "axios";
-
+import { Message } from "../../reusable_component/message_dev/Message";
+import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
 import SideBar from '../../reusable_component/SideBar';
 import styles from './dashboard.module.css';
 import { AppContext } from '../../Contexts';
@@ -21,12 +22,15 @@ export default function DashBoard() {
         }
     }, [socket]);
 
+    const inputRef = useRef(null);
     const bottomRef = useRef(null);
+    const emojiWrapperRef = useRef(null);
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
     const chatRef = useRef(null);
     const currentUserId = Number(user_details?.id);
-
+    const [showEmoji, setShowEmoji] = useState(false);
+    const emojiRef = useRef(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [autoScroll, setAutoScroll] = useState(true);
@@ -66,7 +70,17 @@ export default function DashBoard() {
         if (!socket) return;
 
         socket.on("receive_message", (data) => {
-            setMessages(prev => [...prev, data].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+            const messageWithTime = {
+                ...data,
+                created_at: data.created_at || new Date()
+            };
+
+            setMessages(prev =>
+                [...prev, messageWithTime].sort((a, b) =>
+                    new Date(a.created_at || a.time) -
+                    new Date(b.created_at || b.time)
+                )
+            );
         });
 
         return () => socket.off("receive_message");
@@ -98,6 +112,25 @@ export default function DashBoard() {
             });
     }, []);
 
+ useEffect(() => {
+    const handleClickOutside = (event) => {
+        if (
+            emojiWrapperRef.current &&
+            !emojiWrapperRef.current.contains(event.target)
+        ) {
+            setShowEmoji(false);
+        }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+}, []);
+
+
+
     /* ---------------- SEND MESSAGE ---------------- */
     const sendMessage = () => {
         // if (! socket) return;
@@ -110,19 +143,37 @@ export default function DashBoard() {
         });
 
         setMessage('');
+        setShowEmoji(false);
+        inputRef.current.focus();
     };
 
-    /* ---------------- FORMAT TIME ---------------- */
-    const formatTime = (time) => {
-        if (!time) return "";
-        const date = new Date(time);
-        if (isNaN(date.getTime())) return "";
+    const handleEmojiSelect = (emojiData, event) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-        return date.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+        const input = inputRef.current;
+        if (!input) return;
+
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+
+        const newMessage =
+            message.substring(0, start) +
+            emojiData.emoji +
+            message.substring(end);
+
+        setMessage(newMessage);
+
+        setTimeout(() => {
+            input.focus();
+            input.selectionStart = input.selectionEnd =
+                start + emojiData.emoji.length;
+        }, 0);
     };
+
+
+
+
 
     return (
         <div className={styles.dashboardMain}>
@@ -135,9 +186,6 @@ export default function DashBoard() {
                         <p className={styles.smallName}>College Wide Discussions</p>
                     </div>
 
-                    <div className={styles.headerInputContainer}>
-                        <input className={styles.input} placeholder="search..." />
-                    </div>
                 </div>
 
                 <div className={styles.line}></div>
@@ -156,56 +204,26 @@ export default function DashBoard() {
                         overflowY: "auto",
                         padding: "12px"
                     }}
-                    id='chatspace'
+                    className={styles.chatspace}
                 >
                     {messages.map((msg, index) => {
-                        const isMe = Number(msg.user_id) === currentUserId;
+                        const prevMsg = messages[index - 1];
+
+                        const isConsecutive =
+                            prevMsg &&
+                            Number(prevMsg.user_id) === Number(msg.user_id);
 
                         return (
-                            <div
+                            <Message
                                 key={index}
-                                style={{
-                                    display: "flex",
-                                    justifyContent: isMe ? "flex-end" : "flex-start",
-                                    marginBottom: "10px"
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        maxWidth: "65%",
-                                        padding: "10px 14px",
-                                        borderRadius: "14px",
-                                        backgroundColor: isMe ? "#4f46e5" : "#e5e7eb",
-                                        color: isMe ? "#fff" : "#000",
-                                        position: "relative"
-                                    }}
-                                >
-                                    {!isMe && (
-                                        <div style={{
-                                            fontSize: "12px",
-                                            fontWeight: "600",
-                                            marginBottom: "4px",
-                                            opacity: 0.8
-                                        }}>
-                                            {msg.username}
-                                        </div>
-                                    )}
-
-                                    <div style={{ paddingRight: "45px" }}>
-                                        {msg.message}
-                                    </div>
-
-                                    <div style={{
-                                        position: "absolute",
-                                        bottom: "4px",
-                                        right: "8px",
-                                        fontSize: "11px",
-                                        opacity: 0.7
-                                    }}>
-                                        {formatTime(msg.created_at)}
-                                    </div>
-                                </div>
-                            </div>
+                                sender_id={Number(msg.user_id)}
+                                sender_pfp={msg.sender_pfp}
+                                message={msg.message}
+                                timestamp={msg.created_at || msg.time}
+                                conseq_msgs={isConsecutive}
+                                constraint={isConsecutive ? "no-logo" : ""}
+                                status={msg.status}  // optional
+                            />
                         );
                     })}
                     <div ref={bottomRef} />
@@ -241,6 +259,7 @@ export default function DashBoard() {
                     <div className={styles.footerBox}>
                         <div className={styles.messageContainer}>
                             <input
+                                ref={inputRef}
                                 className={styles.messageInput}
                                 placeholder='Type a message...'
                                 type='text'
@@ -249,10 +268,20 @@ export default function DashBoard() {
                                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                             />
                         </div>
-
+                        <div ref={emojiWrapperRef} className={styles.wraper}>
                         <div className={styles.footerButtons}>
-                            <div className={styles.smiley}>
+                            <div
+                                className={styles.smiley}
+                                onClick={() => setShowEmoji(prev => !prev)}
+                                style={{ position: "relative" }}
+                            >
                                 <i className={`fa-regular fa-face-smile ${styles.smile}`}></i>
+
+                                {showEmoji && (
+                                    <div ref={emojiRef} className={styles.emojiBox} >
+                                        <EmojiBox setEmoji={handleEmojiSelect} />
+                                    </div>
+                                )}
                             </div>
 
                             <div className={styles.attach}>
@@ -265,6 +294,7 @@ export default function DashBoard() {
                             >
                                 Send
                             </button>
+                        </div>
                         </div>
                     </div>
                 </div>
