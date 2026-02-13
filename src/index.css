@@ -79,7 +79,7 @@ h1{
 }
 
 h2{
-	font-size: 1.15em;
+	font-size: 1.15em !important;
 	margin: 1px;
 	color: var(--text-primary);
 }
@@ -105,7 +105,7 @@ h5{
 p{
 	padding: 0;
 	margin: 0;
-	font-size: 0.76em;
+	font-size: 0.76em !important;
 }
 
 a{

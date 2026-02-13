@@ -97,6 +97,7 @@ export default function RoomPage() {
             const room_res = res.data.rooms;
 
             if (!room_res.length && !last_seen_id) {
+                setLoading(false);
                 return;
             }
 
@@ -112,9 +113,6 @@ export default function RoomPage() {
                 setLogOut();
 
             return;
-        }
-        finally {
-            setLoading(false);
         }
     }
 

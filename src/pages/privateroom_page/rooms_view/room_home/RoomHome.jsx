@@ -9,6 +9,7 @@ import { AppContext } from "../../../../Contexts";
 import { File, Message } from "../../../../reusable_component/message_dev/Message";
 import EmojiBox from "../../../../reusable_component/emoji_box/EmojiBox";
 import FileObject from "../../../../reusable_component/file_object/FileObject";
+import MessageBar from "../../../../reusable_component/message_bar/MessageBar";
 
 export default function RoomHome() {
     // Ref to auto scroll to bottom of the messages
@@ -111,12 +112,6 @@ export default function RoomHome() {
     useEffect(() => {
         bottom_ref?.current?.scrollIntoView();
     }, [messages]);
-
-    const autoReHeight = (e) => {
-        const thing = e.target;
-        thing.style.height = "auto";
-        thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
-    };
 
     // Send message to other room members + optimistic UI update
     const sendMessage = async () => {
@@ -302,55 +297,14 @@ export default function RoomHome() {
                         />
                     }
 
-                    <div className={styles.textControls}>
-                        <button
-                            onClick={() => setShowPicker(prev => !prev)}
-                            className={styles.emojis}
-                        ><i className="fa-solid fa-face-laugh"></i></button>
-
-                        <button
-                            className={styles.files}
-                            onClick={() => {
-                                document.getElementById("file").click();
-                            }}
-                        ><i className="fa-solid fa-paperclip"></i></button>
-
-                        <input
-                            id="file"
-                            type="file"
-                            multiple
-                            onChange={handleFiles}
-                            style={{
-                                display: "none"
-                            }}
-                        />
-
-                        <textarea
-                            rows={1}
-                            ref={input_ref}
-                            value={message}
-                            type="text"
-                            placeholder="Type a message"
-                            onClick={() => {
-                                setShowPicker(false);
-                            }}
-                            onChange={(e) => {
-                                setMessage(e.target.value);
-                                autoReHeight(e);
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    sendMessage();
-                                    e.preventDefault();
-                                }
-                            }}
-                        />
-
-                        <button
-                            className={styles.send}
-                            onClick={sendMessage}
-                        ><i className="fa-solid fa-paper-plane"></i></button>
-                    </div>
+                    <MessageBar
+                        setShowPicker={setShowPicker}
+                        handleFiles={handleFiles}
+                        input_ref={input_ref}
+                        message={message}
+                        setMessage={setMessage}
+                        sendMessage={sendMessage}
+                    />
 
                     {
                         show_picker

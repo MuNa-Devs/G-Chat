@@ -25,7 +25,7 @@ export function Message(props) {
                 Number(localStorage.getItem("user_id")) !== props.sender_id
                     ?
                     <div className={`${(
-                        props.conseq_msgs && props.constraint !== "no-logo"
+                        props.conseq_msgs
                     ) && styles.conseqMsg} ${styles.senderMsg}`}>
                         {
                             props.constraint !== "no-logo"
@@ -54,7 +54,7 @@ export function Message(props) {
                         </div>
                     </div>
                     :
-                    <div className={`${(props.conseq_msgs && props.constraint !== "no-logo") && styles.conseqMsg} ${styles.myMsg}`}>
+                    <div className={`${(props.conseq_msgs) && styles.conseqMsg} ${styles.myMsg}`}>
                         <div className={styles.message}>
                             <p
                                 style={isSingleEmoji(props.message) ? {fontSize: "1.5em"} : {}}
@@ -117,7 +117,7 @@ export function File(props) {
                     ?
                     <div
                         className={`${(
-                            props.conseq_msgs && props.constraint !== "no-logo"
+                            props.conseq_msgs
                         ) && styles.conseqFile} ${styles.senderFile}`}
                     >
                         {
@@ -151,7 +151,7 @@ export function File(props) {
                         </div>
                     </div>
                     :
-                    <div className={`${(props.conseq_msgs && props.constraint !== "no-logo") && styles.conseqFile} ${styles.myFile}`}>
+                    <div className={`${(props.conseq_msgs) && styles.conseqFile} ${styles.myFile}`}>
                         <div className={styles.file}>
                             <div className={`${styles.fileInfo}`} onClick={handleDownload}>
                                 <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
