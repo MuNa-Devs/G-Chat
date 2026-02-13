@@ -1,57 +1,77 @@
-import styles from "./room_page.module.css"
-import Rooms from "./Rooms"
-import SideBar from "../../reusable_component/SideBar"
-
-import { useState, useEffect, useContext } from "react"
+import styles from "./room_page.module.css";
+import Rooms from "./Rooms";
+import SideBar from "../../reusable_component/SideBar";
 import NewRoom from "./CreateRoom";
-import axios, { all } from "axios";
-import { AppContext } from "../../Contexts";
-import LoadingScreen from "../loading_screen/LoadingScreen";
 import { server_url } from "../../../creds/server_url";
+import { useContext, useEffect, useState } from "react";
 import { UiContext } from "../../utils/UiContext";
+import { AppContext } from "../../Contexts";
+import axios from "axios";
 
 export default function RoomPage() {
+    // Room filter
     const { room_filter, setRoomFilter } = useContext(UiContext);
 
-    const [is_empty, setEmpty] = useState(true);
-    const [empty_placeholder, setPlaceHolder] = useState("No Roooms Available");
+    // App-level vars
+    const { user_details, is_loading, setLogOut } = useContext(AppContext);
 
-    const [new_room_triggered, setNRTrigger] = useState(false);
+    // Available rooms
+    const [rooms, setRooms] = useState([]);
+    const [searched_rooms, setSearchRes] = useState([]);
 
-    const [all_rooms, setAllRooms] = useState([]);
-    const [my_rooms, setMyRooms] = useState([]);
-
-    const [all_rooms_count, setAllRoomsCount] = useState(0);
-    const [my_rooms_count, setMyRoomsCount] = useState(0);
-
-    const { is_loading, user_details } = useContext(AppContext);
+    // Rooms offset
+    const [last_seen_id, setLastSeenId] = useState(0);
+    const [search_last_seen_id, setSearchLastSeenId] = useState(0);
 
     // Search rooms functionality state vars:
     const [search_query, setSearchQuery] = useState("");
-    const [search_res, setSearchRes] = useState([]);
     const [did_search, setSearched] = useState(false);
+
+    // Create room button click
+    const [new_room_triggered, setNRTrigger] = useState(false);
+
+    // Reload the rooms (used only when a room is created)
+    const [state, setRefreshState] = useState(0);
+
+    // Show loader
+    const [loading, setLoading] = useState(false);
+
+    // Initial rooms load
+    useEffect(() => {
+        if (!user_details?.id) return;
+
+        loadRooms();
+    }, [user_details?.id, state, room_filter]);
 
     // Search rooms call-back:
     useEffect(() => {
+        setSearchRes([]);
+
         if (!search_query) {
+            setLoading(false);
             setSearched(false);
-            //
+            setLastSeenId(0);
+
             return;
         }
 
         setSearched(true);
+        setSearchLastSeenId(0);
+        setLoading(true);
+
         const query = new AbortController();
 
         const search = setTimeout(() => {
-            axios.get(
-                server_url + `/g-chat/rooms/search-rooms?search_query=${search_query}`,
-                { signal: query.signal }
-            ).then(res => {
-                setSearchRes(res.data.rooms_info);
-            }).catch(err => {
-                console.log(err);
-                setSearchRes([]);
-            });
+            searchRooms(
+                query,
+                user_details?.id || localStorage.getItem("user_id"),
+                search_query,
+                search_last_seen_id,
+                setLogOut,
+                setLoading,
+                setSearchRes,
+                setSearchLastSeenId
+            );
         }, 500);
 
         return () => {
@@ -60,54 +80,50 @@ export default function RoomPage() {
         }
     }, [search_query]);
 
-    useEffect(() => {
+    // Load rooms
+    const loadRooms = async () => {
+        setLoading(true);
 
-        if (is_loading) return;
+        try {
+            const res = await axios.get(
+                `${server_url}/g-chat/rooms/${room_filter === "my" ? "my-rooms" : "all-rooms"}?user_id=${user_details?.id}&last_seen_id=${last_seen_id}`,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
 
-        setPlaceHolder("Loading available rooms...")
+            const room_res = res.data.rooms;
 
-        if (room_filter === "my") loadMyRooms();
-        else if (room_filter === "all") loadAllRooms();
-    }, [user_details?.id]);
+            if (!room_res.length && !last_seen_id) {
+                return;
+            }
 
-    const loadMyRooms = async () => {
-
-        if (is_loading || !user_details.id) return;
-
-        setRoomFilter("my");
-        setSearched(false);
-        const rooms = await getMyRooms(user_details.id, my_rooms_count);
-
-        if (!rooms.length && !my_rooms_count) {
-            setEmpty(true);
-            setPlaceHolder("No Rooms Available");
+            setLastSeenId(room_res[room_res.length - 1].r_id);
+            setLoading(false);
+            setRooms(prev => [...prev, ...room_res]);
         }
-        else {
-            setEmpty(false);
-            setMyRoomsCount(prev => prev + rooms.length);
-        }
+        catch (err) {
+            console.log(err);
+            setLoading(false);
 
-        setMyRooms(prev => [...prev, ...rooms]);
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response.data.code))
+                setLogOut();
+
+            return;
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
-    const loadAllRooms = async () => {
-        setRoomFilter("all");
-        setSearched(false);
-        const rooms = await getAllRooms(all_rooms_count);
-
-        if (!rooms.length && !all_rooms_count) {
-            setEmpty(true);
-            setPlaceHolder("No Rooms Available");
-        }
-        else {
-            setEmpty(false);
-            setAllRoomsCount(prev => prev + rooms.length);
-        }
-
-        setAllRooms(prev => [...prev, ...rooms]);
+    // Filter toggle logic
+    const changeFilter = (filter) => {
+        setRooms([]);
+        setLastSeenId(0);
+        setRoomFilter(filter);
     }
-
-    if (is_loading) return <LoadingScreen />
 
     return (
         <div className={styles.roomsPage}>
@@ -148,77 +164,77 @@ export default function RoomPage() {
                             &&
                             <div className={styles.filter}>
                                 <button
-                                    className={`${room_filter === "my" && styles.activeBtn} ${styles.filterBtn}`}
-                                    onClick={loadMyRooms}
+                                    className={
+                                        `
+                                        ${styles.my}
+                                        ${room_filter === "my" && styles.activeBtn} 
+                                        ${styles.filterBtn}
+                                        `
+                                    }
+                                    onClick={() => changeFilter("my")}
                                 >My Rooms</button>
 
                                 <button
-                                    className={`${room_filter === "all" && styles.activeBtn} ${styles.filterBtn}`}
-                                    onClick={loadAllRooms}
+                                    className={
+                                        `
+                                        ${styles.all}
+                                        ${room_filter === "all" && styles.activeBtn} 
+                                        ${styles.filterBtn}
+                                        `
+                                    }
+                                    onClick={() => changeFilter("all")}
                                 >All Rooms</button>
                             </div>
                         }
                     </div>
 
                     <div className={styles.rooms}>
-                        {is_empty && <h4>{empty_placeholder}</h4>}
-
                         {
-                            did_search
-                            &&
-                            search_res
+                            (did_search ? searched_rooms : rooms)
                                 .filter(room => room.r_type !== "private")
                                 .map(room => (
                                     <Rooms
                                         key={room.r_id}
                                         room_id={room.r_id}
                                         logo={`${server_url}/files/${room.icon_url}`}
-                                        room_title={capitalize(room.r_name)}
-                                        prof_name={capitalize(room.username)}
+                                        room_title={room.r_name}
+                                        prof_name={
+                                            room.r_aid === user_details?.id
+                                                ? "You"
+                                                : capitalize(room.username)
+                                        }
                                         join={true}
                                         join_pref={capitalize(room.join_pref)}
-                                        room_btn="View Room"
+                                        is_member={room_filter === "my" ? room.is_member : true}
+                                        room_btn={room_filter === "my" ? "Open Room" : "View Room"}
                                     />
                                 ))
                         }
+                    </div>
 
+                    <div className={styles.loaderDiv}>
                         {
-                            (!is_empty && !did_search) &&
-                            (
-                                room_filter === "all"
-                                    ?
-                                    all_rooms
-                                        .filter(room => room.r_type !== "private")
-                                        .map(room => (
-                                            <Rooms
-                                                key={room.r_id}
-                                                room_id={room.r_id}
-                                                logo={`${server_url}/files/${room.icon_url}`}
-                                                room_title={capitalize(room.r_name)}
-                                                prof_name={capitalize(room.username)}
-                                                join={true}
-                                                join_pref={capitalize(room.join_pref)}
-                                                room_btn="View Room"
-                                            />
-                                        ))
-                                    :
-                                    my_rooms
-                                        .map(room => (
-                                            <Rooms
-                                                key={room.r_id}
-                                                room_id={room.r_id}
-                                                logo={`${server_url}/files/${room.icon_url}`}
-                                                room_title={capitalize(room.r_name)}
-                                                prof_name={capitalize(room.username)}
-                                                join={true}
-                                                join_pref={capitalize(room.join_pref)}
-                                                room_btn="Open Room"
-                                            />
-                                        ))
-                            )
+                            !did_search
+                                ?
+                                (!loading && (!rooms.length))
+                                &&
+                                <h5>{
+                                    room_filter === "my"
+                                        ? "Looks like you're not in any rooms yet. Join or create one to begin."
+                                        : "There are no rooms available right now."
+                                }</h5>
+
+                                :
+                                (!loading && !searched_rooms.length)
+                                &&
+                                <h5>There are no rooms available right now.</h5>
                         }
 
-                        <div className="bufferDiv"></div>
+                        {
+                            loading
+                            &&
+                            <div className={styles.loader}></div>
+                        }
                     </div>
                 </div>
             </div>
@@ -226,40 +242,37 @@ export default function RoomPage() {
             {
                 new_room_triggered &&
                 <div className={styles.newRoomDiv}>
-                    <NewRoom closeHook={setNRTrigger} />
+                    <NewRoom
+                        setRefreshState={setRefreshState}
+                        closeHook={setNRTrigger}
+                    />
                 </div>
             }
         </div>
-    )
+    );
 }
 
 const capitalize = (string) => string?.charAt(0).toUpperCase() + string?.slice(1);
 
-const getMyRooms = async (uid, my_rooms_count) => {
-    try {
-        const res = await axios.get(
-            `${server_url}/g-chat/rooms/get_my_rooms?uid=${uid}&rooms_count=${my_rooms_count}`
-        );
-
-        return res.data.rooms_info;
-    }
-    catch (err) {
+const searchRooms = (query, user_id, search_query, last_seen_id, setLogOut, setLoading, setSearchRes, setSearchLastSeenId) => {
+    axios.get(
+        server_url + `/g-chat/rooms/search?user_id=${user_id}&search_query=${search_query}&last_seen_id=${last_seen_id}`,
+        {
+            signal: query.signal,
+            headers: {
+                auth_token: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    ).then(res => {
+        setSearchRes(prev => [...prev, ...res.data.rooms]);
+        setLoading(false);
+        setSearchLastSeenId(prev => res.data?.rooms[res.data?.rooms?.length - 1].r_id || prev);
+    }).catch(err => {
         console.log(err);
-        return [];
-    }
-};
 
-const getAllRooms = async (all_rooms_count) => {
-    try {
-        console.log(all_rooms_count);
-        const res = await axios.get(
-            `${server_url}/g-chat/rooms/get_all_rooms?rooms_count=${all_rooms_count}`
-        );
+        if (["INVALID_JWT", "FORBIDDEN"].includes(err.response.data.code))
+            setLogOut();
 
-        return res.data.rooms_info;
-    }
-    catch (err) {
-        console.log(err);
-        return [];
-    }
-};
+        setSearchRes([]);
+    });
+}

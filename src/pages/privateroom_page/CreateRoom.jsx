@@ -7,7 +7,7 @@ import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
 
 export default function NewRoom(props) {
-    const { user_details } = useContext(AppContext);
+    const { user_details, setLogOut } = useContext(AppContext);
 
     const [room_icon, setRoomIcon] = useState("");
     const [room_name, setRoomName] = useState("");
@@ -52,18 +52,21 @@ export default function NewRoom(props) {
         if (props.api === "update") form.append("room_id", props.room_data.r_id);
 
         axios.post(
-            `${server_url}/g-chat/rooms/${props.api || "create"}`,
+            `${server_url}/g-chat/rooms/${props.api || "create"}?user_id=${user_details?.id}`,
             form,
             {
                 headers: {
-                    "Content-Type": "multipart/form-data"
+                    "Content-Type": "multipart/form-data",
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
                 }
             }
         ).then(res => {
             const data = res.data;
             setBtnText(btn_text);
             document.getElementById("save").disabled = false;
-            if (props.api === "update") props.setRefreshState(prev => prev + 1);
+
+            props.setRefreshState(prev => prev + 1);
+
             props.closeHook(false);
         }).catch(err => {
             console.log(err);

@@ -1,3 +1,12 @@
+@keyframes reveal{
+    0%{
+        transform: scale(0.8);
+    }
+    100%{
+        transform: scale(1);
+    }
+}
+
 .roomsPage{
     margin: 0;
     padding: 0;
@@ -71,6 +80,7 @@
     flex: 1;
     height: auto;
     display: flex;
+    transition: flex-basis 0.25s ease-out;
 }
 
 .searchBar div{
@@ -122,6 +132,8 @@
 .searchRooms .filter .activeBtn{
     background-color: var(--bg-light);
     color: var(--text-primary) !important;
+
+    animation: reveal 0.2s ease-out 0s 1 forwards;
 }
 
 .rooms{
@@ -148,6 +160,8 @@
     padding-bottom: 16px;
     margin-top: 8px;
     gap: 16px;
+
+    animation: reveal 0.25s ease-in 0s 1 forwards;
 }
 
 .roomDiv .roomInfo{
@@ -275,6 +289,34 @@
     padding: 0;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
+}
+
+.loaderDiv{
+    height: auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes loader{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+.loader{
+    height: 40px;
+    width: 40px;
+    border: 4px solid var(--bg-light);
+    border-top: 4px solid var(--border);
+    border-radius: 50%;
+    animation: loader 0.5s linear 0s infinite forwards;
 }
 
 /* Media Queries */

@@ -1,7 +1,7 @@
 
 export const code_alert_mapper = {
     "MISSING_DATA": "All the fields are required!",
-    "INVALID_EMAIL": "Invalid E-Mail. Use your GITAM mail ID.",
+    "INVALID_EMAIL": "Invalid email. Use your GITAM mail ID.",
     "WEAK_PASSWORD_LOWERCASE": "Password must contain atleast one lower-case letter!",
     "WEAK_PASSWORD_UPPERCASE": "Passwort must contain atleast one upper-case letter!",
     "WEAK_PASSWORD_DIGIT": "Password must contain atleast one digit!",

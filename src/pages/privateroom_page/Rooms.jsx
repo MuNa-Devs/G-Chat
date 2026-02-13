@@ -1,32 +1,9 @@
 import styles from './room_page.module.css'
-import { AppContext } from '../../Contexts';
-
-import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { server_url } from '../../../creds/server_url';
 
 export default function Rooms(props) {
-    const [is_member, setMembership] = useState(false);
-
     const r_id = props.room_id;
-    const { user_details } = useContext(AppContext);
-    const user_id = user_details?.id || localStorage.getItem("user_id");
-
     const navigate = useNavigate();
-
-    useEffect(() => {
-
-        const getMembership = () => axios.get(
-            server_url + `/g-chat/rooms/is_member?room_id=${r_id}&user_id=${user_id}`
-        ).then(res => {
-            setMembership(res.data.is_member);
-        }).catch(err => {
-            console.log(err);
-        });
-
-        getMembership();
-    }, []);
 
     return (
         <div className={styles.roomDiv}>
@@ -60,7 +37,7 @@ export default function Rooms(props) {
                 <button
                     onClick={async (e) => {
                         if (props.room_btn === "View Room")
-                            navigate(`/room/dashboard/${r_id}`, { state: { is_member: is_member } });
+                            navigate(`/room/dashboard/${r_id}`, { state: { is_member: props.is_member } });
                         else
                             navigate(`/room/home/${r_id}`);
                     }}

@@ -87,7 +87,6 @@ export default function DashBoard() {
                     user_id: Number(msg.user_id)
                 }));
                 setMessages(normalized);
-                console.log(res.data.chats);
                 setOffset(prev => prev + res.data.chats.length);
             })
             .catch(err => {

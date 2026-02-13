@@ -1,3 +1,31 @@
+@keyframes reveal {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes reveal-mobile {
+    0% {
+        transform: translate(0%, 0%) scale(0.8);
+    }
+
+    75% {
+        transform: translate(0%, 0%) scale(1.05);
+    }
+
+    100% {
+        transform: translate(0%, 0%) scale(1);
+    }
+}
+
 .newRoom {
     position: fixed;
     top: 50%;
@@ -21,6 +49,8 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 32px;
+
+    animation: reveal 0.25s ease-out 0s 1 forwards;
 }
 
 .titlebar {
@@ -230,7 +260,8 @@
     gap: 24px;
 }
 
-.bottomButtons, .topButtons {
+.bottomButtons,
+.topButtons {
     width: 100%;
     height: auto;
     display: flex;
@@ -252,7 +283,7 @@
     cursor: pointer;
 }
 
-.bottomButtons .cancel, 
+.bottomButtons .cancel,
 .topButtons .cancel {
     color: var(--text-secondary);
     background-color: transparent;
@@ -270,13 +301,13 @@
     background-color: var(--primary);
 }
 
-.topButtons{
+.topButtons {
     display: none;
 }
 
 /* Media Queries */
-@media (max-height: 800px){
-    .topButtons{
+@media (max-height: 800px) {
+    .topButtons {
         flex: 1;
         padding-bottom: 0px;
         display: flex;
@@ -285,7 +316,7 @@
         justify-content: flex-end;
     }
 
-    .bottomButtons{
+    .bottomButtons {
         display: none;
     }
 }
@@ -313,6 +344,8 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 32px;
+
+        animation: reveal-mobile 0.25s ease-out 0s 1 forwards;
     }
 
     .sections .sectionBodyContainer {
@@ -352,6 +385,8 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 32px;
+
+        animation: reveal-mobile 0.25s ease-out 0s 1 forwards;
     }
 
     .sections .sectionBodyContainer {
