@@ -389,3 +389,53 @@
     color: var(--text-primary);
 }
 
+@media(max-width: 560px){
+    .friendsMain {
+        flex-direction: column;
+    }
+    .headerInputContainer {
+        width: 100%;
+    }
+    .input {
+        margin-top: 100px;
+        width: 85%;
+        margin-left: 10px;
+    }
+    .header .pageNameContainer .global {
+        font-size: 1.9rem;
+        margin-top: 5px;
+        margin-left: 25px;
+    }
+    .pageNameContainer{
+        display: flex;
+        flex-direction: row;
+        width: 340px;
+    }
+    .headerInputContainer{
+        margin-top: -50px;
+        margin-left: -300px;
+    }
+    .header{
+        display:flex;
+        margin-top:0;
+    }
+    .smallName{
+        margin-top: 40px;
+        width: 240px;
+        margin-left: -65px;
+
+    }
+    .requestsBtn{
+        align-self: flex-start;
+        margin-left: -80px;
+        margin-top: 15px;
+    }
+    .line{
+        margin-left: 14px;
+        margin-top: 80px;
+        width: 93%;
+    }
+    .resultsContainer{
+        margin-left: 14px;
+    }   
+}

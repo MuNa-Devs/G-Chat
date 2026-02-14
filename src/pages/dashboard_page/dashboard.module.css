@@ -187,6 +187,7 @@
 
 @media (max-width: 560px) {
     .dashboardMain {
+        display: flex;
         flex-direction: column;
     }
 
@@ -199,7 +200,8 @@
         left: 0;
         width: 100%;
         z-index: 999;
-        margin-top: 0px;
+        margin-top: -60px;
+        height: 50px;
     }
 
     .input {
@@ -213,7 +215,7 @@
 
     .footer {
         position: fixed;
-        bottom: 0;
+        margin-bottom: 0;
         left: 0;
         width: 98%;
         z-index: 1000;
@@ -221,7 +223,7 @@
     }
 
     .line {
-        margin-top: 137px;
+        margin-top: 80px;
         margin-left: 25px;
         width: 89%;
         position: fixed;
@@ -244,7 +246,7 @@
     .pageNameContainer {
         width: 100%;
         margin-left: 11.5px;
-        margin-top: 67px;
+        margin-top: 60px;
         background-color: var(--bg);
         height: 70px;
         z-index: 0;
@@ -252,8 +254,8 @@
 
     .chatspace {
         position: relative;
-        margin-top: 135px;
-        margin-bottom: 50px;
+        margin-top: 80px;
+        margin-bottom: -5px;
         overflow-y: auto;
     }
 
@@ -315,7 +317,7 @@
     .pageNameContainer {
         width: 100%;
         margin-left: 11.5px;
-        margin-top: 67px;
+        margin-top: -57px;
         background-color: var(--bg);
         height: 70px;
         z-index: 0;
@@ -324,7 +326,7 @@
     .chatspace {
         position: relative;
         margin-top: 80px;
-        margin-bottom: 50px;
+        margin-bottom: 0px;
         overflow-y: auto;
     }
 
