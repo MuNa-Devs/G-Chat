@@ -20,8 +20,8 @@ export default function RoomPage() {
     const [searched_rooms, setSearchRes] = useState([]);
 
     // Rooms offset
-    const [last_seen_id, setLastSeenId] = useState(0);
-    const [search_last_seen_id, setSearchLastSeenId] = useState(0);
+    const [last_seen_id, setLastSeenId] = useState(Number.MAX_SAFE_INTEGER);
+    const [search_last_seen_id, setSearchLastSeenId] = useState(Number.MAX_SAFE_INTEGER);
 
     // Search rooms functionality state vars:
     const [search_query, setSearchQuery] = useState("");
@@ -41,22 +41,34 @@ export default function RoomPage() {
         if (!user_details?.id) return;
 
         loadRooms();
-    }, [user_details?.id, state, room_filter]);
+    }, [user_details?.id, room_filter]);
+
+    // Reload the rooms entirely on state change
+    useEffect(() => {
+        if (state === 0) return;
+
+        const reload = async () => {
+            await changeFilter(room_filter);
+            loadRooms();
+        }
+
+        reload();
+    }, [state]);
 
     // Search rooms call-back:
     useEffect(() => {
         setSearchRes([]);
 
-        if (!search_query) {
+        if (search_query.trim().length < 1) {
             setLoading(false);
             setSearched(false);
-            setLastSeenId(0);
+            setLastSeenId(Number.MAX_SAFE_INTEGER);
 
             return;
         }
 
         setSearched(true);
-        setSearchLastSeenId(0);
+        setSearchLastSeenId(Number.MAX_SAFE_INTEGER);
         setLoading(true);
 
         const query = new AbortController();
@@ -66,7 +78,7 @@ export default function RoomPage() {
                 query,
                 user_details?.id || localStorage.getItem("user_id"),
                 search_query,
-                search_last_seen_id,
+                Number.MAX_SAFE_INTEGER,
                 setLogOut,
                 setLoading,
                 setSearchRes,
@@ -96,14 +108,16 @@ export default function RoomPage() {
 
             const room_res = res.data.rooms;
 
-            if (!room_res.length && !last_seen_id) {
+            if (!room_res.length && last_seen_id === Number.MAX_SAFE_INTEGER) {
                 setLoading(false);
                 return;
             }
 
+            const final_list = uniqueList([...rooms, ...room_res]);
+
             setLastSeenId(room_res[room_res.length - 1].r_id);
             setLoading(false);
-            setRooms(prev => [...prev, ...room_res]);
+            setRooms(final_list);
         }
         catch (err) {
             console.log(err);
@@ -117,10 +131,10 @@ export default function RoomPage() {
     }
 
     // Filter toggle logic
-    const changeFilter = (filter) => {
+    const changeFilter = async (filter) => {
         setRooms([]);
-        setLastSeenId(0);
-        setRoomFilter(filter);
+        setLastSeenId(Number.MAX_SAFE_INTEGER);
+        await setRoomFilter(filter);
     }
 
     return (
@@ -250,6 +264,8 @@ export default function RoomPage() {
     );
 }
 
+const uniqueList = (list) => ([...new Map(list.map(item => [item.r_id, item])).values()])
+
 const capitalize = (string) => string?.charAt(0).toUpperCase() + string?.slice(1);
 
 const searchRooms = (query, user_id, search_query, last_seen_id, setLogOut, setLoading, setSearchRes, setSearchLastSeenId) => {
@@ -262,13 +278,13 @@ const searchRooms = (query, user_id, search_query, last_seen_id, setLogOut, setL
             }
         }
     ).then(res => {
-        setSearchRes(prev => [...prev, ...res.data.rooms]);
+        setSearchRes(prev => uniqueList([...prev, ...res.data?.rooms]));
         setLoading(false);
-        setSearchLastSeenId(prev => res.data?.rooms[res.data?.rooms?.length - 1].r_id || prev);
+        setSearchLastSeenId(prev => res.data?.rooms[res.data?.rooms?.length - 1]?.r_id || prev);
     }).catch(err => {
         console.log(err);
 
-        if (["INVALID_JWT", "FORBIDDEN"].includes(err.response.data.code))
+        if (["INVALID_JWT", "FORBIDDEN"].includes(err?.response?.data?.code))
             setLogOut();
 
         setSearchRes([]);

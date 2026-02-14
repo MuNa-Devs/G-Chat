@@ -397,6 +397,5 @@
 
     .sidebarAtTop {
         display: flex;
-        position: fixed;
     }
 }
