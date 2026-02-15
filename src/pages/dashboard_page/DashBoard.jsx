@@ -216,7 +216,7 @@ export default function DashBoard() {
                             <Message
                                 key={index}
                                 sender_id={Number(msg.user_id)}
-                                sender_pfp={msg.sender_pfp}
+                                sender_pfp={msg.pfp}
                                 message={msg.message}
                                 timestamp={msg.created_at || msg.time}
                                 conseq_msgs={isConsecutive}

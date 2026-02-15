@@ -63,7 +63,7 @@ export default function UserSettings() {
             const token = localStorage.getItem("token");
             
             const res = await axios.post(
-                `${server_url}/g-chat/users/save-details?user_id=${user_details.id}`,
+                `${server_url}/g-chat/users/save-details?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
                 form,
                 {
                     headers: {
@@ -76,6 +76,8 @@ export default function UserSettings() {
                 await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
         }
         catch (err){
+            console.log(err);
+
             if (
                 err.response.data.code === "INVALID_JWT" ||
                 err.response.data.code === "MISSING_DATA"
