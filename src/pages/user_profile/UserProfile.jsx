@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 import styles from "./user_profile.module.css";
 import { server_url } from "../../../creds/server_url";
+import { AppContext } from "../../Contexts";
 
 export default function UserProfile(props) {
     const user_id = props.user_id;
+    const { user_details } = useContext(AppContext);
     const [user_data, setUserData] = useState({});
 
     useEffect(() => {
-        axios.get(server_url + `/g-chat/users/get-user?user_id=${user_id}`)
+        axios.get(server_url + `/g-chat/users/get-user?user_id=${user_details?.id || localStorage.getItem("user_id")}&req_user_id=${user_id}`)
             .then(res => {
                 setUserData(res.data.user_details);
             }).catch(err => {
                 console.log(err);
+                
+                if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                    setLogOut();
             })
     }, []);
 

@@ -70,6 +70,9 @@ export default function NewRoom(props) {
             props.closeHook(false);
         }).catch(err => {
             console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
         });
     }
 

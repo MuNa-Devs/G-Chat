@@ -18,7 +18,7 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride, s
         if (!token) setLogOut();
 
         const res = await axios.get(
-            `${server_url}/g-chat/users/get-user?user_id=${user_id}`,
+            `${server_url}/g-chat/users/get-user?user_id=${user_id}&req_user_id=${user_id}`,
             {
                 headers: {
                     auth_token: `Bearer ${token}`

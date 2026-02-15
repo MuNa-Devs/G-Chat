@@ -123,7 +123,7 @@ export default function RoomPage() {
             console.log(err);
             setLoading(false);
 
-            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response.data.code))
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
                 setLogOut();
 
             return;
@@ -183,7 +183,12 @@ export default function RoomPage() {
                                         ${styles.filterBtn}
                                         `
                                     }
-                                    onClick={() => changeFilter("my")}
+                                    onClick={() => {
+                                        if (room_filter === "my")
+                                            return;
+
+                                        changeFilter("my");
+                                    }}
                                 >My Rooms</button>
 
                                 <button
@@ -194,7 +199,12 @@ export default function RoomPage() {
                                         ${styles.filterBtn}
                                         `
                                     }
-                                    onClick={() => changeFilter("all")}
+                                    onClick={() => {
+                                        if (room_filter === "all")
+                                            return;
+
+                                        changeFilter("all");
+                                    }}
                                 >All Rooms</button>
                             </div>
                         }

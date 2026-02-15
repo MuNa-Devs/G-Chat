@@ -31,7 +31,7 @@
 
 .mainLayout{
     flex: 1;
-    height: 100%;
+    height: calc(100% - 16px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,10 +40,11 @@
     margin-right: 16px;
     padding-left: 8px;
     padding-right: 9px;
+    padding-bottom: 16px;
 
     overflow-x: hidden;
 
-    animation: slide-in .375s ease-out 0s 1 forwards;
+    animation: slide-in .4s ease-out 0s 1 forwards;
 }
 
 .mainLayout .header{
@@ -57,7 +58,7 @@
     margin-bottom: 8px;
 }
 
-.mainLayout .header .heading h1{
+.mainLayout .header .heading h2{
     color: var(--text-primary);
 }
 
@@ -225,11 +226,16 @@
 .roomInfo .details > h4{
     font-size: 0.85em;
     letter-spacing: 0.8px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     max-width: calc(100% - 8px);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .roomInfo .details p{

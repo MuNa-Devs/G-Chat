@@ -8,7 +8,7 @@ import { AppContext } from '../../Contexts';
 
 export default function FriendsPage() {
 
-    const { user_details } = useContext(AppContext);
+    const { user_details, setLogOut } = useContext(AppContext);
 
     const [friend, setFriend] = useState("");
     const [friends, setFriends] = useState([]);
@@ -29,13 +29,32 @@ export default function FriendsPage() {
         try {
             setLoading(true);
             setHasSearched(false);
+            console.log(query);
+
             const res = await axios.get(
-                `${server_url}/g-chat/search-users?query=${query}`
-            );
-            setResults(res.data);
+                `${server_url}/g-chat/search-users?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}`,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            ); // server sends the following data:
+            // res.data.users = {
+            //  id -> user id,
+            //  username -> their name,
+            //  pfp -> their pfp (filename only not link). telusu kda, server_url tho...
+            //  is_friend -> are they ur frnd (bool)
+            // }
+
+            console.log(res.data?.users);
+            setResults(res.data?.users || []);
             setHasSearched(true);
         } catch (err) {
             console.error(err);
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
+
             setHasSearched(true);
         }
         finally {
@@ -45,44 +64,82 @@ export default function FriendsPage() {
 
 
     const sendRequest = async (receiverId) => {
-        await axios.post(`${server_url}/g-chat/send-request`, {
-            senderId: user_details.id,
-            receiverId
+        axios.post(`${server_url}/g-chat/user/requests?action=send&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                senderId: user_details?.id || localStorage.getItem("user_id"),
+                receiverId
+            },
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            } // res.data.response = { request_id -> id of the request row in db }
+        ).then(res => {
+            setResults(prev => prev.filter(u => u.id !== receiverId));
+        }).catch(err => {
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
         });
-
-        setResults(prev => prev.filter(u => u.id !== receiverId));
     };
 
 
-const acceptRequest = async (requestId) => {
-    try {
-        await axios.post(
-            `${server_url}/g-chat/accept-request`,
-            {
-                requestId,
-                userId: user_details.id
-            }
-        );
+    const acceptRequest = async (requestId) => {
+        try {
+            await axios.post(
+                `${server_url}/g-chat/user/requests?action=accept&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                {
+                    requestId,
+                    userId: user_details?.id || localStorage.getItem("user_id")
+                },
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            ); // res.data.response = { friend_id -> the id of relationship row in db }
 
-        // remove from received UI
-        setReceived(prev => prev.filter(r => r.id !== requestId));
+            // remove from received UI
+            setReceived(prev => prev.filter(r => r.id !== requestId));
 
-        // refresh sent requests (opposite request deleted in backend)
-        const sentRes = await axios.get(
-            `${server_url}/g-chat/requests/sent/${user_details.id}`
-        );
-        setSent(sentRes.data);
 
-        // refresh friends list
-        const friendsRes = await axios.get(
-            `${server_url}/g-chat/friends/${user_details.id}`
-        );
-        setFriends(friendsRes.data);
+            // Server returns this (Idhi marachu nvu expect chesina object kakunda):
+            // sentRes.data.sent_reqs = {
+            //  request_id -> the id of this request in DB,
+            //  user_id -> the id of user who sent this request,
+            //  receiver_id -> the one u sent this request to,
+            //  sent_at -> the time at which this req was sent (UTC)
+            // }
+            // refresh sent requests (opposite request deleted in backend)
+            const sentRes = await axios.get(
+                `${server_url}/g-chat/users/requests/sent?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+            setSent(sentRes.data?.sent_reqs);
 
-    } catch (err) {
-        console.error("Accept request failed:", err);
-    }
-};
+
+            // refresh friends list
+            const friendsRes = await axios.get(
+                `${server_url}/g-chat/users/friends?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            setFriends(friendsRes.data);
+
+        } catch (err) {
+            console.error("Accept request failed:", err);
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
+        }
+    };
 
 
     const rejectRequest = async (requestId) => {
@@ -90,44 +147,44 @@ const acceptRequest = async (requestId) => {
         setReceived(prev => prev.filter(r => r.id !== requestId));
     };
 
-const openProfile = async (friendId) => {
-    try {
-        const res = await axios.get(
-            `${server_url}/g-chat/users/${friendId}/profile`
-        );
+    const openProfile = async (friendId) => {
+        try {
+            const res = await axios.get(
+                `${server_url}/g-chat/users/${friendId}/profile`
+            );
 
-        setSelectedFriend(res.data);
-        setShowProfile(true);
-    } catch (err) {
-        if (err.response?.status === 404) {
-            console.error("User profile not found");
-        } else {
-            console.error(err);
+            setSelectedFriend(res.data);
+            setShowProfile(true);
+        } catch (err) {
+            if (err.response?.status === 404) {
+                console.error("User profile not found");
+            } else {
+                console.error(err);
+            }
         }
-    }
-};
+    };
 
 
-const removeFriend = async (friendId) => {
-    try {
-        await axios.post(`${server_url}/g-chat/remove-friend`, {
-            userId: user_details.id,
-            friendId
-        });
+    const removeFriend = async (friendId) => {
+        try {
+            await axios.post(`${server_url}/g-chat/remove-friend`, {
+                userId: user_details.id,
+                friendId
+            });
 
-        setFriends(prev => prev.filter(f => f.id !== friendId));
-    } catch (err) {
-        console.error(err);
-        alert("Failed to remove friend");
-    }
-};
+            setFriends(prev => prev.filter(f => f.id !== friendId));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to remove friend");
+        }
+    };
 
-     const isFriend = (userId) =>
-    friends.some(f => f.id === userId);
+    const isFriend = (userId) =>
+        friends.some(f => f.id === userId);
 
-const isPending = (userId) =>
-    sent.some(s => s.receiver_id === userId) ||
-    received.some(r => r.sender_id === userId);
+    const isPending = (userId) =>
+        sent.some(s => s.receiver_id === userId) ||
+        received.some(r => r.sender_id === userId);
 
 
 
@@ -172,10 +229,10 @@ const isPending = (userId) =>
 
     }, [showRequests, user_details]);
     useEffect(() => {
-    const closeMenu = () => setActiveMenu(null);
-    document.addEventListener("click", closeMenu);
-    return () => document.removeEventListener("click", closeMenu);
-}, []);
+        const closeMenu = () => setActiveMenu(null);
+        document.addEventListener("click", closeMenu);
+        return () => document.removeEventListener("click", closeMenu);
+    }, []);
 
 
 
@@ -222,31 +279,31 @@ const isPending = (userId) =>
                     )}
 
                     {!loading && results.map((u) => (
-    <div key={u.id} className={styles.friendItem}>
-        <div className={styles.avatar}>
-            {u.username.charAt(0).toUpperCase()}
-        </div>
+                        <div key={u.id} className={styles.friendItem}>
+                            <div className={styles.avatar}>
+                                {u.username.charAt(0).toUpperCase()}
+                            </div>
 
-        <div className={styles.userInfo}>
-            <div className={styles.username}>{u.username}</div>
-        </div>
+                            <div className={styles.userInfo}>
+                                <div className={styles.username}>{u.username}</div>
+                            </div>
 
-        <div className={styles.action}>
-            {isFriend(u.id) ? (
-                <span className={styles.connected}>Connected</span>
-            ) : isPending(u.id) ? (
-                <span className={styles.pending}>Pending</span>
-            ) : (
-                <button
-                    onClick={() => sendRequest(u.id)}
-                    className={styles.addBtn}
-                >
-                    Add Friend
-                </button>
-            )}
-        </div>
-    </div>
-))}
+                            <div className={styles.action}>
+                                {isFriend(u.id) ? (
+                                    <span className={styles.connected}>Connected</span>
+                                ) : isPending(u.id) ? (
+                                    <span className={styles.pending}>Pending</span>
+                                ) : (
+                                    <button
+                                        onClick={() => sendRequest(u.id)}
+                                        className={styles.addBtn}
+                                    >
+                                        Add Friend
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ))}
 
 
                     {!loading && hasSearched && results.length === 0 && (
@@ -270,90 +327,90 @@ const isPending = (userId) =>
 
                     {friends.map((f) => (
                         <div key={f.id} className={styles.friendItem}>
-    <div className={styles.avatar}>
-        {f.username.charAt(0).toUpperCase()}
-    </div>
+                            <div className={styles.avatar}>
+                                {f.username.charAt(0).toUpperCase()}
+                            </div>
 
-    <div className={styles.userInfo}>
-        <div className={styles.username}>{f.username}</div>
-        <div className={styles.subText}>Friend</div>
-    </div>
+                            <div className={styles.userInfo}>
+                                <div className={styles.username}>{f.username}</div>
+                                <div className={styles.subText}>Friend</div>
+                            </div>
 
-    <div
-        className={styles.menuIcon}
-        onClick={(e) => {
-            e.stopPropagation();
-            setActiveMenu(f.id);
-        }}
-    >
-        ⋮
-    </div>
+                            <div
+                                className={styles.menuIcon}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveMenu(f.id);
+                                }}
+                            >
+                                ⋮
+                            </div>
 
-    {showProfile && selectedFriend && (
-    <div
-        className={styles.profileOverlay}
-        onClick={() => setShowProfile(false)}
-    >
-        <div
-            className={styles.profileModal}
-            onClick={(e) => e.stopPropagation()}
-        >
-           <img
-    src={
-        selectedFriend.pfp
-            ? `${server_url}/files/${selectedFriend.pfp}`
-            : "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
-    }
-    onError={(e) => {
-        e.currentTarget.src =
-            "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
-    }}
-    className={styles.profilePic}
-    alt="profile"
-/>
+                            {showProfile && selectedFriend && (
+                                <div
+                                    className={styles.profileOverlay}
+                                    onClick={() => setShowProfile(false)}
+                                >
+                                    <div
+                                        className={styles.profileModal}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <img
+                                            src={
+                                                selectedFriend.pfp
+                                                    ? `${server_url}/files/${selectedFriend.pfp}`
+                                                    : "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
+                                            }
+                                            onError={(e) => {
+                                                e.currentTarget.src =
+                                                    "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                            }}
+                                            className={styles.profilePic}
+                                            alt="profile"
+                                        />
 
-            <div className={styles.fname}>
-            <h3>{selectedFriend.username}</h3>
-            </div>
-            <div className={styles.fdept}>
-            <p className={styles.department}>
-                {selectedFriend.department || "No department"}
-            </p>
-            </div>
-            <div className={styles.fabout}>
-            <p className={styles.about}>
-                {selectedFriend.about || "No bio available"}
-            </p>
-            </div>
+                                        <div className={styles.fname}>
+                                            <h3>{selectedFriend.username}</h3>
+                                        </div>
+                                        <div className={styles.fdept}>
+                                            <p className={styles.department}>
+                                                {selectedFriend.department || "No department"}
+                                            </p>
+                                        </div>
+                                        <div className={styles.fabout}>
+                                            <p className={styles.about}>
+                                                {selectedFriend.about || "No bio available"}
+                                            </p>
+                                        </div>
 
-            <button
-                className={styles.messageBtn}
-                onClick={() => {
-                    setShowProfile(false);
-                    navigate(`/dm/${selectedFriend.id}`);
-                }}
-            >
-                Message
-            </button>
-        </div>
-    </div>
-)}
+                                        <button
+                                            className={styles.messageBtn}
+                                            onClick={() => {
+                                                setShowProfile(false);
+                                                navigate(`/dm/${selectedFriend.id}`);
+                                            }}
+                                        >
+                                            Message
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
 
-    {activeMenu === f.id && (
-        <div className={styles.menu}>
-            <div onClick={() => openChat(f.id)}>Message</div>
-            <div onClick={() => openProfile(f.id)}>View Profile</div>
-            <div
-                className={styles.danger}
-                onClick={() => removeFriend(f.id)}
-            >
-                Remove Friend
-            </div>
-        </div>
-    )}
-</div>
-    
+                            {activeMenu === f.id && (
+                                <div className={styles.menu}>
+                                    <div onClick={() => openChat(f.id)}>Message</div>
+                                    <div onClick={() => openProfile(f.id)}>View Profile</div>
+                                    <div
+                                        className={styles.danger}
+                                        onClick={() => removeFriend(f.id)}
+                                    >
+                                        Remove Friend
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     ))}
                 </div>
 
@@ -396,7 +453,7 @@ const isPending = (userId) =>
 
                                             <div>
                                                 <button
-                                                    onClick={() => acceptRequest(r.id,r.sender_id)}
+                                                    onClick={() => acceptRequest(r.id, r.sender_id)}
                                                     className={styles.accept}
                                                 >
                                                     Accept

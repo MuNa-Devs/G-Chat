@@ -1,3 +1,25 @@
+@keyframes reveal {
+    0% {
+        transform: translate(0%, 0%) scale(0.75);
+        outline: none;
+    }
+
+    100% {
+        transform: translate(0%, 0%) scale(1);
+        outline: 1px solid var(--primary);
+    }
+}
+
+@keyframes text-reveal {
+    0% {
+        color: var(--text-primary);
+    }
+
+    100% {
+        color: var(--primary);
+    }
+}
+
 /* Sidebar at left */
 .sidebarAtLeft {
     height: 100dvh;
@@ -43,6 +65,8 @@
     height: 100%;
     width: 100%;
     border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
 .sidebarAtLeft .userProfile .userDetails {
@@ -92,12 +116,12 @@
 }
 
 .sidebarAtLeft .sidebarOptions .activeBtn {
-    outline: 1px solid var(--primary);
+    animation: reveal 0.15s ease-out 0s 1 forwards;
 }
 
 .sidebarAtLeft .sidebarOptions .activeBtn i,
 .sidebarAtLeft .sidebarOptions .activeBtn span {
-    color: var(--primary);
+    animation: text-reveal 0.15s ease-out 0s 1 forwards;
 }
 
 .sidebarAtLeft .openSidebar {
@@ -226,7 +250,7 @@
     display: none;
 }
 
-.backDrop{
+.backDrop {
     width: 100dvw;
     height: 100dvh;
     position: fixed;
@@ -252,7 +276,7 @@
         background-color: var(--bg-light);
     }
 
-    .sidebarAtLeft.sidebarOpenedLeft{
+    .sidebarAtLeft.sidebarOpenedLeft {
         transform: translateX(0);
     }
 
@@ -368,11 +392,11 @@
         border: none;
     }
 
-    .sidebarAtLeftMin .sidebarUtils .settings i{
+    .sidebarAtLeftMin .sidebarUtils .settings i {
         color: var(--text-primary);
     }
 
-    .sidebarAtLeftMin .sidebarUtils .logout i{
+    .sidebarAtLeftMin .sidebarUtils .logout i {
         color: var(--danger);
     }
 }

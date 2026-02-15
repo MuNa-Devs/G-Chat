@@ -58,7 +58,12 @@ export default function RoomHome() {
     // To fetch the room details
     useEffect(() => {
         axios.get(
-            server_url + `/g-chat/rooms/get-room?room_id=${room_id}`
+            server_url + `/g-chat/rooms/get-room?room_id=${room_id}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
         ).then(res => {
             const data = res.data;
             setRoomData(data.room_info);

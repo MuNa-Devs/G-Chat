@@ -1,4 +1,36 @@
-.generalScreen{
+@keyframes reveal {
+    0% {
+        transform: translate(0%, 0%) scale(0.8);
+    }
+
+    75% {
+        transform: translate(0%, 0%) scale(1.05);
+    }
+
+    100% {
+        transform: translate(0%, 0%) scale(1);
+    }
+}
+
+@keyframes slide-bottom{
+	0%{
+		transform: translateY(-100%);
+	}
+	100%{
+		transform: translateY(0%);
+	}
+}
+
+@keyframes slide-top{
+	0%{
+		transform: translateY(0%);
+	}
+	100%{
+		transform: translateY(100%);
+	}
+}
+
+.generalScreen {
     height: 100dvh;
     width: calc(100% - 64px);
     display: flex;
@@ -9,17 +41,17 @@
     padding-bottom: 0px;
 }
 
-.generalScreen h1{
+.generalScreen h1 {
     font-size: 1.2em;
     color: var(--text-primary);
     letter-spacing: 0.7px;
 }
 
-.generalScreen h3{
+.generalScreen h3 {
     font-size: 0.95em;
 }
 
-.header{
+.header {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -31,9 +63,11 @@
     width: calc(100% - 48px);
     background-color: var(--bg);
     z-index: 999;
+
+    animation: slide-bottom 0.25s ease 0s 1 forwards;
 }
 
-.backBtn{
+.backBtn {
     background-color: transparent;
     border: none;
     width: auto;
@@ -41,11 +75,12 @@
     cursor: pointer;
 }
 
-.backBtn i, .backBtn span{
+.backBtn i,
+.backBtn span {
     color: #ff5f5f;
 }
 
-.infoWrapper{
+.infoWrapper {
     height: auto;
     display: flex;
     flex-direction: column;
@@ -54,9 +89,12 @@
     gap: 24px;
     padding-top: 88px;
     padding-bottom: 112px;
+
+    animation: reveal 0.25s ease 0s 1 forwards;
 }
 
-.hospitalInfo, .contactInfo{
+.hospitalInfo,
+.contactInfo {
     width: calc(100% - 48px);
     max-width: 828px;
     height: auto;
@@ -71,7 +109,8 @@
     border-radius: 16px;
 }
 
-.hospitalInfo h3, .contactInfo h3{
+.hospitalInfo h3,
+.contactInfo h3 {
     font-size: 0.95em;
     color: var(--text-primary);
     letter-spacing: 0.6px;
@@ -79,7 +118,7 @@
 }
 
 .hospitalInfo div,
-.contactInfo div{
+.contactInfo div {
     width: calc(100% - 40px);
     height: auto;
     display: flex;
@@ -90,7 +129,7 @@
     margin-bottom: 10px;
 }
 
-.hospitalInfo .logoContainer{
+.hospitalInfo .logoContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -100,7 +139,7 @@
     gap: 3rem;
 }
 
-.hospitalInfo .logoDiv{
+.hospitalInfo .logoDiv {
     margin: 0;
     padding: 0;
     height: 96px;
@@ -109,15 +148,17 @@
     background-color: var(--card-bg);
 }
 
-.hospitalInfo .logoDiv img{
+.hospitalInfo .logoDiv img {
     height: 96px;
     width: 96px;
     margin: 0;
     padding: 0;
     border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
-.hospitalInfo .logoContainer button{
+.hospitalInfo .logoContainer button {
     width: auto;
     height: auto;
     background-color: var(--primary);
@@ -130,18 +171,21 @@
     cursor: pointer;
 }
 
-.generalScreen .whenNarrow{
+.generalScreen .whenNarrow {
     display: none;
 }
 
-.hospitalInfo h5, .contactInfo h5{
+.hospitalInfo h5,
+.contactInfo h5 {
     font-size: 0.8em;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
     margin: 0;
 }
 
-.hospitalInfo input, .contactInfo input, .hospitalInfo textarea{
+.hospitalInfo input,
+.contactInfo input,
+.hospitalInfo textarea {
     width: calc(100% - 24px);
     border-radius: 8px;
     border: none;
@@ -153,14 +197,14 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.hospitalInfo label{
+.hospitalInfo label {
     font-size: 0.8em;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
     margin: 0;
 }
 
-.actions{
+.actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -174,15 +218,19 @@
     background-color: var(--bg-light);
     border-top: 1px solid var(--border-light);
     z-index: 999;
+
+    animation: slide-top 0.25s ease 0s 1 reverse;
 }
 
-.actions .cancel{
+.actions .cancel {
     background-color: transparent;
-} .actions .cancel:hover{
+}
+
+.actions .cancel:hover {
     background-color: var(--danger);
 }
 
-.actions button{
+.actions button {
     width: auto;
     height: auto;
     border: none;
@@ -203,49 +251,51 @@
     opacity: 0.8;
 }
 
-.contactInfo .visibility{
+.contactInfo .visibility {
     display: flex;
     flex-direction: row;
 }
 
-.contactInfo .visibility > label,
-.visibility > h5{
+.contactInfo .visibility>label,
+.visibility>h5 {
     width: auto;
     margin-right: 24px;
 }
 
-.contactInfo .visibility > div{
+.contactInfo .visibility>div {
     width: auto;
     display: flex;
     flex-direction: row;
 }
-.contactInfo .visibility > div > input{
+
+.contactInfo .visibility>div>input {
     margin: 0;
 }
 
 /* Media Queries */
-@media (max-width: 600px){
-    .generalScreen{
+@media (max-width: 600px) {
+    .generalScreen {
         padding: 0px;
         margin: 0;
         width: 100%;
         height: 100%;
     }
 
-    .header{
+    .header {
         border-bottom: 1px solid var(--border-light);
     }
 
-    .generalScreen, .generalScreen div{
+    .generalScreen,
+    .generalScreen div {
         background-color: var(--bg-light);
     }
 
     .generalScreen input,
-    .generalScreen textarea{
+    .generalScreen textarea {
         border: 1px solid var(--border);
     }
 
-    .infoWrapper{
+    .infoWrapper {
         width: 100%;
         padding: 0px;
         padding-top: 96px;
@@ -254,37 +304,37 @@
     }
 
     .hospitalInfo,
-    .contactInfo{
+    .contactInfo {
         width: calc(100% - 16px);
         padding: 8px;
         border: none;
     }
 
-    .hospitalInfo > div,
-    .contactInfo > div{
+    .hospitalInfo>div,
+    .contactInfo>div {
         width: calc(100% - 16px);
         padding-left: 8px;
         padding-right: 8px;
         border-radius: 0px;
     }
 
-    .hospitalInfo > input,
-    .contactInfo > input,
-    .hospitalInfo > textarea{
+    .hospitalInfo>input,
+    .contactInfo>input,
+    .hospitalInfo>textarea {
         width: 100%;
     }
 }
 
-@media (max-width: 440px){
-    .generalScreen .whenWide{
+@media (max-width: 440px) {
+    .generalScreen .whenWide {
         display: none;
     }
 
-    .generalScreen .whenNarrow{
+    .generalScreen .whenNarrow {
         display: block;
     }
 
-    .hospitalInfo .logoContainer{
+    .hospitalInfo .logoContainer {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -294,13 +344,13 @@
         gap: 3rem;
     }
 
-    .bufferDiv{
+    .bufferDiv {
         display: block;
     }
 }
 
-@media(max-width: 355px){
-    .generalScreen div{
+@media(max-width: 355px) {
+    .generalScreen div {
         background-color: var(--bg);
     }
 }
