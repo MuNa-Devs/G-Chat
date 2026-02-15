@@ -32,14 +32,14 @@ export default function FriendsPage() {
             console.log(query);
 
             const res = await axios.get(
-                `${server_url}/g-chat/search-users?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}`,
+                `${server_url}/g-chat/users/search?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}`,
                 {
                     headers: {
                         auth_token: `Bearer ${localStorage.getItem("token")}`
                     }
                 }
             ); // server sends the following data:
-            // res.data.users = {
+            // res.data.users = array of {
             //  id -> user id,
             //  username -> their name,
             //  pfp -> their pfp (filename only not link). telusu kda, server_url tho...
@@ -64,7 +64,7 @@ export default function FriendsPage() {
 
 
     const sendRequest = async (receiverId) => {
-        axios.post(`${server_url}/g-chat/user/requests?action=send&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+        axios.post(`${server_url}/g-chat/users/requests?action=send&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
             {
                 senderId: user_details?.id || localStorage.getItem("user_id"),
                 receiverId
@@ -86,7 +86,7 @@ export default function FriendsPage() {
     const acceptRequest = async (requestId) => {
         try {
             await axios.post(
-                `${server_url}/g-chat/user/requests?action=accept&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                `${server_url}/g-chat/users/requests?action=accept&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
                 {
                     requestId,
                     userId: user_details?.id || localStorage.getItem("user_id")
@@ -102,11 +102,13 @@ export default function FriendsPage() {
             setReceived(prev => prev.filter(r => r.id !== requestId));
 
 
-            // Server returns this (Idhi marachu nvu expect chesina object kakunda):
-            // sentRes.data.sent_reqs = {
+            // Server returns this (Idhi maracchu nvu expect chesina object kakunda):
+            // sentRes.data.sent_reqs = array of {
             //  request_id -> the id of this request in DB,
             //  user_id -> the id of user who sent this request,
             //  receiver_id -> the one u sent this request to,
+            //  receiver_name -> name of receiver,
+            //  receiver_pfp -> pfp filename of receiver,
             //  sent_at -> the time at which this req was sent (UTC)
             // }
             // refresh sent requests (opposite request deleted in backend)
@@ -118,6 +120,7 @@ export default function FriendsPage() {
                     }
                 }
             );
+            console.log(sentRes.data.sent_reqs);
             setSent(sentRes.data?.sent_reqs);
 
 
@@ -129,9 +132,15 @@ export default function FriendsPage() {
                         auth_token: `Bearer ${localStorage.getItem("token")}`
                     }
                 }
-            );
+            ); // Server returns the following:
+            // friendRes.data.friends = array of {
+            //  friend_id -> id of the relationship in db
+            //  id -> id of ur friedn
+            //  username -> username of ur friend
+            //  pfp -> pfp filename of ur frined
+            // }
 
-            setFriends(friendsRes.data);
+            setFriends(friendsRes.data.friends);
 
         } catch (err) {
             console.error("Accept request failed:", err);
@@ -143,39 +152,82 @@ export default function FriendsPage() {
 
 
     const rejectRequest = async (requestId) => {
-        await axios.post(`${server_url}/g-chat/reject-request`, { requestId: requestId, userId: user_details.id });
-        setReceived(prev => prev.filter(r => r.id !== requestId));
+        axios.post(
+            `${server_url}/g-chat/users/requests?action=reject&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                requestId: requestId,
+                userId: user_details?.id || localStorage.getItem("user_id")
+            },
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        ) // Returns { request_id }
+            .then(res => {
+                setReceived(prev => prev.filter(r => r.id !== requestId));
+            })
+            .catch(err => {
+                if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                    setLogOut();
+            });
+
     };
 
     const openProfile = async (friendId) => {
         try {
             const res = await axios.get(
-                `${server_url}/g-chat/users/${friendId}/profile`
-            );
+                `${server_url}/g-chat/users/get-user?user_id=${user_details?.id || localStorage.getItem("user_id")}&req_user_id=${friendId}`,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            ); // Server sends this data:
+            // res.data.user = array of {
+            //  id -> friend's id
+            //  username -> friend's name
+            //  pfp -> friend's pfp filename
+            //  department -> friend's department
+            //  about -> friend's bio
+            //  phone -> friend's phone num
+            //  personal_email -> friend's personal email
+            // }
 
-            setSelectedFriend(res.data);
+            setSelectedFriend(res.data.user);
             setShowProfile(true);
         } catch (err) {
-            if (err.response?.status === 404) {
+            if (err.response?.data?.code === "NOT_FOUND") {
                 console.error("User profile not found");
-            } else {
-                console.error(err);
             }
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
         }
     };
 
-
     const removeFriend = async (friendId) => {
+        // Here friendId is expected to be relationship id in db.
         try {
-            await axios.post(`${server_url}/g-chat/remove-friend`, {
-                userId: user_details.id,
-                friendId
-            });
+            await axios.post(
+                `${server_url}/g-chat/users/friends/remove?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                {
+                    userId: user_details?.id || localStorage.getItem("user_id"),
+                    friendId
+                },
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
 
             setFriends(prev => prev.filter(f => f.id !== friendId));
         } catch (err) {
             console.error(err);
-            alert("Failed to remove friend");
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogOut();
         }
     };
 
@@ -194,9 +246,21 @@ export default function FriendsPage() {
     useEffect(() => {
         if (!user_details?.id) return;
 
-        axios
-            .get(`${server_url}/g-chat/friends/${user_details.id}`)
-            .then(res => setFriends(res.data))
+        axios.get(
+            `${server_url}/g-chat/users/friends?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        ) // Server returns the following:
+            // friendRes.data.friends = array of {
+            //  friend_id -> id of the relationship in db
+            //  id -> id of ur friedn
+            //  username -> username of ur friend
+            //  pfp -> pfp filename of ur frined
+            // }
+            .then(res => setFriends(res.data.friends))
             .catch(console.error);
     }, [user_details]);
 
@@ -218,13 +282,45 @@ export default function FriendsPage() {
 
     useEffect(() => {
         if (!showRequests || !user_details?.id) return;
-
-        axios.get(`${server_url}/g-chat/requests/received/${user_details.id}`)
-            .then(res => setReceived(res.data))
+        
+        axios.get(
+            `${server_url}/g-chat/users/requests/received?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        )   // Server returns this:
+        // sentRes.data.sent_reqs = array of {
+        //  request_id -> the id of this request in DB,
+        //  user_id -> the id of user who received this request (you),
+        //  sender_id -> the one who sent u this request,
+        //  sender_name -> name of sender,
+        //  sender_pfp -> pfp filename of sender,
+        //  sent_at -> the time at which this req was sent (UTC)
+        // }
+            .then(res => setReceived(res.data?.rec_reqs))
             .catch(console.error);
 
-        axios.get(`${server_url}/g-chat/requests/sent/${user_details.id}`)
-            .then(res => setSent(res.data))
+        // Server returns this (Idhi maracchu nvu expect chesina object kakunda):
+        // sentRes.data.sent_reqs = array of {
+        //  request_id -> the id of this request in DB,
+        //  user_id -> the id of user who sent this request (you),
+        //  receiver_id -> the one u sent this request to,
+        //  receiver_name -> name of receiver,
+        //  receiver_pfp -> pfp filename of receiver,
+        //  sent_at -> the time at which this req was sent (UTC)
+        // }
+        // refresh sent requests (opposite request deleted in backend)
+        axios.get(
+            `${server_url}/g-chat/users/requests/sent?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        )
+            .then(res => setSent(res.data?.sent_reqs))
             .catch(console.error);
 
     }, [showRequests, user_details]);
@@ -471,7 +567,7 @@ export default function FriendsPage() {
 
                                 {activeTab === "sent" &&
                                     sent.map(s => (
-                                        <div key={s.id} className={styles.requestItem}>
+                                        <div key={s.request_id} className={styles.requestItem}>
                                             <span>{s.username}</span>
                                             <span className={styles.pending}>Pending</span>
                                         </div>
