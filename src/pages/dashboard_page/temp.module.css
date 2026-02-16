@@ -29,6 +29,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 8px;
+    padding-bottom: 0;
     margin: 0;
 
     animation: slide-in .4s ease-out 0s 1 forwards;

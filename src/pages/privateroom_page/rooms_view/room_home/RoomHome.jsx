@@ -18,7 +18,7 @@ export default function RoomHome() {
     // Ref to control the message input
     const input_ref = useRef(null);
 
-    const { socket, user_details } = useContext(AppContext);
+    const { socket, user_details, setLogOut } = useContext(AppContext);
     const { room_id } = useParams();
     const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ export default function RoomHome() {
     // To fetch the room details
     useEffect(() => {
         axios.get(
-            server_url + `/g-chat/rooms/get-room?room_id=${room_id}`,
+            server_url + `/g-chat/rooms/get-room?user_id=${user_details?.id || localStorage.getItem("user_id")}&room_id=${room_id}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -69,6 +69,9 @@ export default function RoomHome() {
             setRoomData(data.room_info);
         }).catch(err => {
             console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
         });
     }, [room_id]);
 
@@ -88,7 +91,7 @@ export default function RoomHome() {
         if (!socket || !room_id) return;
 
         const handleMessage = (res) => {
-            if (user_details?.id === Number(res.user_id)) return;
+            if (user_details?.id === Number(res.sender_details.sender_id)) return;
 
             setMessages(
                 prev => [...prev, res]
@@ -107,10 +110,20 @@ export default function RoomHome() {
         if (!room_id) return;
 
         axios.get(
-            server_url + `/g-chat/rooms/get-messages?room_id=${room_id}`
+            server_url + `/g-chat/messages/room?user_id=${user_details?.id || localStorage.getItem("user_id")}&room_id=${room_id}&last_seen_msg=${Number.MAX_SAFE_INTEGER}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
         )
-            .then(res => setMessages(res.data.messages))
-            .catch(err => console.log(err));
+            .then(res => setMessages(res.data?.messages || []))
+            .catch((err) => {
+                console.log(err);
+
+                if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                    setLogOut();
+            });
     }, [room_id]);
 
     // Get to the bottom of the messages everytime {messages} changes
@@ -133,53 +146,63 @@ export default function RoomHome() {
 
         const local_message = {
             msg_id,
-            message: message.trim(),
-            user_id: user_details?.id || localStorage.getItem("user_id"),
-            username: user_details.username,
-            pfp: user_details.pfp,
-            sent_at: null,
-            status: "pending",
-            files: files
-        }
+            identifiers: {
+                message_id: null,
+                room_id
+            },
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: message.trim(),
+            files_list: files.map(file => ({filename: file.name, file_url: null})),
+            timestamp: null,
+            status: "pending"
+        };
 
         setMessages(prev => [...prev, local_message]);
 
         const form = new FormData();
 
-        form.append("msg_id", msg_id);
-        form.append("room_id", room_id);
-        form.append("user_id", user_details?.id || localStorage.getItem("user_id"));
-        form.append("sender_name", user_details?.username);
-        form.append("pfp", user_details?.pfp);
-        form.append("message", message.trim());
         files.forEach(file => form.append("files", file));
+        let files_list;
 
-        axios.post(
-            server_url + "/g-chat/rooms/room-message",
-            form,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data"
+        try {
+            const res = await axios.post(
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                form,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
                 }
-            }
-        ).then(res => {
-            const data = res.data;
-
-            setMessages(prev =>
-                prev.map((message, index) => (
-                    message.msg_id === data.msg_id
-                        ?
-                        prev[index] = {
-                            ...message,
-                            sent_at: data.sent_at,
-                            status: "complete",
-                            files: data.files
-                        }
-                        :
-                        message
-                ))
             );
-        });
+
+            files_list = res.data.files_list;
+        }
+        catch (err) {
+            console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
+        }
+
+        const message_form = {
+            msg_id,
+            identifiers: {
+                room_id
+            },
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: message.trim(),
+            files_list
+        };
+
+        socket.emit("send-room-message", { message_form, room_id });
 
         setMessage("");
         setShowPicker(false);
@@ -191,6 +214,32 @@ export default function RoomHome() {
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
     }
+
+    useEffect(() => {
+        if (!socket)
+            return;
+
+        const updateMsgs = (res) => {
+            setMessages(prev =>
+                prev.map((message) => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            timestamp: res.timestamp,
+                            status: "complete",
+                            files_list: res.files_list
+                        }
+                        :
+                        message
+                ))
+            );
+        }
+
+        socket.on("room_message_emit-success", updateMsgs);
+
+        return () => socket.off("room_message_emit-success", updateMsgs);
+    }, [socket]);
 
     return (
         <div className={styles.chatpage}>
@@ -209,7 +258,7 @@ export default function RoomHome() {
                         className={styles.roomControlBar}
                         onClick={() => {
                             if (window.innerWidth > 490) return;
-                            
+
                             navigate(
                                 `/room/dashboard/${room_id}`,
                                 {
@@ -256,33 +305,33 @@ export default function RoomHome() {
                         {
                             messages.length ?
                                 messages.map((msg, index) => (
-                                    <div key={index}>
+                                    <div key={msg.msg_id}>
                                         {
-                                            msg.files.map((file, index) => (
+                                            msg.files_list.map((file, file_index) => (
                                                 <File
-                                                    key={index}
-                                                    sender_id={msg.user_id}
-                                                    sender_pfp={msg.pfp}
-                                                    filename={file.filename || file.name}
+                                                    key={Number([msg.identifiers.message_id, file_index].join(''))}
+                                                    sender_id={msg.sender_details.sender_id}
+                                                    sender_pfp={msg.sender_details.sender_pfp}
+                                                    filename={file.filename}
                                                     file_url={file.file_url}
-                                                    timestamp={msg.sent_at}
+                                                    timestamp={msg.timestamp}
                                                     status={msg.status || "complete"}
                                                 />
                                             ))
                                         }
 
                                         {
-                                            msg.message
+                                            msg.text
                                             &&
                                             <Message
-                                                key={index}
-                                                conseq_msgs={messages[index - 1]?.user_id === msg.user_id}
-                                                message={msg.message}
-                                                sender_id={msg.user_id}
-                                                sender_name={msg.sender_details?.username || msg.username}
-                                                sender_pfp={msg.sender_details?.pfp || msg.pfp}
-                                                timestamp={msg.timestamp || msg.sent_at}
-                                                files={msg.files}
+                                                key={msg.identifiers.message_id}
+                                                conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                message={msg.text}
+                                                sender_id={msg.sender_details.sender_id}
+                                                sender_name={msg.sender_details.sender_name}
+                                                sender_pfp={msg.sender_details.sender_pfp}
+                                                timestamp={msg.timestamp}
+                                                files={msg.files_list}
                                                 status={msg.status || "complete"}
                                             />
                                         }
