@@ -88,8 +88,8 @@ export default function FriendsPage() {
             await axios.post(
                 `${server_url}/g-chat/users/requests?action=accept&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
                 {
-                    requestId,
-                    userId: user_details?.id || localStorage.getItem("user_id")
+                    requestId:requestId,
+                    userId: user_details?.id || Number(localStorage.getItem("user_id"))
                 },
                 {
                     headers: {
@@ -99,7 +99,7 @@ export default function FriendsPage() {
             ); // res.data.response = { friend_id -> the id of relationship row in db }
 
             // remove from received UI
-            setReceived(prev => prev.filter(r => r.id !== requestId));
+            setReceived(prev => prev.filter(r => r.requestid !== requestId));
 
 
             // Server returns this (Idhi maracchu nvu expect chesina object kakunda):
@@ -165,7 +165,7 @@ export default function FriendsPage() {
             }
         ) // Returns { request_id }
             .then(res => {
-                setReceived(prev => prev.filter(r => r.id !== requestId));
+                setReceived(prev => prev.filter(r => r.requestid !== requestId));
             })
             .catch(err => {
                 if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
@@ -545,17 +545,18 @@ export default function FriendsPage() {
                                 {activeTab === "received" &&
                                     received.map(r => (
                                         <div key={r.id} className={styles.requestItem}>
-                                            <span>{r.username}</span>
+                                            <span>{r.sender_name}</span>
 
                                             <div>
                                                 <button
-                                                    onClick={() => acceptRequest(r.id, r.sender_id)}
+                                                    onClick={() => acceptRequest(r.request_id)}
                                                     className={styles.accept}
                                                 >
                                                     Accept
+                                                    
                                                 </button>
                                                 <button
-                                                    onClick={() => rejectRequest(r.id)}
+                                                    onClick={() => rejectRequest(r.request_id)}
                                                     className={styles.reject}
                                                 >
                                                     Reject
@@ -568,7 +569,7 @@ export default function FriendsPage() {
                                 {activeTab === "sent" &&
                                     sent.map(s => (
                                         <div key={s.request_id} className={styles.requestItem}>
-                                            <span>{s.username}</span>
+                                            <span>{s.receiver_name}</span>
                                             <span className={styles.pending}>Pending</span>
                                         </div>
                                     ))
