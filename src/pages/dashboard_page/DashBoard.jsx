@@ -4,7 +4,7 @@ import { Message } from "../../reusable_component/message_dev/Message";
 import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
 import MessageBar from '../../reusable_component/message_bar/MessageBar';
 import SideBar from '../../reusable_component/SideBar';
-import styles from './dashboard.module.css';
+import styles from './temp.module.css';
 import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
 import { UiContext } from '../../utils/UiContext';
@@ -34,6 +34,7 @@ export default function DashBoard() {
     const emojiRef = useRef(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [files, setFiles] = useState('');
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
@@ -170,24 +171,17 @@ export default function DashBoard() {
         }, 0);
     };
 
-
-
-
-
     return (
         <div className={styles.dashboardMain}>
             <SideBar active_page="dashboard" location="/dashboard" />
 
             <div className={styles.body}>
                 <div className={styles.header}>
-                    <div className={styles.pageNameContainer}>
-                        <h2 className={styles.global}>Global Chat</h2>
-                        <p className={styles.smallName}>College Wide Discussions</p>
-                    </div>
-
+                    <h2 className={styles.global}>Global Chat</h2>
+                    <h5 className={styles.smallName}>College Wide Discussions</h5>
                 </div>
 
-                <div className={styles.line}></div>
+                <hr />
 
                 {/* CHAT MESSAGES */}
                 <div
@@ -242,14 +236,19 @@ export default function DashBoard() {
                             right: "40px",
                             padding: "10px 14px",
                             borderRadius: "20px",
-                            backgroundColor: "#4f46e5",
-                            color: "#fff",
+                            backgroundColor: "var(--accent)",
+                            color: "var(--text-primary)",
                             border: "none",
                             cursor: "pointer",
                             zIndex: 1000
                         }}
                     >
-                        ⬇ New messages
+                        <i
+                            className="fa-solid fa-chevron-down"
+                            style={{
+                                color: "var(--text-primary)"
+                            }}
+                        ></i> New messages
                     </button>
                 )}
 

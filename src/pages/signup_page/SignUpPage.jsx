@@ -21,7 +21,7 @@ export default function SignUpPage() {
     const { setOverride } = useContext(UiContext);
     const [alert, setAlert] = useState(false);
     const [reg_status, setReg] = useState(false);
-    const [show_otp_screen, setShowOtpScreen] = useState(true);
+    const [show_otp_screen, setShowOtpScreen] = useState(false);
 
     const [inputs, setInputs] = useState({
         username: "",

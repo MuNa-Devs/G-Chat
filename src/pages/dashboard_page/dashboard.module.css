@@ -17,7 +17,7 @@
 }
 
 .header {
-    height: 9%;
+    height: auto;
     width: 100%;
 }
 
@@ -189,19 +189,25 @@
     .dashboardMain {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100dvw;
     }
 
     .body {
-        height: 100vh;
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .header {
-        position: fixed;
-        left: 0;
         width: 100%;
         z-index: 999;
-        margin-top: -60px;
-        height: 50px;
+        height: auto;
+        padding: 8px;
     }
 
     .input {
@@ -303,7 +309,6 @@
     .global {
         font-size: 1.16rem;
         color: var(--text-primary);
-        margin-top: -0px;
         margin-left: 15px;
     }
 
