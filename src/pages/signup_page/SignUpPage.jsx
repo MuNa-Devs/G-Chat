@@ -126,8 +126,8 @@ export default function SignUpPage() {
                             setAlert={setAlert}
                             email={inputs.email}
                         />
-
-                        : <>
+                        :
+                        <>
                             <div className={styles.name}>
                                 <h5>Full Name</h5>
 

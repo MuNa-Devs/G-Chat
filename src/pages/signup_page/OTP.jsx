@@ -128,6 +128,9 @@ export default function OTP(props) {
         axios.post(
             `${server_url}/g-chat/auth/send-otp?user_id=${localStorage.getItem("user_id")}`,
             {
+                email: props.email
+            },
+            {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
                 }
