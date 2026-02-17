@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from "axios";
-import { Message } from "../../reusable_component/message_dev/Message";
+import { File, Message } from "../../reusable_component/message_dev/Message";
 import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
 import MessageBar from '../../reusable_component/message_bar/MessageBar';
 import SideBar from '../../reusable_component/SideBar';
-import styles from './temp.module.css';
+import styles from './dashboard.module.css';
 import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
 import { UiContext } from '../../utils/UiContext';
+import FileObject from '../../reusable_component/file_object/FileObject';
 
 export default function DashBoard() {
-    const { user_details, setLoading, socket, setLogOut } = useContext(AppContext);
+    const { user_details, socket, setLogOut } = useContext(AppContext);
 
     const { setOverride } = useContext(UiContext);
 
@@ -23,7 +24,7 @@ export default function DashBoard() {
         }
     }, [socket]);
 
-    const inputRef = useRef(null);
+    const input_ref = useRef(null);
     const bottomRef = useRef(null);
     const emojiWrapperRef = useRef(null);
     const hasMounted = useRef(false);
@@ -36,7 +37,18 @@ export default function DashBoard() {
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
-    const [offset, setOffset] = useState(0);
+    const [offset, setLastSeenId] = useState(Number.MAX_SAFE_INTEGER);
+
+    // File Picker:
+    const [show_file_object, setShowFileObject] = useState(false);
+    const [files, setFiles] = useState([]);
+
+    // File input handler:
+    const handleFiles = (e) => {
+        setFiles(Array.from(e.target.files));
+        setShowFileObject(true);
+        input_ref?.current?.focus();
+    }
 
     /* ---------------- INITIAL LOAD (jump to bottom instantly) ---------------- */
     useLayoutEffect(() => {
@@ -69,22 +81,18 @@ export default function DashBoard() {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on("receive_message", (data) => {
-            const messageWithTime = {
-                ...data,
-                created_at: data.created_at || new Date()
-            };
+        const handleMessage = (res) => {
+            if (user_details?.id === Number(res.sender_details.sender_id)) return;
 
-            setMessages(prev =>
-                [...prev, messageWithTime].sort((a, b) =>
-                    new Date(a.created_at || a.time) -
-                    new Date(b.created_at || b.time)
-                )
+            setMessages(
+                prev => [...prev, res]
             );
-        });
+        };
 
-        return () => socket.off("receive_message");
-    }, [socket]);
+        socket.on("receive_message", handleMessage);
+
+        return () => socket.off("receive_message", handleMessage);
+    }, [socket, user_details.id]);
 
     /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
@@ -96,17 +104,13 @@ export default function DashBoard() {
             }
         })
             .then(res => {
-                const normalized = res.data.chats.map(msg => ({
-                    ...msg,
-                    user_id: Number(msg.user_id)
-                }));
-                setMessages(normalized);
-                setOffset(prev => prev + res.data.chats.length);
+                setMessages(res.data.chats);
+                setLastSeenId(res.data.chats[messages.length - 1]?.identifier?.message_id || 0);
             })
             .catch(err => {
                 console.log(err);
 
-                if (err.response.data.code === "INVALID_JWT")
+                if (err.response?.data?.code === "INVALID_JWT")
                     setLogOut();
             });
     }, []);
@@ -131,25 +135,136 @@ export default function DashBoard() {
 
 
     /* ---------------- SEND MESSAGE ---------------- */
-    const sendMessage = () => {
-        // if (! socket) return;
+    const sendMessage = async () => {
+        if (!message.trim() && files.length === 0) {
+            setMessage("");
+            setFiles([]);
+            input_ref.current.style.height = "auto";
+            input_ref.current?.focus();
 
-        if (!message.trim()) return;
+            return;
+        }
 
-        socket.emit("send_message", {
-            user_id: user_details.id,
-            message
-        });
+        const msg_id = generateUUID();
 
-        setMessage('');
+        const local_message = {
+            msg_id,
+            identifiers: {
+                message_id: null
+            },
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: message.trim(),
+            files_list: files.map(file => ({ filename: file.name, file_url: null })),
+            timestamp: null,
+            status: "pending"
+        };
+
+        setMessages(prev => [...prev, local_message]);
+
+        setMessage("");
         setShowEmoji(false);
-        inputRef.current.focus();
+
+        const form = new FormData();
+
+        files.forEach(file => form.append("files", file));
+        let files_list = [];
+
+        setFiles([]);
+        setShowFileObject(false);
+
+        document.getElementById("file").value = "";
+
+        try {
+            const res = await axios.post(
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                form,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            files_list = res.data.files_list;
+        }
+        catch (err) {
+            console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
+        }
+
+        const message_form = {
+            msg_id,
+            identifiers: {},
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: local_message.text,
+            files_list
+        };
+
+        socket.emit("send_message", { message_form });
+
+        input_ref.current.focus();
+        input_ref.current.style.height = "auto";
     };
+
+    useEffect(() => {
+        if (!socket)
+            return;
+
+        const handleFailedMessages = (res) => {
+            setMessages(prev =>
+                prev.map((message) => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            status: "failed"
+                        }
+                        :
+                        message
+                ))
+            );
+        }
+
+        const updateMsgs = (res) => {
+            setMessages(prev =>
+                prev.map((message) => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            timestamp: res.timestamp,
+                            status: "complete",
+                            files_list: res.files_list
+                        }
+                        :
+                        message
+                ))
+            );
+        }
+
+        socket.on("socket_error", handleFailedMessages);
+        socket.on("message_emit-success", updateMsgs);
+
+        return () => {
+            socket.off("socket_error", handleFailedMessages);
+            socket.off("message_emit-success", updateMsgs);
+        }
+    }, [socket]);
 
     const handleEmojiSelect = (emojiData, event) => {
         event.stopPropagation();
 
-        const input = inputRef.current;
+        const input = input_ref.current;
         if (!input) return;
 
         const start = input.selectionStart;
@@ -197,26 +312,45 @@ export default function DashBoard() {
                     }}
                     className={styles.chatspace}
                 >
-                    {messages.map((msg, index) => {
-                        const prevMsg = messages[index - 1];
+                    {
+                        messages.length ?
+                            messages.map((msg, index) => (
+                                <div key={msg.msg_id || msg.identifiers.message_id}>
+                                    {
+                                        msg.files_list.map((file, file_index) => (
+                                            <File
+                                                key={`${msg.msg_id || msg.identifiers.message_id}-${file_index}`}
+                                                conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                sender_id={msg.sender_details.sender_id}
+                                                sender_pfp={msg.sender_details.sender_pfp}
+                                                filename={file.filename}
+                                                file_url={file.file_url}
+                                                timestamp={msg.timestamp}
+                                                status={msg.status || "complete"}
+                                            />
+                                        ))
+                                    }
 
-                        const isConsecutive =
-                            prevMsg &&
-                            Number(prevMsg.user_id) === Number(msg.user_id);
+                                    {
+                                        msg.text
+                                        &&
+                                        <Message
+                                            key={`${msg.msg_id || msg.identifiers.message_id}-message`}
+                                            conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                            message={msg.text}
+                                            sender_id={msg.sender_details.sender_id}
+                                            sender_name={msg.sender_details.sender_name}
+                                            sender_pfp={msg.sender_details.sender_pfp}
+                                            timestamp={msg.timestamp}
+                                            files={msg.files_list}
+                                            status={msg.status || "complete"}
+                                        />
+                                    }
+                                </div>
+                            )) :
+                            <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                    }
 
-                        return (
-                            <Message
-                                key={index}
-                                sender_id={Number(msg.user_id)}
-                                sender_pfp={msg.pfp}
-                                message={msg.message}
-                                timestamp={msg.created_at || msg.time}
-                                conseq_msgs={isConsecutive}
-                                constraint={isConsecutive ? "no-logo" : ""}
-                                status={msg.status}  // optional
-                            />
-                        );
-                    })}
                     <div ref={bottomRef} />
                 </div>
 
@@ -250,10 +384,18 @@ export default function DashBoard() {
                     </button>
                 )}
 
+                {
+                    show_file_object
+                    &&
+                    <FileObject
+                        files={files}
+                    />
+                }
+
                 <MessageBar
                     setShowPicker={setShowEmoji}
-                    handleFiles={null}
-                    input_ref={inputRef}
+                    handleFiles={handleFiles}
+                    input_ref={input_ref}
                     message={message}
                     setMessage={setMessage}
                     sendMessage={sendMessage}
@@ -273,3 +415,12 @@ export default function DashBoard() {
         </div>
     );
 }
+
+const generateUUID = () => {
+    if (crypto?.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    // fallback
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+};

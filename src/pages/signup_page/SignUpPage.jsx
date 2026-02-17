@@ -89,7 +89,7 @@ export default function SignUpPage() {
             else
                 setAlert(code_alert_mapper[response.data.code]);
         } catch (error) {
-            props.setAlert(code_alert_mapper[error.response?.data.code]);
+            setAlert(code_alert_mapper[error.response?.data.code]);
         }
 
         setReg(false);

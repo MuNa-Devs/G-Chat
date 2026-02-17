@@ -82,7 +82,20 @@ export function Message(props) {
                                         ?
                                         <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
                                         :
-                                        <p>{formatTime(props.timestamp)}</p>
+                                        (
+                                            props.status === "failed"
+                                                ?
+                                                <i
+                                                    className="fa-regular fa-circle-xmark"
+                                                    style={{
+                                                        fontSize: "0.75em",
+                                                        color: "var(--danger-light)"
+                                                    }}
+                                                ></i>
+                                                
+                                                :
+                                                <p>{formatTime(props.timestamp)}</p>
+                                        )
                                 }
                             </div>
                         </div>
@@ -183,7 +196,20 @@ export function File(props) {
                                         ?
                                         <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
                                         :
-                                        <p>{formatTime(props.timestamp)}</p>
+                                        (
+                                            props.status === "failed"
+                                                ?
+                                                <i
+                                                    className="fa-regular fa-circle-xmark"
+                                                    style={{
+                                                        fontSize: "0.75em",
+                                                        color: "var(--danger-light)"
+                                                    }}
+                                                ></i>
+                                                
+                                                :
+                                                <p>{formatTime(props.timestamp)}</p>
+                                        )
                                 }
                             </div>
                         </div>
