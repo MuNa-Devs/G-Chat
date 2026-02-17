@@ -99,7 +99,7 @@ export default function FriendsPage() {
             ); // res.data.response = { friend_id -> the id of relationship row in db }
 
             // remove from received UI
-            setReceived(prev => prev.filter(r => r.requestid !== requestId));
+            setReceived(prev => prev.filter(r => r.request_id !== requestId));
 
 
             // Server returns this (Idhi maracchu nvu expect chesina object kakunda):
@@ -165,7 +165,7 @@ export default function FriendsPage() {
             }
         ) // Returns { request_id }
             .then(res => {
-                setReceived(prev => prev.filter(r => r.requestid !== requestId));
+                setReceived(prev => prev.filter(r => r.request_id !== requestId));
             })
             .catch(err => {
                 if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
@@ -222,7 +222,7 @@ export default function FriendsPage() {
                 }
             );
 
-            setFriends(prev => prev.filter(f => f.id !== friendId));
+            setFriends(prev => prev.filter(f => f.friend_id !== friendId));
         } catch (err) {
             console.error(err);
 
@@ -499,7 +499,7 @@ export default function FriendsPage() {
                                     <div onClick={() => openProfile(f.id)}>View Profile</div>
                                     <div
                                         className={styles.danger}
-                                        onClick={() => removeFriend(f.id)}
+                                        onClick={() => removeFriend(f.friend_id)}
                                     >
                                         Remove Friend
                                     </div>
@@ -544,7 +544,7 @@ export default function FriendsPage() {
                             <div className={styles.requestsList}>
                                 {activeTab === "received" &&
                                     received.map(r => (
-                                        <div key={r.id} className={styles.requestItem}>
+                                        <div key={r.request_id} className={styles.requestItem}>
                                             <span>{r.sender_name}</span>
 
                                             <div>
