@@ -103,7 +103,7 @@ export default function RoomHome() {
         return () => {
             socket.off("get-room-message", handleMessage);
         };
-    }, [socket, room_id]);
+    }, [socket, room_id, user_details.id]);
 
     // To fetch all the messages of the room at startup
     useEffect(() => {
@@ -169,7 +169,7 @@ export default function RoomHome() {
         const form = new FormData();
 
         files.forEach(file => form.append("files", file));
-        let files_list;
+        let files_list = [];
 
         setFiles([]);
         setShowFileObject(false);
@@ -206,7 +206,7 @@ export default function RoomHome() {
                 sender_name: user_details?.username,
                 sender_pfp: user_details?.pfp
             },
-            text: message.trim(),
+            text: local_message.text,
             files_list
         };
 
@@ -219,6 +219,21 @@ export default function RoomHome() {
     useEffect(() => {
         if (!socket)
             return;
+
+        const handleFailedMessages = (res) => {
+            setMessages(prev => {
+                prev.map((message) => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            status: "failed"
+                        }
+                        :
+                        message
+                ))
+            });
+        }
 
         const updateMsgs = (res) => {
             setMessages(prev =>
@@ -237,9 +252,13 @@ export default function RoomHome() {
             );
         }
 
+        socket.on("socket_error", handleFailedMessages);
         socket.on("room_message_emit-success", updateMsgs);
 
-        return () => socket.off("room_message_emit-success", updateMsgs);
+        return () => {
+            socket.off("socket_error", handleFailedMessages);
+            socket.off("room_message_emit-success", updateMsgs);
+        }
     }, [socket]);
 
     return (
@@ -306,11 +325,11 @@ export default function RoomHome() {
                         {
                             messages.length ?
                                 messages.map((msg, index) => (
-                                    <div key={index}>
+                                    <div key={msg.msg_id || msg.identifiers.message_id}>
                                         {
                                             msg.files_list.map((file, file_index) => (
                                                 <File
-                                                    key={`${index}-${file.filename}`}
+                                                    key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
                                                     conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                     sender_id={msg.sender_details.sender_id}
                                                     sender_pfp={msg.sender_details.sender_pfp}
@@ -326,7 +345,7 @@ export default function RoomHome() {
                                             msg.text
                                             &&
                                             <Message
-                                                key={index}
+                                                key={msg.msg_id || msg.identifiers.message_id}
                                                 conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                 message={msg.text}
                                                 sender_id={msg.sender_details.sender_id}
