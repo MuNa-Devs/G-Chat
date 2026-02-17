@@ -163,10 +163,18 @@ export default function RoomHome() {
 
         setMessages(prev => [...prev, local_message]);
 
+        setMessage("");
+        setShowPicker(false);
+
         const form = new FormData();
 
         files.forEach(file => form.append("files", file));
         let files_list;
+
+        setFiles([]);
+        setShowFileObject(false);
+
+        document.getElementById("file").value = "";
 
         try {
             const res = await axios.post(
@@ -203,13 +211,6 @@ export default function RoomHome() {
         };
 
         socket.emit("send-room-message", { message_form, room_id });
-
-        setMessage("");
-        setShowPicker(false);
-        setFiles([]);
-        setShowFileObject(false);
-
-        document.getElementById("file").value = "";
 
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
@@ -305,11 +306,12 @@ export default function RoomHome() {
                         {
                             messages.length ?
                                 messages.map((msg, index) => (
-                                    <div key={msg.msg_id}>
+                                    <div key={index}>
                                         {
                                             msg.files_list.map((file, file_index) => (
                                                 <File
-                                                    key={Number([msg.identifiers.message_id, file_index].join(''))}
+                                                    key={`${index}-${file.filename}`}
+                                                    conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                     sender_id={msg.sender_details.sender_id}
                                                     sender_pfp={msg.sender_details.sender_pfp}
                                                     filename={file.filename}
@@ -324,7 +326,7 @@ export default function RoomHome() {
                                             msg.text
                                             &&
                                             <Message
-                                                key={msg.identifiers.message_id}
+                                                key={index}
                                                 conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                 message={msg.text}
                                                 sender_id={msg.sender_details.sender_id}

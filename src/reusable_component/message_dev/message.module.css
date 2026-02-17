@@ -1,3 +1,12 @@
+@keyframes reveal{
+    0%{
+        transform: scale(0.5);
+    }
+    100%{
+        transform: scale(1);
+    }
+}
+
 /* Main Div Wrappers */
 .messageDiv,
 .fileDiv {
@@ -70,6 +79,8 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap;
+
+    animation: reveal 0.25s ease-out 0s 1 forwards;
 }
 
 .senderMsg .message:hover .msgInfo,
@@ -99,10 +110,18 @@
 .myFile .file .fileInfo>h3 {
     flex: 1;
     padding: 4px;
-    font-size: 0.85em;
+    font-size: 0.8em;
     letter-spacing: 0.85px;
     line-height: 1.4;
     word-break: break-word;
+}
+
+.myMsg .message>p{
+    font-size: 0.75em !important;
+}
+
+.emoji{
+    font-size: 1.5em !important;
 }
 
 /* Message time styles */

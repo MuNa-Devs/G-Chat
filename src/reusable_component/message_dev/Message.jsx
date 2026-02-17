@@ -15,7 +15,17 @@ const formatTime = (time) => {
     });
 };
 
-const isSingleEmoji = (text) => (/^\p{Extended_Pictographic}$/u.test(text))
+const isSingleEmoji = (text) => {
+    if (!text) return false;
+
+    const trimmed = text.trim();
+    const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+    const segments = [...segmenter.segment(trimmed)];
+
+    if (segments.length !== 1) return false;
+
+    return /\p{Extended_Pictographic}/u.test(trimmed);
+};
 
 export function Message(props) {
 
@@ -41,7 +51,7 @@ export function Message(props) {
 
                         <div className={styles.message}>
                             <p
-                                style={isSingleEmoji(props.message) ? {fontSize: "1.5em"} : {}}
+                                className={`${isSingleEmoji(props.message) ? "emoji" : ""}`}
                             >{props.message}</p>
 
                             <div className={styles.time}>
@@ -56,9 +66,11 @@ export function Message(props) {
                     :
                     <div className={`${(props.conseq_msgs) && styles.conseqMsg} ${styles.myMsg}`}>
                         <div className={styles.message}>
-                            <p
-                                style={isSingleEmoji(props.message) ? {fontSize: "1.5em"} : {}}
-                            >{props.message}</p>
+                            {
+                                isSingleEmoji(props.message)
+                                    ? <h1>{props.message}</h1>
+                                    : <p>{props.message}</p>
+                            }
 
                             <div className={styles.time}>
                                 <div className={styles.msgInfo}>
@@ -67,10 +79,10 @@ export function Message(props) {
 
                                 {
                                     props.status === "pending"
-                                    ?
-                                    <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
-                                    :
-                                    <p>{formatTime(props.timestamp)}</p>
+                                        ?
+                                        <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
+                                        :
+                                        <p>{formatTime(props.timestamp)}</p>
                                 }
                             </div>
                         </div>
@@ -168,10 +180,10 @@ export function File(props) {
 
                                 {
                                     props.status === "pending"
-                                    ?
-                                    <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
-                                    :
-                                    <p>{formatTime(props.timestamp)}</p>
+                                        ?
+                                        <i className={`${"fa-regular fa-clock"} ${styles.messageLoader}`}></i>
+                                        :
+                                        <p>{formatTime(props.timestamp)}</p>
                                 }
                             </div>
                         </div>
