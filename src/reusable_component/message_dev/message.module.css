@@ -1,8 +1,9 @@
-@keyframes reveal{
-    0%{
+@keyframes reveal {
+    0% {
         transform: scale(0.5);
     }
-    100%{
+
+    100% {
         transform: scale(1);
     }
 }
@@ -62,6 +63,21 @@
     margin-left: 8px;
 }
 
+/* Wrapper div styles */
+.wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.wrapper>h5 {
+    font-size: 0.7em;
+}
+
 /* Message & File div styles */
 .senderMsg .message,
 .myMsg .message,
@@ -86,7 +102,7 @@
 .senderMsg .message:hover .msgInfo,
 .myMsg .message:hover .msgInfo,
 .senderFile .file:hover .msgInfo,
-.myFile .file:hover .msgInfo{
+.myFile .file:hover .msgInfo {
     display: block;
 }
 
@@ -116,11 +132,11 @@
     word-break: break-word;
 }
 
-.myMsg .message>p{
+.myMsg .message>p {
     font-size: 0.75em !important;
 }
 
-.emoji{
+.emoji {
     font-size: 1.5em !important;
 }
 
@@ -132,10 +148,11 @@
     align-items: flex-end;
     justify-content: flex-end;
     width: auto;
-    height: 24px;
+    height: auto;
 }
 
 .myMsg .time>p,
+.senderMsg .time>p,
 .file .time>p {
     font-size: 0.6em !important;
     letter-spacing: 0.5px;
@@ -153,21 +170,21 @@
 .senderMsg .message .time .msgInfo>i,
 .senderFile .message .time .msgInfo>i,
 .myMsg .message .time .msgInfo>i,
-.myFile .message .time .msgInfo>i{
+.myFile .message .time .msgInfo>i {
     font-size: .8em;
 }
 
 .senderMsg .message .time .msgInfo>i,
-.senderFile .message .time .msgInfo>i{
+.senderFile .message .time .msgInfo>i {
     color: var(--primary-light);
 }
 
 .myMsg .message .time .msgInfo>i,
-.myFile .message .time .msgInfo>i{
+.myFile .message .time .msgInfo>i {
     color: var(--text-secondary);
 }
 
-.msgInfo{
+.msgInfo {
     display: none;
 }
 
@@ -266,5 +283,18 @@
 
     .conseqMsg.myMsg {
         padding-right: 52px;
+    }
+
+    .senderMsg .message,
+    .myMsg .message,
+    .senderFile .file,
+    .myFile .file {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message .time,
+    .file .time {
+        align-self: flex-end;
     }
 }

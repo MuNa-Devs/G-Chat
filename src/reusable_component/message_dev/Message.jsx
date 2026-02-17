@@ -49,23 +49,29 @@ export function Message(props) {
                             />
                         }
 
-                        <div className={styles.message}>
-                            <p
-                                className={`${isSingleEmoji(props.message) ? "emoji" : ""}`}
-                            >{props.message}</p>
+                        <div className={styles.wrapper}>
+                            {
+                                !props.conseq_msgs
+                                &&
+                                <h5>{props.sender_name}</h5>
+                            }
 
-                            <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
+                            <div className={`${styles.message}`}>
+                                {
+                                    isSingleEmoji(props.message)
+                                        ? <h1>{props.message}</h1>
+                                        : <p>{props.message}</p>
+                                }
+
+                                <div className={styles.time}>
+                                    <p>{formatTime(props.timestamp)}</p>
                                 </div>
-
-                                <p>{formatTime(props.timestamp)}</p>
                             </div>
                         </div>
                     </div>
                     :
                     <div className={`${(props.conseq_msgs) && styles.conseqMsg} ${styles.myMsg}`}>
-                        <div className={styles.message}>
+                        <div className={`${styles.message}`}>
                             {
                                 isSingleEmoji(props.message)
                                     ? <h1>{props.message}</h1>
@@ -92,7 +98,7 @@ export function Message(props) {
                                                         color: "var(--danger-light)"
                                                     }}
                                                 ></i>
-                                                
+
                                                 :
                                                 <p>{formatTime(props.timestamp)}</p>
                                         )
@@ -157,21 +163,29 @@ export function File(props) {
                             />
                         }
 
-                        <div className={styles.file}>
-                            <div className={`${styles.fileInfo}`} onClick={handleDownload}>
-                                <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
-                                    {getIcon(props.filename).element}
+                        <div className={styles.wrapper}>
+                            {
+                                !props.conseqFile
+                                &&
+                                <h5>{props.sender_name}</h5>
+                            }
+
+                            <div className={styles.file}>
+                                <div className={`${styles.fileInfo}`} onClick={handleDownload}>
+                                    <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
+                                        {getIcon(props.filename).element}
+                                    </div>
+
+                                    <h3>{props.filename}</h3>
                                 </div>
 
-                                <h3>{props.filename}</h3>
-                            </div>
+                                <div className={styles.time}>
+                                    <div className={styles.msgInfo}>
+                                        <i className="fa-solid fa-angle-down"></i>
+                                    </div>
 
-                            <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
+                                    <p>{formatTime(props.timestamp)}</p>
                                 </div>
-
-                                <p>{formatTime(props.timestamp)}</p>
                             </div>
                         </div>
                     </div>
@@ -206,7 +220,7 @@ export function File(props) {
                                                         color: "var(--danger-light)"
                                                     }}
                                                 ></i>
-                                                
+
                                                 :
                                                 <p>{formatTime(props.timestamp)}</p>
                                         )

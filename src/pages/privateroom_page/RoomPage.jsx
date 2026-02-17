@@ -115,7 +115,7 @@ export default function RoomPage() {
 
             const final_list = uniqueList([...rooms, ...room_res]);
 
-            setLastSeenId(room_res[room_res.length - 1].r_id);
+            setLastSeenId(room_res[room_res.length - 1]?.r_id);
             setLoading(false);
             setRooms(final_list);
         }
@@ -227,7 +227,7 @@ export default function RoomPage() {
                                         }
                                         join={true}
                                         join_pref={capitalize(room.join_pref)}
-                                        is_member={room_filter === "my" ? room.is_member : true}
+                                        is_member={room.is_member}
                                         room_btn={room_filter === "my" ? "Open Room" : "View Room"}
                                     />
                                 ))

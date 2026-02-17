@@ -332,6 +332,7 @@ export default function RoomHome() {
                                                     key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
                                                     conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                     sender_id={msg.sender_details.sender_id}
+                                                    sender_name={msg.sender_details.sender_name}
                                                     sender_pfp={msg.sender_details.sender_pfp}
                                                     filename={file.filename}
                                                     file_url={file.file_url}

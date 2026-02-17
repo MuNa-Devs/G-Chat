@@ -322,6 +322,7 @@ export default function DashBoard() {
                                                 key={`${msg.msg_id || msg.identifiers.message_id}-${file_index}`}
                                                 conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
                                                 sender_id={msg.sender_details.sender_id}
+                                                sender_name={msg.sender_details.sender_name}
                                                 sender_pfp={msg.sender_details.sender_pfp}
                                                 filename={file.filename}
                                                 file_url={file.file_url}
@@ -348,7 +349,16 @@ export default function DashBoard() {
                                     }
                                 </div>
                             )) :
-                            <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                            <div
+                                className={styles.noMsgs}
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            ><h5>No Recent Messages</h5></div>
                     }
 
                     <div ref={bottomRef} />
