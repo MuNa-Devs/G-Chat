@@ -38,10 +38,30 @@ export function AppProvider({ children }) {
         is_logged_in && loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
     }, [is_logged_in]);
 
+    const handleSocketErrors = (res) => {
+        switch (res.code) {
+            case "FORBIDDEN_ACCESS":
+                setLogOut();
+
+                break;
+        }
+    }
+
     useEffect(() => {
-        if (socket === null) setSocket(io(server_url));
-        
-        socket?.emit("register_client", {user_id: localStorage.getItem("user_id")});
+        if (socket === null)
+            setSocket(
+                io(server_url, {
+                    auth: {
+                        token: localStorage.getItem("token")
+                    }
+                })
+            );
+
+        if (socket !== null) {
+            socket.on("socket_error", handleSocketErrors);
+
+            return () => socket.off("socket_error", handleSocketErrors);
+        }
     }, [socket])
 
     return (

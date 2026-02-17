@@ -29,12 +29,10 @@ export default function DashBoard() {
     const hasMounted = useRef(false);
     const prevMsgCount = useRef(0);
     const chatRef = useRef(null);
-    const currentUserId = Number(user_details?.id);
     const [showEmoji, setShowEmoji] = useState(false);
     const emojiRef = useRef(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [files, setFiles] = useState('');
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
 
