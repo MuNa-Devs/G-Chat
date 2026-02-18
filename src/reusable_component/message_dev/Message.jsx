@@ -53,7 +53,7 @@ export function Message(props) {
                             {
                                 !props.conseq_msgs
                                 &&
-                                <h5>{props.sender_name}</h5>
+                                <h5 style={{marginTop: "8px"}}>{props.sender_name}</h5>
                             }
 
                             <div className={`${styles.message}`}>
