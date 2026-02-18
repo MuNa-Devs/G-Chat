@@ -52,7 +52,7 @@ export default function NewRoom(props) {
         if (props.api === "update") form.append("room_id", props.room_data.r_id);
 
         axios.post(
-            `${server_url}/g-chat/rooms/${props.api || "create"}?user_id=${user_details?.id}`,
+            `${server_url}/g-chat/rooms/${props.api || "create"}?user_id=${user_details?.id || localStorage.getItem("user_id")}${props.api === "update" ? "&room_id=" + props.room_data.r_id : ""}`,
             form,
             {
                 headers: {
@@ -62,7 +62,7 @@ export default function NewRoom(props) {
             }
         ).then(res => {
             const data = res.data;
-            setBtnText(btn_text);
+            setBtnText(props.btn_text || "Create");
             document.getElementById("save").disabled = false;
 
             props.setRefreshState(prev => prev + 1);

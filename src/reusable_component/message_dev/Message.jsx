@@ -79,10 +79,6 @@ export function Message(props) {
                             }
 
                             <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
-                                </div>
-
                                 {
                                     props.status === "pending"
                                         ?
@@ -180,10 +176,6 @@ export function File(props) {
                                 </div>
 
                                 <div className={styles.time}>
-                                    <div className={styles.msgInfo}>
-                                        <i className="fa-solid fa-angle-down"></i>
-                                    </div>
-
                                     <p>{formatTime(props.timestamp)}</p>
                                 </div>
                             </div>
@@ -201,10 +193,6 @@ export function File(props) {
                             </div>
 
                             <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
-                                </div>
-
                                 {
                                     props.status === "pending"
                                         ?

@@ -10,8 +10,12 @@ import { File, Message } from "../../../../reusable_component/message_dev/Messag
 import EmojiBox from "../../../../reusable_component/emoji_box/EmojiBox";
 import FileObject from "../../../../reusable_component/file_object/FileObject";
 import MessageBar from "../../../../reusable_component/message_bar/MessageBar";
+import PageLoader from "../../../loading_screen/PageLoader";
 
 export default function RoomHome() {
+    // To set the loader screen until the data loads
+    const [loader, setLoader] = useState(true);
+
     // Ref to auto scroll to bottom of the messages
     const bottom_ref = useRef(null);
 
@@ -156,7 +160,7 @@ export default function RoomHome() {
                 sender_pfp: user_details?.pfp
             },
             text: message.trim(),
-            files_list: files.map(file => ({filename: file.name, file_url: null})),
+            files_list: files.map(file => ({ filename: file.name, file_url: null })),
             timestamp: null,
             status: "pending"
         };
@@ -261,6 +265,12 @@ export default function RoomHome() {
         }
     }, [socket]);
 
+    useEffect(() => {
+        if (!Object.keys(room_data).length) return;
+
+        setLoader(false);
+    }, [room_data]);
+
     return (
         <div className={styles.chatpage}>
             {
@@ -272,143 +282,149 @@ export default function RoomHome() {
                 />
             }
 
-            <div className={styles.chatContext}>
-                <div className={styles.chatWindow}>
-                    <div
-                        className={styles.roomControlBar}
-                        onClick={() => {
-                            if (window.innerWidth > 490) return;
+            {
+                loader
+                ?
+                <PageLoader />
+                :
+                <div className={styles.chatContext}>
+                    <div className={styles.chatWindow}>
+                        <div
+                            className={styles.roomControlBar}
+                            onClick={() => {
+                                if (window.innerWidth > 490) return;
 
-                            navigate(
-                                `/room/dashboard/${room_id}`,
-                                {
-                                    state: {
-                                        from: `/room/home/${room_id}`
+                                navigate(
+                                    `/room/dashboard/${room_id}`,
+                                    {
+                                        state: {
+                                            from: `/room/home/${room_id}`
+                                        }
                                     }
-                                }
-                            );
-                        }}
-                    >
-                        <button
-                            className={styles.backBtn}
-                            onClick={() => navigate("/rooms")}
+                                );
+                            }}
                         >
-                            <i className="fa-solid fa-chevron-left"></i>
-                        </button>
+                            <button
+                                className={styles.backBtn}
+                                onClick={() => navigate("/rooms")}
+                            >
+                                <i className="fa-solid fa-chevron-left"></i>
+                            </button>
 
-                        <div className={styles.room_info}>
-                            <img
-                                src={server_url + `/files/${room_data.icon_url}`}
-                                onError={(e) => {
-                                    e.target.onError = null;
-                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/8184/8184182.png";
-                                }}
-                            />
+                            <div className={styles.room_info}>
+                                <img
+                                    src={server_url + `/files/${room_data.icon_url}`}
+                                    onError={(e) => {
+                                        e.target.onError = null;
+                                        e.target.src = "https://cdn-icons-png.flaticon.com/512/8184/8184182.png";
+                                    }}
+                                />
 
-                            <h2>{room_data.r_name}</h2>
+                                <h2>{room_data.r_name}</h2>
+                            </div>
+
+                            <button
+                                className={styles.roomOptions}
+                                onClick={() => navigate(
+                                    `/room/dashboard/${room_id}`,
+                                    {
+                                        state: {
+                                            from: `/room/home/${room_id}`
+                                        }
+                                    }
+                                )}
+                            ><i className="fa-solid fa-bars"></i></button>
                         </div>
 
-                        <button
-                            className={styles.roomOptions}
-                            onClick={() => navigate(
-                                `/room/dashboard/${room_id}`,
-                                {
-                                    state: {
-                                        from: `/room/home/${room_id}`
-                                    }
-                                }
-                            )}
-                        ><i className="fa-solid fa-bars"></i></button>
-                    </div>
+                        <div className={styles.chatContainer}>
+                            {
+                                messages.length ?
+                                    messages.map((msg, index) => (
+                                        <div key={msg.msg_id || msg.identifiers.message_id}>
+                                            {
+                                                msg.files_list.map((file, file_index) => (
+                                                    <File
+                                                        key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
+                                                        conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                        sender_id={msg.sender_details.sender_id}
+                                                        sender_name={msg.sender_details.sender_name}
+                                                        sender_pfp={msg.sender_details.sender_pfp}
+                                                        filename={file.filename}
+                                                        file_url={file.file_url}
+                                                        timestamp={msg.timestamp}
+                                                        status={msg.status || "complete"}
+                                                    />
+                                                ))
+                                            }
 
-                    <div className={styles.chatContainer}>
-                        {
-                            messages.length ?
-                                messages.map((msg, index) => (
-                                    <div key={msg.msg_id || msg.identifiers.message_id}>
-                                        {
-                                            msg.files_list.map((file, file_index) => (
-                                                <File
-                                                    key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
-                                                    conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                            {
+                                                msg.text
+                                                &&
+                                                <Message
+                                                    key={msg.msg_id || msg.identifiers.message_id}
+                                                    conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                    message={msg.text}
                                                     sender_id={msg.sender_details.sender_id}
                                                     sender_name={msg.sender_details.sender_name}
                                                     sender_pfp={msg.sender_details.sender_pfp}
-                                                    filename={file.filename}
-                                                    file_url={file.file_url}
                                                     timestamp={msg.timestamp}
+                                                    files={msg.files_list}
                                                     status={msg.status || "complete"}
                                                 />
-                                            ))
-                                        }
+                                            }
+                                        </div>
+                                    )) :
+                                    <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                            }
 
-                                        {
-                                            msg.text
-                                            &&
-                                            <Message
-                                                key={msg.msg_id || msg.identifiers.message_id}
-                                                conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
-                                                message={msg.text}
-                                                sender_id={msg.sender_details.sender_id}
-                                                sender_name={msg.sender_details.sender_name}
-                                                sender_pfp={msg.sender_details.sender_pfp}
-                                                timestamp={msg.timestamp}
-                                                files={msg.files_list}
-                                                status={msg.status || "complete"}
-                                            />
-                                        }
-                                    </div>
-                                )) :
-                                <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                            <div ref={bottom_ref}></div>
+                        </div>
+
+                        {
+                            show_file_object
+                            &&
+                            <FileObject
+                                files={files}
+                            />
                         }
 
-                        <div ref={bottom_ref}></div>
-                    </div>
-
-                    {
-                        show_file_object
-                        &&
-                        <FileObject
-                            files={files}
+                        <MessageBar
+                            setShowPicker={setShowPicker}
+                            handleFiles={handleFiles}
+                            input_ref={input_ref}
+                            message={message}
+                            setMessage={setMessage}
+                            sendMessage={sendMessage}
                         />
-                    }
 
-                    <MessageBar
-                        setShowPicker={setShowPicker}
-                        handleFiles={handleFiles}
-                        input_ref={input_ref}
-                        message={message}
-                        setMessage={setMessage}
-                        sendMessage={sendMessage}
-                    />
+                        {
+                            show_picker
+                            &&
+                            <div className={styles.emojiPicker}>
+                                <EmojiBox
+                                    setEmoji={setEmoji}
+                                />
+                            </div>
+                        }
+                    </div>
 
-                    {
-                        show_picker
-                        &&
-                        <div className={styles.emojiPicker}>
-                            <EmojiBox
-                                setEmoji={setEmoji}
-                            />
+                    <div className={styles.roomContents}>
+                        <h3>Room Contents</h3>
+
+                        <div className={styles.pinnedMsgs}>
+                            <h4>Pinned Messages</h4>
+
+                            <h5>No Pinned Messages</h5>
                         </div>
-                    }
-                </div>
 
-                <div className={styles.roomContents}>
-                    <h3>Room Contents</h3>
+                        <div className={styles.materials}>
+                            <h4>Materials</h4>
 
-                    <div className={styles.pinnedMsgs}>
-                        <h4>Pinned Messages</h4>
-
-                        <h5>No Pinned Messages</h5>
-                    </div>
-
-                    <div className={styles.materials}>
-                        <h4>Materials</h4>
-
-                        <h5>No Materials Uploaded</h5>
+                            <h5>No Materials Uploaded</h5>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     );
 }

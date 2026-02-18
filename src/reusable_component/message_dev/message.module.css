@@ -92,6 +92,8 @@
     gap: 8px;
     border-radius: 8px;
     max-width: 56%;
+    min-width: 48px;
+    min-height: 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap;

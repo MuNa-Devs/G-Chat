@@ -135,6 +135,8 @@
     height: 80px;
     width: 80px;
     border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .sections .sectionBodyContainer .profilePic .uploadBtn {
