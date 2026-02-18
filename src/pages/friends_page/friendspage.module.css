@@ -90,21 +90,25 @@
     gap: 8px;
 }
 
+.friendsList{
+    width: calc(100% - 16px);
+    padding: 8px;
+}
+
 /* Individual user row */
 .friendItem {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 8px;
     border-radius: 10px;
     background: var(--bg-lighter);
 
     gap: 12px;
-    width: 94.5%;
-    margin-left: 30px;
+    width: calc(100% - 56px);
+    margin-left: 16px;
     margin-top: 10px;
-
+    margin-right: 16px;
 }
-
 
 
 /* Avatar circle */
@@ -437,5 +441,11 @@
     }
     .resultsContainer{
         margin-left: 14px;
-    }   
+    }  
+    .friendItem{
+        width: calc(100% - 48px);
+        margin-top: 10px;
+        margin-left: 16px;
+        margin-right: 16px;
+    } 
 }

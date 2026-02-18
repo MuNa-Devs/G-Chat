@@ -91,7 +91,9 @@ export default function RoomHome() {
         if (!socket || !room_id) return;
 
         const handleMessage = (res) => {
-            if (user_details?.id === Number(res.sender_details.sender_id)) return;
+            if (user_details?.id === Number(res.sender_details.sender_id)) {
+                return;
+            }
 
             setMessages(
                 prev => [...prev, res]
@@ -104,6 +106,10 @@ export default function RoomHome() {
             socket.off("get-room-message", handleMessage);
         };
     }, [socket, room_id, user_details.id]);
+
+    useEffect(() => {
+        console.log("messages updated");
+    }, [messages]);
 
     // To fetch all the messages of the room at startup
     useEffect(() => {
@@ -156,7 +162,7 @@ export default function RoomHome() {
                 sender_pfp: user_details?.pfp
             },
             text: message.trim(),
-            files_list: files.map(file => ({filename: file.name, file_url: null})),
+            files_list: files.map(file => ({ filename: file.name, file_url: null })),
             timestamp: null,
             status: "pending"
         };
@@ -276,18 +282,6 @@ export default function RoomHome() {
                 <div className={styles.chatWindow}>
                     <div
                         className={styles.roomControlBar}
-                        onClick={() => {
-                            if (window.innerWidth > 490) return;
-
-                            navigate(
-                                `/room/dashboard/${room_id}`,
-                                {
-                                    state: {
-                                        from: `/room/home/${room_id}`
-                                    }
-                                }
-                            );
-                        }}
                     >
                         <button
                             className={styles.backBtn}
@@ -296,7 +290,19 @@ export default function RoomHome() {
                             <i className="fa-solid fa-chevron-left"></i>
                         </button>
 
-                        <div className={styles.room_info}>
+                        <div className={styles.room_info}
+                            onClick={() => {
+                                if (window.innerWidth > 490) return;
+
+                                navigate(
+                                    `/room/dashboard/${room_id}`,
+                                    {
+                                        state: {
+                                            from: `/room/home/${room_id}`
+                                        }
+                                    }
+                                );
+                            }}>
                             <img
                                 src={server_url + `/files/${room_data.icon_url}`}
                                 onError={(e) => {
