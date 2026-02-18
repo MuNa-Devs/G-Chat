@@ -317,9 +317,7 @@ export default function ViewRoom() {
             {
                 show_settings
                 &&
-                <div className={styles.roomSettings}
-                    onClick={() => setShowSettings(false)}
-                >
+                <div className={styles.roomSettings}>
                     <NewRoom
                         header="Change Room Settings"
                         btn_text="Update"
@@ -338,9 +336,7 @@ export default function ViewRoom() {
             {
                 show_profile
                 &&
-                <div className={styles.adminProfile}
-                    onClick={() => setShowProfile(false)}
-                >
+                <div className={styles.adminProfile}>
                     <UserProfile
                         user_id={room_data.id}
                         closeHook={setShowProfile}
