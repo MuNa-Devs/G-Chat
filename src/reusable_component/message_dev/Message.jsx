@@ -53,7 +53,7 @@ export function Message(props) {
                             {
                                 !props.conseq_msgs
                                 &&
-                                <h5>{props.sender_name}</h5>
+                                <h5 style={{marginTop: "8px"}}>{props.sender_name}</h5>
                             }
 
                             <div className={`${styles.message}`}>
@@ -79,10 +79,6 @@ export function Message(props) {
                             }
 
                             <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
-                                </div>
-
                                 {
                                     props.status === "pending"
                                         ?
@@ -180,10 +176,6 @@ export function File(props) {
                                 </div>
 
                                 <div className={styles.time}>
-                                    <div className={styles.msgInfo}>
-                                        <i className="fa-solid fa-angle-down"></i>
-                                    </div>
-
                                     <p>{formatTime(props.timestamp)}</p>
                                 </div>
                             </div>
@@ -201,10 +193,6 @@ export function File(props) {
                             </div>
 
                             <div className={styles.time}>
-                                <div className={styles.msgInfo}>
-                                    <i className="fa-solid fa-angle-down"></i>
-                                </div>
-
                                 {
                                     props.status === "pending"
                                         ?
