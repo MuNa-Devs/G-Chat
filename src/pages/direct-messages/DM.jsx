@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function DM() {
-    const { user_details, socket } = useContext(AppContext);
+    const { user_details, socket, setLogOut } = useContext(AppContext);
     const navigate = useNavigate();
     const bottom_ref = useRef(null);
     const input_ref = useRef(null);
@@ -40,12 +40,20 @@ export default function DM() {
     // To get all the contacts of the user
     useEffect(() => {
         axios.get(
-            server_url + `/g-chat/dms/get-contacts?user_id=${user_details?.id || localStorage.getItem("user_id")}`
+            server_url + `/g-chat/messages/contacts?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
         ).then(res => {
             const data = res.data;
             setChats(data.contacts);
         }).catch(err => {
             console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.respnonse?.data?.code))
+                setLogOut();
         });
     }, []);
 
@@ -56,7 +64,12 @@ export default function DM() {
         input_ref?.current?.focus();
 
         axios.get(
-            server_url + `/g-chat/dms/get-chats?contact_id=${selected_contactID}`
+            server_url + `/g-chat/messages/chats?user_id=${user_details?.id || localStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
         ).then(res => {
             const data = res.data;
             setMessages(data.chats.sort(
