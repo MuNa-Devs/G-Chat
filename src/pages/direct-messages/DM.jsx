@@ -8,9 +8,6 @@ import { useContext, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
-// Hi! Temp change to be able to commit into github... :)
-
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
     const navigate = useNavigate();
