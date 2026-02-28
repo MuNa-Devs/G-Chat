@@ -19,6 +19,8 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride, s
 
         if (!token) setLogOut();
 
+        console.log(user_id);
+
         const res = await axios.get(
             `${server_url}/g-chat/users/get-user?user_id=${user_id}&req_user_id=${user_id}`,
             {
@@ -33,6 +35,7 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride, s
         setUserDetails(res.data.user);
     } catch (err) {
         console.log("User details not loaded:", err);
+        console.log(user_id);
         setLogOut();
         setUserDetails({
             id: 0,

@@ -111,10 +111,6 @@ export default function RoomHome() {
         };
     }, [socket, room_id, user_details.id]);
 
-    useEffect(() => {
-        console.log("messages updated");
-    }, [messages]);
-
     // To fetch all the messages of the room at startup
     useEffect(() => {
         if (!room_id) return;
