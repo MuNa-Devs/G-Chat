@@ -137,7 +137,7 @@ export default function RoomHome() {
         bottom_ref?.current?.scrollIntoView();
     }, [messages]);
 
-    // Send message to other room members + optimistic UI update
+    // Send message + optimistic UI update
     const sendMessage = async () => {
         if (!message.trim() && files.length === 0) {
             setMessage("");
@@ -223,8 +223,7 @@ export default function RoomHome() {
     }
 
     useEffect(() => {
-        if (!socket)
-            return;
+        if (!socket) return;
 
         const handleFailedMessages = (res) => {
             setMessages(prev => {

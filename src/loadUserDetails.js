@@ -2,13 +2,13 @@ import axios from "axios";
 import { server_url } from "../creds/server_url";
 
 export const loadUserDetails = async (setUserDetails, setLoading, setOverride, setLogOut) => {
-    if (!localStorage.getItem("user_id")) return;
+    if (!sessionStorage.getItem("user_id")) return;
 
     setLoading(true);
     setOverride("loading");
 
     try {
-        const user_id = localStorage.getItem("user_id");
+        const user_id = sessionStorage.getItem("user_id");
 
         if (!user_id) {
             setUserDetails(null);

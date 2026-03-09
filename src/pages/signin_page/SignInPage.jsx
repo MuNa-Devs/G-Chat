@@ -53,7 +53,7 @@ function SignInPage() {
             const response = await axios.post(`${server_url}/g-chat/auth/signin`, inputs);
 
             if (response.data.success) {
-                localStorage.setItem("user_id", response.data.user.id);
+                sessionStorage.setItem("user_id", response.data.user.id);
                 localStorage.setItem("token", response.data.token);
 
                 await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);

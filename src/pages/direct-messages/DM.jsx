@@ -2,11 +2,14 @@ import styles from "./dm.module.css";
 import SideBar from "../../reusable_component/SideBar";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
-import {Message} from "../../reusable_component/message_dev/Message";
+import { Message } from "../../reusable_component/message_dev/Message";
 
 import { useContext, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MessageBar from "../../reusable_component/message_bar/MessageBar";
+import FileObject from "../../reusable_component/file_object/FileObject";
+import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
@@ -31,6 +34,26 @@ export default function DM() {
 
     // To set selected contact's details
     const [contact_details, setContactDetails] = useState({});
+
+    // File Picker:
+    const [show_file_object, setShowFileObject] = useState(false);
+    const [files, setFiles] = useState([]);
+
+    // File input handler:
+    const handleFiles = (e) => {
+        setFiles(Array.from(e.target.files));
+        setShowFileObject(true);
+        input_ref?.current?.focus();
+    }
+
+    // Emoji Picker:
+    const [show_picker, setShowPicker] = useState(false);
+
+    // Emoji picker call-back:
+    const setEmoji = (emoji_data) => {
+        setMessage(prev => prev + emoji_data.emoji);
+        input_ref?.current?.focus();
+    }
 
     // To get to the bottom of the chats
     useEffect(() => {
@@ -72,10 +95,7 @@ export default function DM() {
             }
         ).then(res => {
             const data = res.data;
-            setMessages(data.chats.sort(
-                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
-                )
-            );
+            setMessages(data.chats);
         }).catch(err => {
             console.log(err);
         });
@@ -97,6 +117,9 @@ export default function DM() {
         if (!socket || !selected_contactID) return;
 
         const handleMessage = (res) => {
+            if (user_details?.id === Number(res.sender_details.sender_id))
+                return;
+
             setMessages(
                 prev => [...prev, res]
             );
@@ -109,49 +132,143 @@ export default function DM() {
         }
     }, [socket, selected_contactID]);
 
-    const autoReHeight = (e) => {
-        const thing = e.target;
-        thing.style.height = "auto";
-        thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
-    }
+    // const autoReHeight = (e) => {
+    //     const thing = e.target;
+    //     thing.style.height = "auto";
+    //     thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
+    // }
 
-    // To send message + optimistic UI update
-    const sendMessage = () => {
-        if (message.trim() === "") {
+    // Send message + optimistic UI update
+    const sendMessage = async () => {
+        if (!message.trim() && files.length === 0) {
             setMessage("");
+            setFiles([]);
             input_ref.current.style.height = "auto";
             input_ref.current?.focus();
 
             return;
         }
 
-        const timestamp = new Date();
+        const msg_id = generateUUID();
 
         const local_message = {
-            contact_id: selected_contactID,
-            message: message,
-            sent_by: (user_details?.id || localStorage.getItem("user_id")),
-            sent_at: timestamp,
-            username: user_details?.username,
-            pfp: user_details?.pfp
-        }
+            msg_id,
+            identifiers: {
+                message_id: null,
+                contact_id: selected_contactID
+            },
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: message.trim(),
+            files_list: files.map(file => ({ filename: file.name, file_url: null })),
+            timestamp: null,
+            status: "pending"
+        };
 
         setMessages(
             prev => [...prev, local_message]
         );
 
-        socket.emit("send-dm", {
-            contact_id: selected_contactID,
-            message: message,
-            sent_by: (user_details?.id || localStorage.getItem("user_id")),
-            sent_at: timestamp,
-            message_details: local_message
-        });
-
         setMessage("");
+        setShowPicker(false);
+
+        const form = new FormData();
+
+        files.forEach(file => form.append("files", file));
+        let files_list = [];
+
+        setFiles([]);
+        setShowFileObject(false);
+
+        document.getElementById("file").value = "";
+
+        try {
+            const res = await axios.post(
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                form,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            files_list = res.data.files_list;
+        }
+        catch (err) {
+            console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
+        }
+
+        const message_form = {
+            msg_id,
+            identifiers: {
+                message_id: null,
+                contact_id: selected_contactID
+            },
+            sender_details: {
+                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: local_message.text,
+            files_list
+        };
+
+        socket.emit("send-dm", { message_form, contact_id: selected_contactID });
+
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
-    }
+    };
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleFailedMessages = (res) => {
+            setMessages(prev => {
+                prev.map(message => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            status: "failed"
+                        }
+                        :
+                        message
+                ));
+            });
+        };
+
+        const updateMsgs = (res) => {
+            setMessages(prev => (
+                prev.map(message => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            timestamp: res.timestamp,
+                            status: "complete",
+                            files_list: res.files_list
+                        }
+                        :
+                        message
+                ))
+            ));
+        };
+
+        socket.on("socket_error", handleFailedMessages);
+        socket.on("dm_emit-success", updateMsgs);
+
+        return () => {
+            socket.off("socket_error", handleFailedMessages);
+            socket.off("dm_emit-success", updateMsgs);
+        };
+    }, [socket]);
 
     const [show_contacts, setShowContacts] = useState(false);
 
@@ -215,34 +332,32 @@ export default function DM() {
                             <div ref={bottom_ref}></div>
                         </div>
 
-                        <div className={styles.textControls}>
-                            <button className={styles.emojis}><i className="fa-regular fa-face-grin-wide"></i></button>
-
-                            <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
-
-                            <textarea
-                                rows={1}
-                                ref={input_ref}
-                                value={message}
-                                type="text"
-                                placeholder="Type a message"
-                                onChange={(e) => {
-                                    setMessage(e.target.value)
-                                    autoReHeight(e);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        sendMessage();
-                                        e.preventDefault();
-                                    }
-                                }}
+                        {
+                            show_file_object
+                            &&
+                            <FileObject
+                                files={files}
                             />
+                        }
 
-                            <button
-                                className={styles.send}
-                                onClick={sendMessage}
-                            ><i className="fa-solid fa-paper-plane"></i></button>
-                        </div>
+                        <MessageBar
+                            setShowPicker={setShowPicker}
+                            handleFiles={handleFiles}
+                            input_ref={input_ref}
+                            message={message}
+                            setMessage={setMessage}
+                            sendMessage={sendMessage}
+                        />
+
+                        {
+                            show_picker
+                            &&
+                            <div className={styles.emojiPicker}>
+                                <EmojiBox
+                                    setEmoji={setEmoji}
+                                />
+                            </div>
+                        }
                     </div>
                     :
                     <div className={styles.noConv}>
@@ -394,7 +509,11 @@ function Contact(props) {
     );
 }
 
-const normalizeMessage = (msg) => ({
-    ...msg,
-    time: new Date(msg.sent_at || msg.timestamp).getTime()
-});
+const generateUUID = () => {
+    if (crypto?.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    // fallback
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+};

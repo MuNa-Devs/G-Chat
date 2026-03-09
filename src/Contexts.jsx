@@ -17,18 +17,18 @@ export function AppProvider({ children }) {
 
     // To check login:
     const [is_logged_in, setIsLoggedIn] = useState(() => {
-        const status = localStorage.getItem("is_logged_in");
+        const status = sessionStorage.getItem("is_logged_in");
         return status === "true";
     });
 
     const setLogin = () => {
         setIsLoggedIn(true);
-        localStorage.setItem("is_logged_in", "true");
+        sessionStorage.setItem("is_logged_in", "true");
     };
 
     const setLogOut = () => {
         setIsLoggedIn(false);
-        localStorage.setItem("is_logged_in", "false");
+        sessionStorage.setItem("is_logged_in", "false");
     };
 
     // For socket connection:
@@ -48,6 +48,8 @@ export function AppProvider({ children }) {
     }
 
     useEffect(() => {
+        if (!is_logged_in) return;
+
         if (socket === null)
             setSocket(
                 io(server_url, {
@@ -62,7 +64,7 @@ export function AppProvider({ children }) {
 
             return () => socket.off("socket_error", handleSocketErrors);
         }
-    }, [socket])
+    }, [socket, is_logged_in]);
 
     return (
         <AppContext.Provider

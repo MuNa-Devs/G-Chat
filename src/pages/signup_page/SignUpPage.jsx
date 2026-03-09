@@ -77,7 +77,7 @@ export default function SignUpPage() {
             const response = await axios.post(`${server_url}/g-chat/auth/signup`, inputs);
 
             if (response.data.success) {
-                localStorage.setItem("user_id", response.data.user.id);
+                sessionStorage.setItem("user_id", response.data.user.id);
                 localStorage.setItem("token", response.data.token);
 
                 await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
