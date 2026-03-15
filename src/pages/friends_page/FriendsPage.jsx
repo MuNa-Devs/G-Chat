@@ -32,7 +32,7 @@ export default function FriendsPage() {
             console.log(query);
 
             const res = await axios.get(
-                `${server_url}/g-chat/users/search?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}`,
+                `${server_url}/g-chat/users/search?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
                 {
                     headers: {
                         auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -46,7 +46,6 @@ export default function FriendsPage() {
             //  is_friend -> are they ur frnd (bool)
             // }
 
-            console.log(res.data?.users);
             setResults(res.data?.users || []);
             setHasSearched(true);
         } catch (err) {

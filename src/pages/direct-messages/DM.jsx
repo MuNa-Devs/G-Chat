@@ -3,19 +3,29 @@ import SideBar from "../../reusable_component/SideBar";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
 import { Message } from "../../reusable_component/message_dev/Message";
-
-import { useContext, useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useRef } from "react";
 import axios from "axios";
 import MessageBar from "../../reusable_component/message_bar/MessageBar";
 import FileObject from "../../reusable_component/file_object/FileObject";
 import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
+import { useState } from "react";
+import { useEffect } from "react";
+import DivLoader from "../loading_screen/DivLoader";
+import AddContact from "./AddContact";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
-    const navigate = useNavigate();
     const bottom_ref = useRef(null);
     const input_ref = useRef(null);
+
+    // Contct load placeholder
+    const [is_loading, setLoading] = useState(true);
+
+    // To toggle between chats & search chats
+    const [searched, setSearched] = useState(false);
+
+    // Search vals
+    const [search_query, setSearchQuery] = useState("");
 
     // To set all messages
     const [messages, setMessages] = useState([]);
@@ -25,6 +35,9 @@ export default function DM() {
 
     // To set chat contacts
     const [chats, setChats] = useState([]);
+
+    // To set last contact id
+    const [last_seen_con, setLastSeenCon] = useState(Number.MAX_SAFE_INTEGER);
 
     // To set contact selected or not
     const [chat_selected, setChatSelected] = useState(false);
@@ -62,8 +75,12 @@ export default function DM() {
 
     // To get all the contacts of the user
     useEffect(() => {
+        if (searched) return;
+
+        setLoading(true);
+
         axios.get(
-            server_url + `/g-chat/messages/contacts?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            server_url + `/g-chat/messages/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&last_seen=${last_seen_con}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -72,22 +89,26 @@ export default function DM() {
         ).then(res => {
             const data = res.data;
             setChats(data.contacts);
+            setLoading(false);
         }).catch(err => {
             console.log(err);
 
             if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.respnonse?.data?.code))
                 setLogOut();
+
+            setLoading(false);
         });
-    }, []);
+    }, [searched]);
 
     // To fetch all the messages of a particular contact
     useEffect(() => {
         if (!chat_selected || !selected_contactID) return;
 
+        setLoading(true);
         input_ref?.current?.focus();
 
         axios.get(
-            server_url + `/g-chat/messages/chats?user_id=${user_details?.id || localStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
+            server_url + `/g-chat/messages/chats?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -98,6 +119,9 @@ export default function DM() {
             setMessages(data.chats);
         }).catch(err => {
             console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
         });
     }, [selected_contactID]);
 
@@ -132,11 +156,51 @@ export default function DM() {
         }
     }, [socket, selected_contactID]);
 
-    // const autoReHeight = (e) => {
-    //     const thing = e.target;
-    //     thing.style.height = "auto";
-    //     thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
-    // }
+    // Search contacts
+    useEffect(() => {
+        if (search_query.trim().length < 1) {
+            setChats([]);
+            setSearched(false);
+            setLastSeenCon(Number.MAX_SAFE_INTEGER);
+
+            return;
+        }
+
+        setChats([]);
+        setSearched(true);
+        setLastSeenCon(Number.MAX_SAFE_INTEGER);
+        setLoading(true);
+
+        const query = new AbortController();
+
+        const search = setTimeout(() => {
+            axios.get(
+                server_url + `/g-chat/messages/search/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&query=${search_query}&last_seen_id=${last_seen_con}`,
+                {
+                    signal: query.signal,
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            ).then(res => {
+                const contacts = res.data.contacts;
+
+                setChats(contacts);
+                setLoading(false);
+                setLastSeenCon(contacts[contacts.length - 1]?.contact_id || Number.MAX_SAFE_INTEGER);
+            }).catch(err => {
+                console.log(err);
+
+                if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                    setLogOut();
+            });
+        }, 500);
+
+        return () => {
+            query.abort();
+            clearTimeout(search);
+        };
+    }, [search_query]);
 
     // Send message + optimistic UI update
     const sendMessage = async () => {
@@ -158,7 +222,7 @@ export default function DM() {
                 contact_id: selected_contactID
             },
             sender_details: {
-                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_id: user_details?.id || sessionStorage.getItem("user_id"),
                 sender_name: user_details?.username,
                 sender_pfp: user_details?.pfp
             },
@@ -187,7 +251,7 @@ export default function DM() {
 
         try {
             const res = await axios.post(
-                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
                 form,
                 {
                     headers: {
@@ -212,7 +276,7 @@ export default function DM() {
                 contact_id: selected_contactID
             },
             sender_details: {
-                sender_id: user_details?.id || localStorage.getItem("user_id"),
+                sender_id: user_details?.id || sessionStorage.getItem("user_id"),
                 sender_name: user_details?.username,
                 sender_pfp: user_details?.pfp
             },
@@ -270,7 +334,11 @@ export default function DM() {
         };
     }, [socket]);
 
+    // To hide chat panel on smaller screens
     const [show_contacts, setShowContacts] = useState(false);
+
+    // Add Contact toggle
+    const [add_contact, setAddContact] = useState(false);
 
     return (
         <div className={styles.dmDashboard}>
@@ -381,51 +449,71 @@ export default function DM() {
                 <div className={styles.searchBar}>
                     <div><i className="fa-solid fa-magnifying-glass"></i></div>
 
-                    <input type="text" placeholder="Search contacts..." />
+                    <input
+                        type="text"
+                        value={search_query}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder="Search for contacts..."
+                    />
                 </div>
 
                 <hr className={styles.divider} />
 
-                <div className={styles.chatFilters}>
-                    <button className={styles.activeFilter}>All</button>
-                    <button>New</button>
-                    <button>Frequent</button>
-                </div>
+                {
+                    is_loading
+                        ?
+                        <DivLoader />
+                        :
+                        <>
+                            {
+                                !searched
+                                &&
+                                <div className={styles.chatFilters}>
+                                    <button className={styles.activeFilter}>All</button>
+                                    <button>New</button>
+                                    <button>Frequent</button>
+                                </div>
+                            }
 
-                <div className={styles.contacts}>
-                    {
-                        chats.length
-                            ?
-                            chats.map((chat, index) => (
-                                <Contact
-                                    key={index}
-                                    setChatSelected={setChatSelected}
-                                    setSelectedCID={setSelectedCID}
-                                    setContactDetails={setContactDetails}
-                                    setShowContacts={setShowContacts}
-                                    selected_CID={selected_contactID}
-                                    contact_id={chat.contact_id}
-                                    pfp={chat.pfp}
-                                    username={chat.username}
-                                    recent_message={chat.recent_message || ""}
-                                    timestamp={chat.sent_at}
-                                    transaction={
-                                        chat.sent_by === (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
-                                    }
-                                    unread_msg={chat.unread_msgs}
-                                />
-                            ))
-                            :
-                            <div className={styles.noChats}>
-                                <h5>No Chats Available</h5>
-                                <h5>But that just means a fresh start! Start connecting with your friends today.</h5>
+                            <div className={styles.contacts}>
+                                {
+                                    chats.length
+                                        ?
+                                        chats.map((chat, index) => (
+                                            <Contact
+                                                key={index}
+                                                setChatSelected={setChatSelected}
+                                                setSelectedCID={setSelectedCID}
+                                                setContactDetails={setContactDetails}
+                                                setShowContacts={setShowContacts}
+                                                selected_CID={selected_contactID}
+                                                contact_id={chat.contact_id}
+                                                pfp={chat.pfp}
+                                                username={chat.username}
+                                                recent_message={chat.recent_message || ""}
+                                                timestamp={chat.sent_at}
+                                                transaction={
+                                                    chat.sent_by === (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
+                                                }
+                                                unread_msg={chat.unread_msgs}
+                                            />
+                                        ))
+                                        :
+                                        <div className={styles.noChats}>
+                                            <h5>No Chats Available</h5>
+                                            <h5>But that just means a fresh start! Start connecting with your friends today.</h5>
+                                        </div>
+                                }
+
+                                <div className={styles.buffer}></div>
                             </div>
-                    }
+                        </>
+                }
 
-                    <div className={styles.buffer}></div>
-                </div>
-
-                <div className={styles.newContact}>
+                <div
+                    className={styles.newContact}
+                    onClick={() => setAddContact(true)}
+                >
                     <i className="fa-solid fa-plus"></i>
                 </div>
             </div>
@@ -441,6 +529,16 @@ export default function DM() {
 
                 <button><i className="fa-solid fa-plus"></i></button>
             </div>
+
+            {
+                add_contact
+                &&
+                <div className={styles.addContactScreen}>
+                    <AddContact
+                        setAddContact={setAddContact}
+                    />
+                </div>
+            }
         </div>
     );
 }

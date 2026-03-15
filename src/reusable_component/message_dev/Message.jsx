@@ -32,7 +32,7 @@ export function Message(props) {
     return (
         <div className={styles.messageDiv}>
             {
-                Number(localStorage.getItem("user_id")) !== props.sender_id
+                Number(sessionStorage.getItem("user_id")) !== props.sender_id
                     ?
                     <div className={`${(
                         props.conseq_msgs
@@ -140,7 +140,7 @@ export function File(props) {
             ></a>
 
             {
-                Number(localStorage.getItem("user_id")) !== props.sender_id
+                Number(sessionStorage.getItem("user_id")) !== props.sender_id
                     ?
                     <div
                         className={`${(

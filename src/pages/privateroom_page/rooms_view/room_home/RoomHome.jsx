@@ -62,7 +62,7 @@ export default function RoomHome() {
     // To fetch the room details
     useEffect(() => {
         axios.get(
-            server_url + `/g-chat/rooms/get-room?user_id=${user_details?.id || localStorage.getItem("user_id")}&room_id=${room_id}`,
+            server_url + `/g-chat/rooms/get-room?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&room_id=${room_id}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -116,7 +116,7 @@ export default function RoomHome() {
         if (!room_id) return;
 
         axios.get(
-            server_url + `/g-chat/messages/room?user_id=${user_details?.id || localStorage.getItem("user_id")}&room_id=${room_id}&last_seen_msg=${Number.MAX_SAFE_INTEGER}`,
+            server_url + `/g-chat/messages/room?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&room_id=${room_id}&last_seen_msg=${Number.MAX_SAFE_INTEGER}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -184,7 +184,7 @@ export default function RoomHome() {
 
         try {
             const res = await axios.post(
-                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
                 form,
                 {
                     headers: {

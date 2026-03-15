@@ -63,7 +63,8 @@ function SignInPage() {
             } else
                 setAlert(code_alert_mapper[response.data.code] || "Something went wrong!");
         } catch (err) {
-            setAlert(code_alert_mapper[err.response.data.code] || "Something went wrong!");
+            console.log("Error:", err);
+            setAlert(code_alert_mapper[err.response?.data?.code] || "Something went wrong!");
         }
 
         setSignin(false);
