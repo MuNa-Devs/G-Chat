@@ -1,0 +1,64 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader{
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.beads{
+  position: relative;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+}
+
+.bead{
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* top */
+.bead1{
+  background: var(--accent);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* right */
+.bead2{
+  background: var(--success);
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* bottom */
+.bead3{
+  background: var(--accent);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* left */
+.bead4{
+  background: var(--accent);
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}

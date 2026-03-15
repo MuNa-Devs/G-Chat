@@ -2,24 +2,20 @@ import axios from "axios";
 import { server_url } from "../creds/server_url";
 
 export const loadUserDetails = async (setUserDetails, setLoading, setOverride, setLogOut) => {
-    if (!localStorage.getItem("user_id")) return;
+    if (!sessionStorage.getItem("user_id")) return;
 
     setLoading(true);
     setOverride("loading");
 
     try {
-        const user_id = localStorage.getItem("user_id");
-
-        if (!user_id) {
-            setUserDetails(null);
-            return;
-        }
-
+        const user_id = sessionStorage.getItem("user_id");
         const token = localStorage.getItem("token");
 
-        if (!token) setLogOut();
-
-        console.log(user_id);
+        if (!["/signin", "signup"].includes(window.location.pathname) && !token){
+            console.log("User is not in signin or signup page and they don't have token.");
+            setLogOut();
+            return;
+        }
 
         const res = await axios.get(
             `${server_url}/g-chat/users/get-user?user_id=${user_id}&req_user_id=${user_id}`,
@@ -35,7 +31,6 @@ export const loadUserDetails = async (setUserDetails, setLoading, setOverride, s
         setUserDetails(res.data.user);
     } catch (err) {
         console.log("User details not loaded:", err);
-        console.log(user_id);
         setLogOut();
         setUserDetails({
             id: 0,

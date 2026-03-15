@@ -15,6 +15,7 @@ import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
+import Assignments from "./pages/assignments_page/Assignments";
 
 export default function App() {
 	return (
@@ -67,6 +68,14 @@ export default function App() {
 				path="/direct-messages" element={
 					<LoginProtector>
 						<DM />
+					</LoginProtector>
+				}
+			/>
+
+						<Route
+				path="/Assignments" element={
+					<LoginProtector>
+						<Assignments />
 					</LoginProtector>
 				}
 			/>

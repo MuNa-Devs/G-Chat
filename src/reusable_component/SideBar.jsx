@@ -28,7 +28,7 @@ export default function SideBar(props) {
                         <img
                             src={server_url + "/files/" + user_details.pfp}
                             onError={e => {
-                                e.target.onError = null;
+                                e.target.onerror = null;
                                 e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
                             }}
                         />
@@ -85,6 +85,17 @@ export default function SideBar(props) {
                             setOpenLeft(false);
                         }}
                     ><i className="fa-solid fa-user-group"></i> <span>Friends</span></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "Assignments" && styles.activeBtn}
+                        `}
+                        onClick={() => {
+                            navigate("/assignments");
+                            setOpenLeft(false);
+                        }}
+                    ><i class="fa-solid fa-file-pen"></i> <span>Assignments</span></button>
+                    
                 </div>
 
                 <div className={styles.sidebarUtils}>

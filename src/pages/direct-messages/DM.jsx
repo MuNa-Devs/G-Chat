@@ -2,17 +2,30 @@ import styles from "./dm.module.css";
 import SideBar from "../../reusable_component/SideBar";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
-import {Message} from "../../reusable_component/message_dev/Message";
-
-import { useContext, useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Message } from "../../reusable_component/message_dev/Message";
+import { useContext, useRef } from "react";
 import axios from "axios";
+import MessageBar from "../../reusable_component/message_bar/MessageBar";
+import FileObject from "../../reusable_component/file_object/FileObject";
+import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
+import { useState } from "react";
+import { useEffect } from "react";
+import DivLoader from "../loading_screen/DivLoader";
+import AddContact from "./AddContact";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
-    const navigate = useNavigate();
     const bottom_ref = useRef(null);
     const input_ref = useRef(null);
+
+    // Contct load placeholder
+    const [is_loading, setLoading] = useState(true);
+
+    // To toggle between chats & search chats
+    const [searched, setSearched] = useState(false);
+
+    // Search vals
+    const [search_query, setSearchQuery] = useState("");
 
     // To set all messages
     const [messages, setMessages] = useState([]);
@@ -23,6 +36,9 @@ export default function DM() {
     // To set chat contacts
     const [chats, setChats] = useState([]);
 
+    // To set last contact id
+    const [last_seen_con, setLastSeenCon] = useState(Number.MAX_SAFE_INTEGER);
+
     // To set contact selected or not
     const [chat_selected, setChatSelected] = useState(false);
 
@@ -32,6 +48,26 @@ export default function DM() {
     // To set selected contact's details
     const [contact_details, setContactDetails] = useState({});
 
+    // File Picker:
+    const [show_file_object, setShowFileObject] = useState(false);
+    const [files, setFiles] = useState([]);
+
+    // File input handler:
+    const handleFiles = (e) => {
+        setFiles(Array.from(e.target.files));
+        setShowFileObject(true);
+        input_ref?.current?.focus();
+    }
+
+    // Emoji Picker:
+    const [show_picker, setShowPicker] = useState(false);
+
+    // Emoji picker call-back:
+    const setEmoji = (emoji_data) => {
+        setMessage(prev => prev + emoji_data.emoji);
+        input_ref?.current?.focus();
+    }
+
     // To get to the bottom of the chats
     useEffect(() => {
         bottom_ref?.current?.scrollIntoView();
@@ -39,8 +75,12 @@ export default function DM() {
 
     // To get all the contacts of the user
     useEffect(() => {
+        if (searched) return;
+
+        setLoading(true);
+
         axios.get(
-            server_url + `/g-chat/messages/contacts?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
+            server_url + `/g-chat/messages/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&last_seen=${last_seen_con}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -49,22 +89,26 @@ export default function DM() {
         ).then(res => {
             const data = res.data;
             setChats(data.contacts);
+            setLoading(false);
         }).catch(err => {
             console.log(err);
 
             if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.respnonse?.data?.code))
                 setLogOut();
+
+            setLoading(false);
         });
-    }, []);
+    }, [searched]);
 
     // To fetch all the messages of a particular contact
     useEffect(() => {
         if (!chat_selected || !selected_contactID) return;
 
+        setLoading(true);
         input_ref?.current?.focus();
 
         axios.get(
-            server_url + `/g-chat/messages/chats?user_id=${user_details?.id || localStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
+            server_url + `/g-chat/messages/chats?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -72,12 +116,12 @@ export default function DM() {
             }
         ).then(res => {
             const data = res.data;
-            setMessages(data.chats.sort(
-                    (a, b) => new Date(a.timestamp || a.sent_at) - new Date(b.timestamp || b.sent_at)
-                )
-            );
+            setMessages(data.chats);
         }).catch(err => {
             console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
         });
     }, [selected_contactID]);
 
@@ -97,6 +141,9 @@ export default function DM() {
         if (!socket || !selected_contactID) return;
 
         const handleMessage = (res) => {
+            if (user_details?.id === Number(res.sender_details.sender_id))
+                return;
+
             setMessages(
                 prev => [...prev, res]
             );
@@ -109,51 +156,189 @@ export default function DM() {
         }
     }, [socket, selected_contactID]);
 
-    const autoReHeight = (e) => {
-        const thing = e.target;
-        thing.style.height = "auto";
-        thing.style.height = Math.min(thing.scrollHeight - 24, 150) + "px";
-    }
+    // Search contacts
+    useEffect(() => {
+        if (search_query.trim().length < 1) {
+            setChats([]);
+            setSearched(false);
+            setLastSeenCon(Number.MAX_SAFE_INTEGER);
 
-    // To send message + optimistic UI update
-    const sendMessage = () => {
-        if (message.trim() === "") {
+            return;
+        }
+
+        setChats([]);
+        setSearched(true);
+        setLastSeenCon(Number.MAX_SAFE_INTEGER);
+        setLoading(true);
+
+        const query = new AbortController();
+
+        const search = setTimeout(() => {
+            axios.get(
+                server_url + `/g-chat/messages/search/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&query=${search_query}&last_seen_id=${last_seen_con}`,
+                {
+                    signal: query.signal,
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            ).then(res => {
+                const contacts = res.data.contacts;
+
+                setChats(contacts);
+                setLoading(false);
+                setLastSeenCon(contacts[contacts.length - 1]?.contact_id || Number.MAX_SAFE_INTEGER);
+            }).catch(err => {
+                console.log(err);
+
+                if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                    setLogOut();
+            });
+        }, 500);
+
+        return () => {
+            query.abort();
+            clearTimeout(search);
+        };
+    }, [search_query]);
+
+    // Send message + optimistic UI update
+    const sendMessage = async () => {
+        if (!message.trim() && files.length === 0) {
             setMessage("");
+            setFiles([]);
             input_ref.current.style.height = "auto";
             input_ref.current?.focus();
 
             return;
         }
 
-        const timestamp = new Date();
+        const msg_id = generateUUID();
 
         const local_message = {
-            contact_id: selected_contactID,
-            message: message,
-            sent_by: (user_details?.id || localStorage.getItem("user_id")),
-            sent_at: timestamp,
-            username: user_details?.username,
-            pfp: user_details?.pfp
-        }
+            msg_id,
+            identifiers: {
+                message_id: null,
+                contact_id: selected_contactID
+            },
+            sender_details: {
+                sender_id: user_details?.id || sessionStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: message.trim(),
+            files_list: files.map(file => ({ filename: file.name, file_url: null })),
+            timestamp: null,
+            status: "pending"
+        };
 
         setMessages(
             prev => [...prev, local_message]
         );
 
-        socket.emit("send-dm", {
-            contact_id: selected_contactID,
-            message: message,
-            sent_by: (user_details?.id || localStorage.getItem("user_id")),
-            sent_at: timestamp,
-            message_details: local_message
-        });
-
         setMessage("");
+        setShowPicker(false);
+
+        const form = new FormData();
+
+        files.forEach(file => form.append("files", file));
+        let files_list = [];
+
+        setFiles([]);
+        setShowFileObject(false);
+
+        document.getElementById("file").value = "";
+
+        try {
+            const res = await axios.post(
+                `${server_url}/g-chat/files/upload?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
+                form,
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            files_list = res.data.files_list;
+        }
+        catch (err) {
+            console.log(err);
+
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                setLogOut();
+        }
+
+        const message_form = {
+            msg_id,
+            identifiers: {
+                message_id: null,
+                contact_id: selected_contactID
+            },
+            sender_details: {
+                sender_id: user_details?.id || sessionStorage.getItem("user_id"),
+                sender_name: user_details?.username,
+                sender_pfp: user_details?.pfp
+            },
+            text: local_message.text,
+            files_list
+        };
+
+        socket.emit("send-dm", { message_form, contact_id: selected_contactID });
+
         input_ref.current?.focus();
         input_ref.current.style.height = "auto";
-    }
+    };
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleFailedMessages = (res) => {
+            setMessages(prev => {
+                prev.map(message => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            status: "failed"
+                        }
+                        :
+                        message
+                ));
+            });
+        };
+
+        const updateMsgs = (res) => {
+            setMessages(prev => (
+                prev.map(message => (
+                    message.msg_id === res.msg_id
+                        ?
+                        {
+                            ...message,
+                            timestamp: res.timestamp,
+                            status: "complete",
+                            files_list: res.files_list
+                        }
+                        :
+                        message
+                ))
+            ));
+        };
+
+        socket.on("socket_error", handleFailedMessages);
+        socket.on("dm_emit-success", updateMsgs);
+
+        return () => {
+            socket.off("socket_error", handleFailedMessages);
+            socket.off("dm_emit-success", updateMsgs);
+        };
+    }, [socket]);
+
+    // To hide chat panel on smaller screens
     const [show_contacts, setShowContacts] = useState(false);
+
+    // Add Contact toggle
+    const [add_contact, setAddContact] = useState(false);
 
     return (
         <div className={styles.dmDashboard}>
@@ -215,34 +400,32 @@ export default function DM() {
                             <div ref={bottom_ref}></div>
                         </div>
 
-                        <div className={styles.textControls}>
-                            <button className={styles.emojis}><i className="fa-regular fa-face-grin-wide"></i></button>
-
-                            <button className={styles.files}><i className="fa-solid fa-paperclip"></i></button>
-
-                            <textarea
-                                rows={1}
-                                ref={input_ref}
-                                value={message}
-                                type="text"
-                                placeholder="Type a message"
-                                onChange={(e) => {
-                                    setMessage(e.target.value)
-                                    autoReHeight(e);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        sendMessage();
-                                        e.preventDefault();
-                                    }
-                                }}
+                        {
+                            show_file_object
+                            &&
+                            <FileObject
+                                files={files}
                             />
+                        }
 
-                            <button
-                                className={styles.send}
-                                onClick={sendMessage}
-                            ><i className="fa-solid fa-paper-plane"></i></button>
-                        </div>
+                        <MessageBar
+                            setShowPicker={setShowPicker}
+                            handleFiles={handleFiles}
+                            input_ref={input_ref}
+                            message={message}
+                            setMessage={setMessage}
+                            sendMessage={sendMessage}
+                        />
+
+                        {
+                            show_picker
+                            &&
+                            <div className={styles.emojiPicker}>
+                                <EmojiBox
+                                    setEmoji={setEmoji}
+                                />
+                            </div>
+                        }
                     </div>
                     :
                     <div className={styles.noConv}>
@@ -266,51 +449,71 @@ export default function DM() {
                 <div className={styles.searchBar}>
                     <div><i className="fa-solid fa-magnifying-glass"></i></div>
 
-                    <input type="text" placeholder="Search contacts..." />
+                    <input
+                        type="text"
+                        value={search_query}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder="Search for contacts..."
+                    />
                 </div>
 
                 <hr className={styles.divider} />
 
-                <div className={styles.chatFilters}>
-                    <button className={styles.activeFilter}>All</button>
-                    <button>New</button>
-                    <button>Frequent</button>
-                </div>
+                {
+                    is_loading
+                        ?
+                        <DivLoader />
+                        :
+                        <>
+                            {
+                                !searched
+                                &&
+                                <div className={styles.chatFilters}>
+                                    <button className={styles.activeFilter}>All</button>
+                                    <button>New</button>
+                                    <button>Frequent</button>
+                                </div>
+                            }
 
-                <div className={styles.contacts}>
-                    {
-                        chats.length
-                            ?
-                            chats.map((chat, index) => (
-                                <Contact
-                                    key={index}
-                                    setChatSelected={setChatSelected}
-                                    setSelectedCID={setSelectedCID}
-                                    setContactDetails={setContactDetails}
-                                    setShowContacts={setShowContacts}
-                                    selected_CID={selected_contactID}
-                                    contact_id={chat.contact_id}
-                                    pfp={chat.pfp}
-                                    username={chat.username}
-                                    recent_message={chat.recent_message || ""}
-                                    timestamp={chat.sent_at}
-                                    transaction={
-                                        chat.sent_by === (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
-                                    }
-                                    unread_msg={chat.unread_msgs}
-                                />
-                            ))
-                            :
-                            <div className={styles.noChats}>
-                                <h5>No Chats Available</h5>
-                                <h5>But that just means a fresh start! Start connecting with your friends today.</h5>
+                            <div className={styles.contacts}>
+                                {
+                                    chats.length
+                                        ?
+                                        chats.map((chat, index) => (
+                                            <Contact
+                                                key={index}
+                                                setChatSelected={setChatSelected}
+                                                setSelectedCID={setSelectedCID}
+                                                setContactDetails={setContactDetails}
+                                                setShowContacts={setShowContacts}
+                                                selected_CID={selected_contactID}
+                                                contact_id={chat.contact_id}
+                                                pfp={chat.pfp}
+                                                username={chat.username}
+                                                recent_message={chat.recent_message || ""}
+                                                timestamp={chat.sent_at}
+                                                transaction={
+                                                    chat.sent_by === (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
+                                                }
+                                                unread_msg={chat.unread_msgs}
+                                            />
+                                        ))
+                                        :
+                                        <div className={styles.noChats}>
+                                            <h5>No Chats Available</h5>
+                                            <h5>But that just means a fresh start! Start connecting with your friends today.</h5>
+                                        </div>
+                                }
+
+                                <div className={styles.buffer}></div>
                             </div>
-                    }
+                        </>
+                }
 
-                    <div className={styles.buffer}></div>
-                </div>
-
-                <div className={styles.newContact}>
+                <div
+                    className={styles.newContact}
+                    onClick={() => setAddContact(true)}
+                >
                     <i className="fa-solid fa-plus"></i>
                 </div>
             </div>
@@ -326,6 +529,16 @@ export default function DM() {
 
                 <button><i className="fa-solid fa-plus"></i></button>
             </div>
+
+            {
+                add_contact
+                &&
+                <div className={styles.addContactScreen}>
+                    <AddContact
+                        setAddContact={setAddContact}
+                    />
+                </div>
+            }
         </div>
     );
 }
@@ -394,7 +607,11 @@ function Contact(props) {
     );
 }
 
-const normalizeMessage = (msg) => ({
-    ...msg,
-    time: new Date(msg.sent_at || msg.timestamp).getTime()
-});
+const generateUUID = () => {
+    if (crypto?.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    // fallback
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+};

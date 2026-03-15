@@ -53,7 +53,7 @@ function SignInPage() {
             const response = await axios.post(`${server_url}/g-chat/auth/signin`, inputs);
 
             if (response.data.success) {
-                localStorage.setItem("user_id", response.data.user.id);
+                sessionStorage.setItem("user_id", response.data.user.id);
                 localStorage.setItem("token", response.data.token);
 
                 await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
@@ -63,7 +63,8 @@ function SignInPage() {
             } else
                 setAlert(code_alert_mapper[response.data.code] || "Something went wrong!");
         } catch (err) {
-            setAlert(code_alert_mapper[err.response.data.code] || "Something went wrong!");
+            console.log("Error:", err);
+            setAlert(code_alert_mapper[err.response?.data?.code] || "Something went wrong!");
         }
 
         setSignin(false);
