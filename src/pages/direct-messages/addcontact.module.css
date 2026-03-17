@@ -26,7 +26,7 @@
     }
 }
 
-.addContact{
+.addContact {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -53,7 +53,7 @@
     animation: reveal 0.25s ease-out 0s 1 forwards;
 }
 
-h4{
+h4 {
     padding-left: 8px;
     letter-spacing: 0.8px;
 }
@@ -68,7 +68,7 @@ h4{
     margin-right: 8px;
 }
 
-.recentFriends{
+.recentFriends {
     height: auto;
     min-height: 88px;
     width: calc(100% - 32px);
@@ -116,7 +116,7 @@ h4{
     letter-spacing: 0.5px;
 }
 
-.friends{
+.friends {
     flex: 1;
     width: calc(100% - 32px);
     display: flex;
@@ -131,19 +131,20 @@ h4{
 }
 
 /* Recent Friends styles */
-.block{
+.block {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
 
-    width: 72px;          /* fixed width */
+    width: 72px;
+    /* fixed width */
     gap: 6px;
 
     cursor: pointer;
 }
 
-.pfp{
+.pfp {
     height: 64px;
     width: 64px;
     border-radius: 50%;
@@ -154,7 +155,7 @@ h4{
     background-color: var(--card-bg);
 }
 
-.pfp > img{
+.pfp>img {
     height: 100%;
     width: 100%;
     border-radius: 50%;
@@ -163,7 +164,7 @@ h4{
     display: block;
 }
 
-.username{
+.username {
     width: 100%;
     font-size: 12px;
     text-align: center;
@@ -171,4 +172,34 @@ h4{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media (max-width: 470px) {
+    .addContact {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        transform: translate(0%, 0%);
+
+        width: calc(100% - 32px);
+        max-width: 1800px;
+        height: calc(100% - 32px);
+        max-height: 1950px;
+
+        background-color: var(--bg-lighter);
+        border-radius: 0px;
+        padding: 16px;
+
+        box-shadow: 0 0 40px var(--shadow);
+        z-index: 999;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+
+        overflow-y: auto;
+
+        animation: reveal-mobile 0.25s ease-out 0s 1 forwards;
+    }
 }

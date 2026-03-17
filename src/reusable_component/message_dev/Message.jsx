@@ -51,7 +51,7 @@ export function Message(props) {
 
                         <div className={styles.wrapper}>
                             {
-                                !props.conseq_msgs
+                                (!props.conseq_msgs && props.constraint !== "no-logo")
                                 &&
                                 <h5 style={{marginTop: "8px"}}>{props.sender_name}</h5>
                             }
@@ -140,12 +140,12 @@ export function File(props) {
             ></a>
 
             {
-                Number(sessionStorage.getItem("user_id")) !== props.sender_id
+                Number(sessionStorage.getItem("user_id")) != props.sender_id
                     ?
                     <div
                         className={`${(
                             props.conseq_msgs
-                        ) && styles.conseqFile} ${styles.senderFile}`}
+                        ) ? styles.conseqFile : ""} ${styles.senderFile}`}
                     >
                         {
                             props.constraint !== "no-logo"
@@ -161,7 +161,7 @@ export function File(props) {
 
                         <div className={styles.wrapper}>
                             {
-                                !props.conseqFile
+                                (!props.conseqFile && props.constraint !== "no-logo")
                                 &&
                                 <h5>{props.sender_name}</h5>
                             }

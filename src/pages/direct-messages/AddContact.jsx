@@ -8,6 +8,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { AppContext } from "../../Contexts";
 import createContact from "./CreateContact";
+import PageLoader from "../loading_screen/PageLoader";
 
 export default function AddContact(props) {
     const [search_query, setSearchQuery] = useState("");
@@ -15,6 +16,7 @@ export default function AddContact(props) {
 
     // To set loader
     const [loading, setLoading] = useState(true);
+    const [page_loader, setPageLoader] = useState(true);
 
     // To toggle between search & all
     const [searched, setSearched] = useState(false);
@@ -65,6 +67,7 @@ export default function AddContact(props) {
             setFriends(friends);
             setLoading(false);
             setLastSeenId(friends[friends.length - 1]?.id || Number.MAX_SAFE_INTEGER);
+            setPageLoader(false);
         }).catch(err => {
             console.error(err);
 
@@ -120,68 +123,122 @@ export default function AddContact(props) {
 
     return (
         <div className={styles.addContact}>
-            <h2>Add Contact</h2>
+            <div
+                style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}
+            >
+                <h2>Add Contact</h2>
 
-            {
-                recents.length > 0
-                    ?
-                    <>
-                        <h4>Recent Connections</h4>
-
-                        <div className={styles.recentFriends}>
-                            {
-                                recents.map(recent => (
-                                    <RecentFriend
-                                        key={recent.friend_id}
-                                        user_id={user_details?.id || sessionStorage.getItem("user_id")}
-                                        friend_id={recent.friend_id}
-                                        url={recent.pfp}
-                                        username={recent.username}
-                                        props={props}
-                                    />
-                                ))
-                            }
-                        </div>
-                    </>
-                    :
-                    <div></div>
-            }
-
-            <hr className={styles.divider} />
-
-            <div className={styles.searchBar}>
-                <div><i className="fa-solid fa-magnifying-glass"></i></div>
-
-                <input
-                    type="text"
-                    value={search_query}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search for friends..."
-                />
+                <button
+                    style={{
+                        backgroundColor: "transparent",
+                        outline: "none",
+                        border: "none"
+                    }}
+                    onClick={() => props.setAddContact(false)}
+                >
+                    <i
+                        style={{
+                            color: "var(--danger)",
+                            fontSize: "1.25em"
+                        }}
+                        className="fa-solid fa-xmark"
+                    ></i>
+                </button>
             </div>
 
             {
-                loading
+                page_loader
                     ?
-                    <DivLoader />
+                    <PageLoader />
                     :
                     <>
-                        {!searched && <h4>Friends</h4>}
+                        {
+                            recents.length > 0
+                                ?
+                                <>
+                                    <h4>Recent Connections</h4>
 
-                        <div className={styles.friends}>
-                            {
-                                friends.map(frnd => (
-                                    <Friend
-                                        key={frnd.friend_id}
-                                        user_id={user_details?.id || sessionStorage.getItem("user_id")}
-                                        friend_id={frnd.friend_id}
-                                        url={frnd.pfp}
-                                        username={frnd.username}
-                                        props={props}
-                                    />
-                                ))
-                            }
+                                    <div className={styles.recentFriends}>
+                                        {
+                                            recents.map(recent => (
+                                                <RecentFriend
+                                                    key={recent.friend_id}
+                                                    user_id={user_details?.id || sessionStorage.getItem("user_id")}
+                                                    friend_id={recent.friend_id}
+                                                    url={recent.pfp}
+                                                    username={recent.username}
+                                                    props={props}
+                                                />
+                                            ))
+                                        }
+                                    </div>
+                                </>
+                                :
+                                <div></div>
+                        }
+
+                        < hr className={styles.divider} />
+
+                        <div className={styles.searchBar}>
+                            <div><i className="fa-solid fa-magnifying-glass"></i></div>
+
+                            <input
+                                type="text"
+                                value={search_query}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                placeholder="Search for friends..."
+                            />
                         </div>
+
+                        {
+                            loading
+                                ?
+                                <DivLoader />
+                                :
+                                <>
+                                    {!searched && <h4>Friends</h4>}
+
+                                    <div className={styles.friends}>
+                                        {
+                                            friends.length > 0
+                                                ?
+                                                friends.map(frnd => (
+                                                    <Friend
+                                                        key={frnd.friend_id}
+                                                        ruse="add-contact"
+                                                        user_id={user_details?.id || sessionStorage.getItem("user_id")}
+                                                        friend_id={frnd.friend_id}
+                                                        url={frnd.pfp}
+                                                        username={frnd.username}
+                                                        props={props}
+                                                    />
+                                                ))
+                                                :
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        gap: "4px"
+                                                    }}
+                                                >
+                                                    <h5>You have no friends.</h5>
+                                                    <h5>Add friends to start messaging.</h5>
+                                                </div>
+                                        }
+                                    </div>
+                                </>
+                        }
                     </>
             }
         </div>
@@ -193,7 +250,17 @@ function RecentFriend({ user_id, friend_id, url, username, props }) {
 
     return (
         <div className={styles.block}
-            onClick={() => createContact(user_id, friend_id, props)}
+            onClick={async () => {
+                const c_det = await createContact(user_id, friend_id, props);
+                await props.setChatSelected(true);
+                props.setLoading(true);
+                await props.setSelectedCID(Number(c_det?.contact_id));
+                await props.setContactDetails({
+                    username: c_det?.username,
+                    pfp: c_det?.pfp
+                });
+                props.setAddContact(false);
+            }}
         >
             <div className={styles.pfp}>
                 <img

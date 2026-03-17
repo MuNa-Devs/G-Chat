@@ -221,7 +221,7 @@ export default function RoomPage() {
                                         logo={`${server_url}/files/${room.icon_url}`}
                                         room_title={room.r_name}
                                         prof_name={
-                                            room.r_aid === user_details?.id
+                                            room.r_aid == user_details?.id
                                                 ? "You"
                                                 : capitalize(room.username)
                                         }

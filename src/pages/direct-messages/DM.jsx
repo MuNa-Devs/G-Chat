@@ -12,14 +12,18 @@ import { useState } from "react";
 import { useEffect } from "react";
 import DivLoader from "../loading_screen/DivLoader";
 import AddContact from "./AddContact";
+import { File } from "../../reusable_component/message_dev/Message";
+import PageLoader from "../loading_screen/PageLoader";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
     const bottom_ref = useRef(null);
     const input_ref = useRef(null);
+    const search_ref = useRef(null);
 
     // Contct load placeholder
     const [is_loading, setLoading] = useState(true);
+    const [chat_loader, setChatLoader] = useState(true);
 
     // To toggle between chats & search chats
     const [searched, setSearched] = useState(false);
@@ -51,6 +55,9 @@ export default function DM() {
     // File Picker:
     const [show_file_object, setShowFileObject] = useState(false);
     const [files, setFiles] = useState([]);
+
+    // Add Contact toggle
+    const [add_contact, setAddContact] = useState(false);
 
     // File input handler:
     const handleFiles = (e) => {
@@ -93,19 +100,19 @@ export default function DM() {
         }).catch(err => {
             console.log(err);
 
-            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.respnonse?.data?.code))
+            if (["INVALID_JWT", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
                 setLogOut();
 
             setLoading(false);
         });
-    }, [searched]);
+    }, [searched, add_contact]);
 
     // To fetch all the messages of a particular contact
     useEffect(() => {
         if (!chat_selected || !selected_contactID) return;
 
-        setLoading(true);
         input_ref?.current?.focus();
+        setChatLoader(true);
 
         axios.get(
             server_url + `/g-chat/messages/chats?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&contact_id=${selected_contactID}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
@@ -117,6 +124,7 @@ export default function DM() {
         ).then(res => {
             const data = res.data;
             setMessages(data.chats);
+            setChatLoader(false);
         }).catch(err => {
             console.log(err);
 
@@ -175,7 +183,7 @@ export default function DM() {
 
         const search = setTimeout(() => {
             axios.get(
-                server_url + `/g-chat/messages/search/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&query=${search_query}&last_seen_id=${last_seen_con}`,
+                server_url + `/g-chat/messages/search/contacts?user_id=${user_details?.id || sessionStorage.getItem("user_id")}&query=${search_query}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
                 {
                     signal: query.signal,
                     headers: {
@@ -207,7 +215,7 @@ export default function DM() {
         if (!message.trim() && files.length === 0) {
             setMessage("");
             setFiles([]);
-            input_ref.current.style.height = "auto";
+            input_ref.current?.style && (input_ref.current.style.height = "auto");
             input_ref.current?.focus();
 
             return;
@@ -294,7 +302,7 @@ export default function DM() {
         if (!socket) return;
 
         const handleFailedMessages = (res) => {
-            setMessages(prev => {
+            setMessages(prev =>
                 prev.map(message => (
                     message.msg_id === res.msg_id
                         ?
@@ -304,8 +312,8 @@ export default function DM() {
                         }
                         :
                         message
-                ));
-            });
+                ))
+            );
         };
 
         const updateMsgs = (res) => {
@@ -332,13 +340,10 @@ export default function DM() {
             socket.off("socket_error", handleFailedMessages);
             socket.off("dm_emit-success", updateMsgs);
         };
-    }, [socket]);
+    }, [socket, selected_contactID]);
 
     // To hide chat panel on smaller screens
     const [show_contacts, setShowContacts] = useState(false);
-
-    // Add Contact toggle
-    const [add_contact, setAddContact] = useState(false);
 
     return (
         <div className={styles.dmDashboard}>
@@ -370,7 +375,7 @@ export default function DM() {
                                     }}
                                 />
 
-                                <h2>{contact_details.username}</h2>
+                                <h3>{contact_details.username}</h3>
                             </div>
 
                             <button
@@ -378,53 +383,83 @@ export default function DM() {
                             ><i className="fa-solid fa-bars"></i></button>
                         </div>
 
-                        <div className={styles.chatContainer}>
-                            {
-                                messages.length
-                                    ? messages.map((msg, index) => (
-                                        <Message
-                                            key={index}
-                                            constraint="no-logo"
-                                            conseq_msgs={messages[index - 1]?.sent_by === msg.sent_by}
-                                            message={msg.message}
-                                            sender_id={msg.sent_by}
-                                            sender_name={msg.username}
-                                            sender_pfp={msg.pfp}
-                                            timestamp={msg.sent_at || msg.timestamp}
+                        {
+                            chat_loader
+                                ?
+                                <PageLoader />
+                                :
+                                <>
+                                    <div className={styles.chatContainer}>
+                                        {
+                                            messages.length ?
+                                                messages.map((msg, index) => (
+                                                    <div key={msg.msg_id || msg.identifiers.message_id}>
+                                                        {
+                                                            msg.files_list.map((file, file_index) => (
+                                                                <File
+                                                                    key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
+                                                                    constraint={"no-logo"}
+                                                                    sender_id={msg.sender_details.sender_id}
+                                                                    sender_name={msg.sender_details.sender_name}
+                                                                    sender_pfp={msg.sender_details.sender_pfp}
+                                                                    filename={file.filename}
+                                                                    file_url={file.file_url}
+                                                                    timestamp={msg.timestamp}
+                                                                    status={msg.status || "complete"}
+                                                                />
+                                                            ))
+                                                        }
+
+                                                        {
+                                                            msg.text
+                                                            &&
+                                                            <Message
+                                                                key={msg.msg_id || msg.identifiers.message_id}
+                                                                constraint={"no-logo"}
+                                                                message={msg.text}
+                                                                sender_id={msg.sender_details.sender_id}
+                                                                sender_name={msg.sender_details.sender_name}
+                                                                sender_pfp={msg.sender_details.sender_pfp}
+                                                                timestamp={msg.timestamp}
+                                                                files={msg.files_list}
+                                                                status={msg.status || "complete"}
+                                                            />
+                                                        }
+                                                    </div>
+                                                )) :
+                                                <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                                        }
+
+                                        <div ref={bottom_ref}></div>
+                                    </div>
+
+                                    {
+                                        show_file_object
+                                        &&
+                                        <FileObject
+                                            files={files}
                                         />
-                                    ))
+                                    }
 
-                                    : <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
-                            }
+                                    <MessageBar
+                                        setShowPicker={setShowPicker}
+                                        handleFiles={handleFiles}
+                                        input_ref={input_ref}
+                                        message={message}
+                                        setMessage={setMessage}
+                                        sendMessage={sendMessage}
+                                    />
 
-                            <div ref={bottom_ref}></div>
-                        </div>
-
-                        {
-                            show_file_object
-                            &&
-                            <FileObject
-                                files={files}
-                            />
-                        }
-
-                        <MessageBar
-                            setShowPicker={setShowPicker}
-                            handleFiles={handleFiles}
-                            input_ref={input_ref}
-                            message={message}
-                            setMessage={setMessage}
-                            sendMessage={sendMessage}
-                        />
-
-                        {
-                            show_picker
-                            &&
-                            <div className={styles.emojiPicker}>
-                                <EmojiBox
-                                    setEmoji={setEmoji}
-                                />
-                            </div>
+                                    {
+                                        show_picker
+                                        &&
+                                        <div className={styles.emojiPicker}>
+                                            <EmojiBox
+                                                setEmoji={setEmoji}
+                                            />
+                                        </div>
+                                    }
+                                </>
                         }
                     </div>
                     :
@@ -437,9 +472,9 @@ export default function DM() {
                     </div>
             }
 
-            <div className={`${styles.messages} ${show_contacts && styles.showContacts}`}>
+            <div className={`${styles.messages} ${show_contacts ? styles.showContacts : ""}`}>
                 <div className={styles.header}>
-                    <h2>Chats</h2>
+                    <h2>Contacts</h2>
 
                     <button
                         onClick={() => setShowContacts(false)}
@@ -452,6 +487,7 @@ export default function DM() {
                     <input
                         type="text"
                         value={search_query}
+                        ref={search_ref}
                         onChange={e => setSearchQuery(e.target.value)}
                         placeholder="Search for contacts..."
                     />
@@ -465,23 +501,13 @@ export default function DM() {
                         <DivLoader />
                         :
                         <>
-                            {
-                                !searched
-                                &&
-                                <div className={styles.chatFilters}>
-                                    <button className={styles.activeFilter}>All</button>
-                                    <button>New</button>
-                                    <button>Frequent</button>
-                                </div>
-                            }
-
                             <div className={styles.contacts}>
                                 {
                                     chats.length
                                         ?
                                         chats.map((chat, index) => (
                                             <Contact
-                                                key={index}
+                                                key={chat.contact_id}
                                                 setChatSelected={setChatSelected}
                                                 setSelectedCID={setSelectedCID}
                                                 setContactDetails={setContactDetails}
@@ -493,7 +519,7 @@ export default function DM() {
                                                 recent_message={chat.recent_message || ""}
                                                 timestamp={chat.sent_at}
                                                 transaction={
-                                                    chat.sent_by === (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
+                                                    chat.sent_by == (user_details?.id || localStorage.getItem("user_id")) ? 1 : 0
                                                 }
                                                 unread_msg={chat.unread_msgs}
                                             />
@@ -512,7 +538,10 @@ export default function DM() {
 
                 <div
                     className={styles.newContact}
-                    onClick={() => setAddContact(true)}
+                    onClick={() => {
+                        setShowContacts(false);
+                        setAddContact(true);
+                    }}
                 >
                     <i className="fa-solid fa-plus"></i>
                 </div>
@@ -520,14 +549,24 @@ export default function DM() {
 
             <div className={styles.messagesCollapsed}>
                 <div>
-                    <button><i className="fa-solid fa-magnifying-glass"></i></button>
+                    <button
+                        onClick={() => {
+                            setShowContacts(true);
+                            search_ref?.current?.focus();
+                            setSearched(true);
+                        }}
+                    ><i className="fa-solid fa-magnifying-glass"></i></button>
 
                     <button
-                        onClick={() => setShowContacts(prev => !prev)}
+                        onClick={() => setShowContacts(true)}
                     ><i className="fa-solid fa-address-book"></i></button>
                 </div>
 
-                <button><i className="fa-solid fa-plus"></i></button>
+                <button
+                    onClick={() => {
+                        setAddContact(true);
+                    }}
+                ><i className="fa-solid fa-plus"></i></button>
             </div>
 
             {
@@ -536,6 +575,11 @@ export default function DM() {
                 <div className={styles.addContactScreen}>
                     <AddContact
                         setAddContact={setAddContact}
+                        setSelectedCID={setSelectedCID}
+                        setChatSelected={setChatSelected}
+                        setContactDetails={setContactDetails}
+                        setLoading={setLoading}
+                        setShowContacts={setShowContacts}
                     />
                 </div>
             }
@@ -561,7 +605,7 @@ function Contact(props) {
         <div
             className={`
                 ${styles.contact}
-                ${props.selected_CID === props.contact_id && styles.selectedContact}
+                ${props.selected_CID == props.contact_id && styles.selectedContact}
             `}
             onClick={() => {
                 props.setChatSelected(true);
@@ -587,7 +631,7 @@ function Contact(props) {
 
                     <h5>
                         {
-                            props.selected_CID !== props.contact_id &&
+                            props.selected_CID != props.contact_id &&
                             (
                                 props.transaction
                                     ? "You: " + props.recent_message
