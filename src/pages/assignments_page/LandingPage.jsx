@@ -1,11 +1,14 @@
 import SideBar from "../../reusable_component/SideBar";
 import styles from "./landing_page.module.css";
-
+import { useState } from "react";   
 import writer from "./../../assets/images/writer.png";
 import history from "./../../assets/images/history.png";
 import portfolio from "./../../assets/images/portfolio.png";
 
 export default function AssignmentHome(props) {
+    const [showWriterBox, setShowWriterBox] = useState(false);
+const [price, setPrice] = useState("");
+const [file, setFile] = useState(null);
 
     return (
         <div className={styles.homeDiv}>
@@ -32,7 +35,7 @@ export default function AssignmentHome(props) {
                         </p>
                     </div>
 
-                    <button>Get Started</button>
+                    <button onClick={() => setShowWriterBox(true)}>Get Started</button>
                 </div>
 
                 {/* <hr className={styles.divider} /> */}
@@ -169,6 +172,43 @@ export default function AssignmentHome(props) {
                         A secure marketplace where students and writers collaborate efficiently, with transparency, protection, and reliability at every step.
                     </h5>
                 </div>
+                {showWriterBox && (
+    <div className={styles.popupOverlay}>
+        <div className={styles.popupBox}>
+
+            <h3>Become a Writer</h3>
+
+            <div className={styles.popupField}>
+                <label>Upload Handwriting Sample</label>
+                <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                />
+            </div>
+
+            <div className={styles.popupField}>
+                <label>Price Per Page</label>
+                <input
+                    type="number"
+                    placeholder="Enter price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                />
+            </div>
+
+            <div className={styles.popupActions}>
+                <button onClick={() => setShowWriterBox(false)}>
+                    Cancel
+                </button>
+
+                <button>
+                    Submit
+                </button>
+            </div>
+
+        </div>
+    </div>
+)}
             </div>
         </div>
     );
