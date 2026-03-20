@@ -21,7 +21,11 @@ const [file, setFile] = useState(null);
                 <div className={styles.header}>
                     <h2>Assignments</h2>
 
-                    <button><i className="fa-solid fa-bell"></i></button>
+                    <div>
+                        <button><i className="fa-solid fa-cart-shopping"></i></button>
+
+                        <button><i className="fa-solid fa-envelope"></i></button>
+                    </div>
                 </div>
 
                 <div className={styles.hero}>
