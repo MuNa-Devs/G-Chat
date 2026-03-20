@@ -126,7 +126,7 @@ export default function AssignmentHome(props) {
 
                             <h3>Work in Progress</h3>
 
-                            <p>Writer accepts and starts working. Status updates available.</p>
+                            <p>Writer accepts and starts working.</p>
                         </div>
                     </div>
 
