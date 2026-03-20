@@ -9,6 +9,7 @@ import { AppContext } from '../../Contexts';
 import { server_url } from '../../../creds/server_url';
 import { UiContext } from '../../utils/UiContext';
 import FileObject from '../../reusable_component/file_object/FileObject';
+import PageLoader from '../loading_screen/PageLoader';
 
 export default function DashBoard() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
@@ -36,6 +37,7 @@ export default function DashBoard() {
     const [messages, setMessages] = useState([]);
     const [autoScroll, setAutoScroll] = useState(true);
     const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
+    const [is_loading, setLoading] = useState(true);
 
     const [offset, setLastSeenId] = useState(Number.MAX_SAFE_INTEGER);
 
@@ -97,6 +99,7 @@ export default function DashBoard() {
     /* ---------------- FETCH OLD MESSAGES ---------------- */
     useEffect(() => {
         const token = localStorage.getItem("token");
+        setLoading(true);
 
         axios.get(`${server_url}/g-chat/messages/global?offset=${offset}`, {
             headers: {
@@ -106,12 +109,15 @@ export default function DashBoard() {
             .then(res => {
                 setMessages(res.data.chats);
                 setLastSeenId(res.data.chats[messages.length - 1]?.identifier?.message_id || 0);
+                setLoading(false);
             })
             .catch(err => {
                 console.log(err);
 
                 if (err.response?.data?.code === "INVALID_JWT")
                     setLogOut();
+
+                setLoading(false);
             });
     }, []);
 
@@ -313,55 +319,63 @@ export default function DashBoard() {
                     className={styles.chatspace}
                 >
                     {
-                        messages.length ?
-                            messages.map((msg, index) => (
-                                <div key={msg.msg_id || msg.identifiers.message_id}>
-                                    {
-                                        msg.files_list.map((file, file_index) => (
-                                            <File
-                                                key={`${msg.msg_id || msg.identifiers.message_id}-${file_index}`}
-                                                conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
-                                                sender_id={msg.sender_details.sender_id}
-                                                sender_name={msg.sender_details.sender_name}
-                                                sender_pfp={msg.sender_details.sender_pfp}
-                                                filename={file.filename}
-                                                file_url={file.file_url}
-                                                timestamp={msg.timestamp}
-                                                status={msg.status || "complete"}
-                                            />
-                                        ))
-                                    }
+                        is_loading
+                            ?
+                            <PageLoader />
+                            :
+                            <>
+                                {
+                                    messages.length ?
+                                        messages.map((msg, index) => (
+                                            <div key={msg.msg_id || msg.identifiers.message_id}>
+                                                {
+                                                    msg.files_list.map((file, file_index) => (
+                                                        <File
+                                                            key={`${msg.msg_id || msg.identifiers.message_id}-${file_index}`}
+                                                            conseqFiles={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                            sender_id={msg.sender_details.sender_id}
+                                                            sender_name={msg.sender_details.sender_name}
+                                                            sender_pfp={msg.sender_details.sender_pfp}
+                                                            filename={file.filename}
+                                                            file_url={file.file_url}
+                                                            timestamp={msg.timestamp}
+                                                            status={msg.status || "complete"}
+                                                        />
+                                                    ))
+                                                }
 
-                                    {
-                                        msg.text
-                                        &&
-                                        <Message
-                                            key={`${msg.msg_id || msg.identifiers.message_id}-message`}
-                                            conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
-                                            message={msg.text}
-                                            sender_id={msg.sender_details.sender_id}
-                                            sender_name={msg.sender_details.sender_name}
-                                            sender_pfp={msg.sender_details.sender_pfp}
-                                            timestamp={msg.timestamp}
-                                            files={msg.files_list}
-                                            status={msg.status || "complete"}
-                                        />
-                                    }
-                                </div>
-                            )) :
-                            <div
-                                className={styles.noMsgs}
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}
-                            ><h5>No Recent Messages</h5></div>
+                                                {
+                                                    msg.text
+                                                    &&
+                                                    <Message
+                                                        key={`${msg.msg_id || msg.identifiers.message_id}-message`}
+                                                        conseq_msgs={messages[index - 1]?.sender_details.sender_id === msg.sender_details.sender_id}
+                                                        message={msg.text}
+                                                        sender_id={msg.sender_details.sender_id}
+                                                        sender_name={msg.sender_details.sender_name}
+                                                        sender_pfp={msg.sender_details.sender_pfp}
+                                                        timestamp={msg.timestamp}
+                                                        files={msg.files_list}
+                                                        status={msg.status || "complete"}
+                                                    />
+                                                }
+                                            </div>
+                                        )) :
+                                        <div
+                                            className={styles.noMsgs}
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}
+                                        ><h5>No Recent Messages</h5></div>
+                                }
+
+                                <div ref={bottomRef} />
+                            </>
                     }
-
-                    <div ref={bottomRef} />
                 </div>
 
                 {/* NEW MESSAGE BUTTON */}

@@ -88,13 +88,13 @@ export default function SideBar(props) {
 
                     <button
                         className={`
-                            ${props.active_page == "Assignments" && styles.activeBtn}
+                            ${props.active_page == "assignments" && styles.activeBtn}
                         `}
                         onClick={() => {
                             navigate("/assignments");
                             setOpenLeft(false);
                         }}
-                    ><i class="fa-solid fa-file-pen"></i> <span>Assignments</span></button>
+                    ><i className="fa-solid fa-file-pen"></i> <span>Assignments</span></button>
                     
                 </div>
 
@@ -163,6 +163,13 @@ export default function SideBar(props) {
                         `}
                         onClick={() => navigate("/friends")}
                     ><i className="fa-solid fa-user-group"></i></button>
+
+                    <button
+                        className={`
+                            ${props.active_page == "assignments" && styles.activeBtn}
+                        `}
+                        onClick={() => navigate("/assignments")}
+                    ><i className="fa-solid fa-file-pen"></i></button>
                 </div>
 
                 <div className={styles.sidebarUtils}>

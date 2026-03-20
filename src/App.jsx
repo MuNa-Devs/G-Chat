@@ -15,7 +15,7 @@ import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
-import Assignments from "./pages/assignments_page/Assignments";
+import AssignmentHome from "./pages/assignments_page/LandingPage";
 
 export default function App() {
 	return (
@@ -75,7 +75,7 @@ export default function App() {
 						<Route
 				path="/Assignments" element={
 					<LoginProtector>
-						<Assignments />
+						<AssignmentHome />
 					</LoginProtector>
 				}
 			/>
