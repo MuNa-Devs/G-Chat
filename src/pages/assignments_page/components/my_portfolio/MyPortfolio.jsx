@@ -14,12 +14,27 @@ export default function MyPortfolio(props) {
     return (
         <div className={styles.mainDiv}>
             <div className={styles.header}>
-                <h2>My Portfolio</h2>
+                <div>
+                    <button></button>
+
+                    <h2>My Portfolio</h2>
+                </div>
 
                 <div>
-                    <button><i className="fa-solid fa-cart-shopping"></i></button>
+                    <button>
+                        <i
+                            className="fa-solid fa-chevron-left"
+                            style={{
+                                color: "var(--danger)",
+                                fontWeight: "900",
+                                fontSize: "1.1em"
+                            }}
+                        ></i>
+                    </button>
 
-                    <button><i className="fa-solid fa-envelope"></i></button>
+                    <button className={styles.utilBtn}><i className="fa-solid fa-cart-shopping"></i></button>
+
+                    <button className={styles.utilBtn}><i className="fa-solid fa-envelope"></i></button>
                 </div>
             </div>
 
@@ -41,6 +56,8 @@ export default function MyPortfolio(props) {
                 </div>
 
                 <div className={styles.availability}>
+                    <h5>Available for work</h5>
+
                     <Toggle
                         defaultValue={true}
                         onChange={() => { }}
@@ -105,6 +122,33 @@ export default function MyPortfolio(props) {
                             num={price_per_page}
                         />
                     </div>
+                </div>
+            </div>
+
+            <div className={styles.personalInfo}>
+                <div className={styles.info}>
+                    <div className={styles.name}>
+                        <h5>Full Name</h5>
+
+                        <input type="text" value={"lorem ipsum temps"} />
+                    </div>
+
+
+                    <div className={styles.bio}>
+                        <h5>About</h5>
+
+                        <textarea value={"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Architecto quod dolor voluptatem. Libero unde cumque omnis, tempora nisi neque perspiciatis eveniet harum quaerat dolorem autem."}></textarea>
+                    </div>
+                </div>
+
+                <div className={styles.sample}>
+                    <img
+                        src={"#"}
+                        onError={e => {
+                            e.onerror = null;
+                            e.target.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQznUqYhO1tPH_lZhYtNtPXO6BF3_6tsJDPSQ&s"
+                        }}
+                    />
                 </div>
             </div>
         </div>
