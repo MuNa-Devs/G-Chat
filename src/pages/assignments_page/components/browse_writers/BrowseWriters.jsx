@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./browse_writers.module.css";
-import WriterCard from "../../reusable_component/writer_card/WriterCard";
+import WriterCard from "../../../../reusable_component/writer_card/WriterCard";
 import axios from "axios";
 import { server_url } from "../../../../../creds/server_url";
 
