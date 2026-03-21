@@ -1,10 +1,15 @@
 import SideBar from "../../reusable_component/SideBar";
+import GetStarted from "./components/get_started/GetStarted";
 import styles from "./landing_page.module.css";
 import writer from "./../../assets/images/writer.png";
 import history from "./../../assets/images/history.png";
 import portfolio from "./../../assets/images/portfolio.png";
-
+import { useState } from "react";
 export default function AssignmentHome(props) {
+    const [showPopup, setShowPopup] = useState(false);
+const [file, setFile] = useState(null);
+const [price, setPrice] = useState("");
+
 
     return (
         <div className={styles.homeDiv}>
@@ -35,7 +40,7 @@ export default function AssignmentHome(props) {
                         </p>
                     </div>
 
-                    <button onClick={() => setShowWriterBox(true)}>Get Started</button>
+                    <button onClick={() => setShowPopup(true)}>Get Started</button>
                 </div>
 
                 {/* <hr className={styles.divider} /> */}
@@ -172,6 +177,14 @@ export default function AssignmentHome(props) {
                         A secure marketplace where students and writers collaborate efficiently, with transparency, protection, and reliability at every step.
                     </h5>
                 </div>
+                <GetStarted
+    show={showPopup}
+    setShow={setShowPopup}
+    file={file}
+    setFile={setFile}
+    price={price}
+    setPrice={setPrice}
+/>
             </div>
         </div>
     );
