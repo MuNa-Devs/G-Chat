@@ -49,7 +49,7 @@ export default function AssignmentHome(props) {
                 <div className={styles.cta}>
                     <div
                         className={`${styles.browseWriters} ${styles.ctaDiv}`}
-                        onClick={() => navigate("/#")}
+                        onClick={() => navigate("/browse-writers")}
                     >
                         <div className={`${styles.writerLogo} ${styles.ctaLogo}`}>
                             <img src={writer} />

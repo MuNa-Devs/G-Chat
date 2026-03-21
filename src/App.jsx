@@ -17,6 +17,7 @@ import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
 import AssignmentHome from "./pages/assignments_page/LandingPage";
 import MyPortfolio from "./pages/assignments_page/components/my_portfolio/MyPortfolio";
+import BrowseWriters from "./pages/assignments_page/components/browse_writers/BrowseWriters";
 
 export default function App() {
 	return (
@@ -85,6 +86,14 @@ export default function App() {
 				path="/portfolio" element={
 					<LoginProtector>
 						<MyPortfolio />
+					</LoginProtector>
+				}
+			/>
+
+						<Route
+				path="/browse-writers" element={
+					<LoginProtector>
+						<BrowseWriters />
 					</LoginProtector>
 				}
 			/>

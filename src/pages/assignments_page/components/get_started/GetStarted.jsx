@@ -38,7 +38,7 @@ export default function WriterPopup({
                 uploadRes.data.files_list[0].file_url;
 
             await axios.post(
-                `${server_url}/g-chat/writers/create`,
+                `${server_url}/g-chat/orders/writers/create`,
                 {
                     writer_id: user_details?.id,
                     sample_url: uploadedFile,
