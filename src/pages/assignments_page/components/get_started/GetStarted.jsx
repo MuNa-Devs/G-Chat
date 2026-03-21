@@ -4,14 +4,16 @@ import axios from "axios";
 import { useContext } from "react";
 import { AppContext } from "../../../../Contexts";
 import { useState } from "react";
+import DivLoader from "../../../loading_screen/DivLoader";
 
 export default function WriterPopup({
     show,
     setShow
 }) {
-    const { user_details } = useContext(AppContext);
+    const { user_details, setLogout } = useContext(AppContext);
     const [file, setFile] = useState(null);
     const [price, setPrice] = useState(null);
+    const [loading, setLoading] = useState(false);
 
 
     if (!show) return null;
@@ -20,6 +22,7 @@ export default function WriterPopup({
         try {
             if (!file || !price) return;
 
+            setLoading(true);
             const formData = new FormData();
 
             formData.append("files", file);
@@ -51,10 +54,16 @@ export default function WriterPopup({
                 }
             );
 
+            setLoading(false);
             setShow(false);
 
         } catch (err) {
             console.error(err);
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogout();
+
+            setLoading(false);
         }
     };
 
@@ -102,16 +111,21 @@ export default function WriterPopup({
                     />
                 </div>
 
-                <div className={styles.popupActions}>
-                    <button onClick={() => setShow(false)}>
-                        Cancel
-                    </button>
+                {
+                    loading
+                        ?
+                        <DivLoader />
+                        :
+                        <div className={styles.popupActions}>
+                            <button onClick={() => setShow(false)}>
+                                Cancel
+                            </button>
 
-                    <button onClick={submitWriter}>
-                        OK
-                    </button>
-                </div>
-
+                            <button onClick={submitWriter}>
+                                OK
+                            </button>
+                        </div>
+                }
             </div>
         </div>
     );
