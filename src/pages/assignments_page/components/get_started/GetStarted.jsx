@@ -3,16 +3,16 @@ import { server_url } from "../../../../../creds/server_url";
 import axios from "axios";
 import { useContext } from "react";
 import { AppContext } from "../../../../Contexts";
+import { useState } from "react";
 
 export default function WriterPopup({
     show,
-    setShow,
-    file,
-    setFile,
-    price,
-    setPrice
+    setShow
 }) {
     const { user_details } = useContext(AppContext);
+    const [file, setFile] = useState(null);
+    const [price, setPrice] = useState(null);
+
 
     if (!show) return null;
 

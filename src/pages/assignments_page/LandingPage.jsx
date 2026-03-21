@@ -5,9 +5,12 @@ import writer from "./../../assets/images/writer.png";
 import history from "./../../assets/images/history.png";
 import portfolio from "./../../assets/images/portfolio.png";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function AssignmentHome(props) {
     const navigate = useNavigate();
+    const [showPopup, setShowPopup] = useState(false);
+
 
     return (
         <div className={styles.homeDiv}>
@@ -184,10 +187,6 @@ export default function AssignmentHome(props) {
                 <GetStarted
     show={showPopup}
     setShow={setShowPopup}
-    file={file}
-    setFile={setFile}
-    price={price}
-    setPrice={setPrice}
 />
             </div>
         </div>
