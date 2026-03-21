@@ -16,6 +16,7 @@ import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
 import AssignmentHome from "./pages/assignments_page/LandingPage";
+import MyPortfolio from "./pages/assignments_page/components/my_portfolio/MyPortfolio";
 
 export default function App() {
 	return (
@@ -35,17 +36,17 @@ export default function App() {
 			/>
 
 			<Route path="/room/dashboard/:room_id" element={
-					<LoginProtector>
-						<ViewRoom />
-					</LoginProtector>
-				} 
+				<LoginProtector>
+					<ViewRoom />
+				</LoginProtector>
+			}
 			/>
 
 			<Route path="/room/home/:room_id" element={
-					<LoginProtector>
-						<RoomHome />
-					</LoginProtector>
-				}
+				<LoginProtector>
+					<RoomHome />
+				</LoginProtector>
+			}
 			/>
 
 			<Route
@@ -64,7 +65,7 @@ export default function App() {
 				}
 			/>
 
-			<Route 
+			<Route
 				path="/direct-messages" element={
 					<LoginProtector>
 						<DM />
@@ -72,10 +73,18 @@ export default function App() {
 				}
 			/>
 
-						<Route
+			<Route
 				path="/Assignments" element={
 					<LoginProtector>
 						<AssignmentHome />
+					</LoginProtector>
+				}
+			/>
+
+			<Route
+				path="/portfolio" element={
+					<LoginProtector>
+						<MyPortfolio />
 					</LoginProtector>
 				}
 			/>

@@ -3,8 +3,10 @@ import styles from "./landing_page.module.css";
 import writer from "./../../assets/images/writer.png";
 import history from "./../../assets/images/history.png";
 import portfolio from "./../../assets/images/portfolio.png";
+import { useNavigate } from "react-router-dom";
 
 export default function AssignmentHome(props) {
+    const navigate = useNavigate();
 
     return (
         <div className={styles.homeDiv}>
@@ -41,7 +43,10 @@ export default function AssignmentHome(props) {
                 {/* <hr className={styles.divider} /> */}
 
                 <div className={styles.cta}>
-                    <div className={`${styles.browseWriters} ${styles.ctaDiv}`}>
+                    <div
+                        className={`${styles.browseWriters} ${styles.ctaDiv}`}
+                        onClick={() => navigate("/#")}
+                    >
                         <div className={`${styles.writerLogo} ${styles.ctaLogo}`}>
                             <img src={writer} />
                         </div>
@@ -61,7 +66,10 @@ export default function AssignmentHome(props) {
                         <h5>Keep track of your past assignments, milestones, and payment disbursements</h5>
                     </div>
 
-                    <div className={`${styles.portfolio} ${styles.ctaDiv}`}>
+                    <div
+                        className={`${styles.portfolio} ${styles.ctaDiv}`}
+                        onClick={() => navigate("/portfolio")}
+                    >
                         <div className={`${styles.portfolioLogo} ${styles.ctaLogo}`}>
                             <img src={portfolio} />
                         </div>
