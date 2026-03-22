@@ -10,7 +10,7 @@ export default function BrowseWriters() {
 
     useEffect(() => {
         axios.get(
-            `${server_url}/g-chat/orders/writers/all`,
+            `${server_url}/g-chat/orders/writer/all`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
