@@ -5,16 +5,21 @@ import { useContext } from "react";
 import { AppContext } from "../../../../Contexts";
 import { useState } from "react";
 import DivLoader from "../../../loading_screen/DivLoader";
+import { useEffect } from "react";
 
-export default function WriterPopup({
-    show,
-    setShow
-}) {
+export default function WriterPopup(props) {
+    const { show, setShow, ...rem_props } = props;
     const { user_details, setLogout } = useContext(AppContext);
     const [file, setFile] = useState(null);
-    const [price, setPrice] = useState(null);
+    const [price, setPrice] = useState(rem_props.price_per_page || "");
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if (rem_props.condn !== "update") return;
+
+        setFile(props.sample_url);
+        setPrice(props.price_per_page);
+    }, [show]);
 
     if (!show) return null;
 
@@ -23,25 +28,13 @@ export default function WriterPopup({
             if (!file || !price) return;
 
             setLoading(true);
-            const formData = new FormData();
 
-            formData.append("files", file);
-
-            const uploadRes = await axios.post(
-                `${server_url}/g-chat/files/upload?user_id=${user_details?.id}`,
-                formData,
-                {
-                    headers: {
-                        auth_token: `Bearer ${localStorage.getItem("token")}`
-                    }
-                }
-            );
-
-            const uploadedFile =
-                uploadRes.data.files_list[0].file_url;
+            const uploadedFile = rem_props.condn !== "update"
+                ? ( await uploadFile(file, user_details)).data.files_list[0].file_url
+                : rem_props.sample_url;
 
             await axios.post(
-                `${server_url}/g-chat/orders/writers/create`,
+                `${server_url}/g-chat/orders/writer/${rem_props.condn === "update" ? "update" : "create"}`,
                 {
                     writer_id: user_details?.id,
                     sample_url: uploadedFile,
@@ -71,7 +64,7 @@ export default function WriterPopup({
         <div className={styles.popupOverlay}>
             <div className={styles.popupBox}>
 
-                <h3>Become a Writer</h3>
+                <h3>{rem_props.condn === "update" ? "Change Your Preferences" : "Become a Writer"}</h3>
 
                 <div className={styles.popupField}>
                     <label>Handwriting Sample</label>
@@ -91,13 +84,19 @@ export default function WriterPopup({
                         />
                     </label>
 
-                    {file && (
-                        <img
-                            src={URL.createObjectURL(file)}
-                            alt="sample"
-                            className={styles.previewImage}
-                        />
-                    )}
+                    {
+                        file && (
+                            <img
+                                src={
+                                    typeof file === "string"
+                                        ? server_url + "/files/" + rem_props.sample_url
+                                        : URL.createObjectURL(file)
+                                }
+                                alt="sample"
+                                className={styles.previewImage}
+                            />
+                        )
+                    }
                 </div>
 
                 <div className={styles.popupField}>
@@ -105,7 +104,7 @@ export default function WriterPopup({
 
                     <input
                         type="number"
-                        value={price}
+                        value={price || ""}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="Enter price"
                     />
@@ -129,4 +128,22 @@ export default function WriterPopup({
             </div>
         </div>
     );
+}
+
+const uploadFile = async (file, user_details) => {
+    const formData = new FormData();
+
+    formData.append("files", file);
+
+    const uploadRes = await axios.post(
+        `${server_url}/g-chat/files/upload?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
+        formData,
+        {
+            headers: {
+                auth_token: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    );
+
+    return uploadRes;
 }

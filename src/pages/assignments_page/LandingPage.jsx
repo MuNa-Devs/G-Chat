@@ -11,7 +11,6 @@ export default function AssignmentHome(props) {
     const navigate = useNavigate();
     const [showPopup, setShowPopup] = useState(false);
 
-
     return (
         <div className={styles.homeDiv}>
             <SideBar
@@ -83,6 +82,9 @@ export default function AssignmentHome(props) {
                         <h5>Update your preferences, showcase your latest works, and refine your identity</h5>
                     </div>
                 </div>
+
+                <br />
+                <h2>What is the process?</h2>
 
                 <div className={styles.timeline}>
                     <div className={`${styles.step} ${styles.left}`}>
@@ -184,10 +186,11 @@ export default function AssignmentHome(props) {
                         A secure marketplace where students and writers collaborate efficiently, with transparency, protection, and reliability at every step.
                     </h5>
                 </div>
+                
                 <GetStarted
-    show={showPopup}
-    setShow={setShowPopup}
-/>
+                    show={showPopup}
+                    setShow={setShowPopup}
+                />
             </div>
         </div>
     );

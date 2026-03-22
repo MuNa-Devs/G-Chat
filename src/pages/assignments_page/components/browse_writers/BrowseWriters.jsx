@@ -3,14 +3,17 @@ import styles from "./browse_writers.module.css";
 import WriterCard from "../../../../reusable_component/writer_card/WriterCard";
 import axios from "axios";
 import { server_url } from "../../../../../creds/server_url";
+import { useContext } from "react";
+import { AppContext } from "../../../../Contexts";
 
 export default function BrowseWriters() {
+    const { user_details, setLogout } = useContext(AppContext);
     const [writers, setWriters] = useState([]);
     const [search, setSearch] = useState("");
 
     useEffect(() => {
         axios.get(
-            `${server_url}/g-chat/orders/writers/all`,
+            `${server_url}/g-chat/orders/writers/all?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
@@ -22,6 +25,9 @@ export default function BrowseWriters() {
         })
         .catch((err) => {
             console.error(err);
+
+            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                setLogout();
         });
 
     }, []);

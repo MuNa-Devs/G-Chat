@@ -1,27 +1,50 @@
-.mainDiv{
+@keyframes planeDrop {
+    0% {
+        transform: translateY(-100%) scale(0.96);
+        opacity: 0;
+        filter: blur(6px);
+    }
+
+    60% {
+        transform: translateY(10px) scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.mainDiv {
     width: auto;
     height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    background-color: var(--bg);
 
     overflow-y: auto;
+
+    animation: planeDrop 0.6s ease-out;
+    transform-origin: top center;
 }
 
-.header{
+.header {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
 
-    background-color: var(--bg-light);
+    background-color: var(--bg-lighter);
+    border-bottom: 1px solid var(--border-light);
 
     width: calc(100% - 48px);
     padding: 24px;
 }
 
-.header>div{
+.header>div {
     width: auto;
     height: 100%;
     display: flex;
@@ -69,36 +92,42 @@
     width: 100%;
 }
 
-.profileInfo{
-    width: calc(100% - 112px);
+.profileInfo {
+    width: calc(100% - 162px);
     height: auto;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 24px;
     padding: 24px;
-    margin: 32px;
+    margin: 56px;
+    margin-bottom: 16px;
 
     background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
     border-radius: 16px;
 }
 
-.pfp{
-    width: 144px;
-    height: 144px;
-    border: 50%;
+.pfp {
+    width: 120px;
+    height: 120px;
+    padding: 0;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.pfp>img{
+.pfp>img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.userData{
+.userData {
     flex: 1;
     height: 100%;
     display: flex;
@@ -108,26 +137,349 @@
     gap: 8px;
 }
 
-.userData>h3{
+.userData>h3 {
     font-size: 1.18em;
     font-weight: 600;
     letter-spacing: 0.8px;
 }
 
-.userData>p{
+.userData>p {
     font-size: 0.85em !important;
     font-weight: 400;
     line-height: 1.6;
     color: var(--text-secondary);
 }
 
-.availability{
+.availability {
     width: auto;
-    height: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
     margin-right: 16px;
+    padding: 24px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.5));
+}
+
+hr {
+    width: calc(100% - 80px);
+    border: 1px solid var(--border-light);
+}
+
+.stats {
+    width: calc(100% - 162px);
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+
+    padding: 24px;
+    margin: 56px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+}
+
+.statCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* better centering */
+    gap: 8px;
+
+    background-color: var(--bg-lighter);
+    border: 1px solid var(--border-light);
+    padding: 8px;
+    border-radius: 12px;
+
+    min-height: 120px;
+    /* keeps all cards same height */
+}
+
+.moneyEarned {
+    border-top: 3px solid var(--success);
+}
+
+.rating {
+    border-top: 3px solid var(--warning);
+}
+
+.assignmentsWritten {
+    border-top: 3px solid var(--accent);
+}
+
+.assignmentsCreated {
+    border-top: 3px solid var(--primary);
+}
+
+.pricePerPage {
+    border-top: 3px solid var(--danger-light);
+}
+
+.value {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: center;
+}
+
+.value i {
+    font-size: 0.85em;
+    color: var(--text-primary);
+}
+
+.value p {
+    font-size: 1.05em !important;
+    color: var(--text-primary);
+    letter-spacing: 1.6px;
+}
+
+.value span {
+    font-size: 1.05em;
+    color: var(--text-primary);
+}
+
+.sample {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    padding: 24px;
+    margin: 56px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+}
+
+.sample>img {
+    width: 100%;
+    max-width: 400px;
+    /* controls how wide it can get */
+    height: 500px;
+    /* fixed viewing height */
+
+    object-fit: contain;
+    /* VERY IMPORTANT */
+
+    border-radius: 8px;
+    background-color: var(--bg);
+    /* helps if image has transparency */
+}
+
+.footer {
+    width: calc(100% - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 32px;
+    margin-top: 16px;
+    background-color: var(--bg-lighter);
+    border-top: 1px solid var(--border-light);
+
+    z-index: 99;
+}
+
+.footerText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.footerText>h4,
+.footerText>p {
+    font-size: 0.75em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 100;
+    letter-spacing: 1.6px;
+    line-height: 1.39;
+}
+
+.footerText>p {
+    font-size: 0.7em !important;
+    color: var(--text-secondary);
+}
+
+.footerLinks {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.footerLinks>span {
+    font-size: 0.75em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 100;
+    letter-spacing: 1.6px;
+    line-height: 1.39;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.footerLinks>i {
+    font-size: .58em;
+    color: var(--text-secondary);
+}
+
+.footerContact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.footerContact>p {
+    font-size: 0.75em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 100;
+    letter-spacing: 1.6px;
+    line-height: 1.39;
+    color: var(--text-secondary);
+}
+
+.footerIcons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.footerIcons i {
+    font-size: 1.2em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.footerIcons i:hover {
+    color: var(--accent);
+    scale: 1.1;
+}
+
+.userData > h3 {
+    color: var(--text-primary);
+}
+
+.userData > p {
+    color: var(--text-secondary);
+}
+
+.statCard h5 {
+    color: var(--text-secondary);
+}
+
+.value p {
+    color: var(--text-primary);
+}
+
+/* Media Queries */
+@media (max-width: 1159px) {
+    .stats {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+
+    .moneyEarned {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 750px) {
+    .profileInfo {
+        width: calc(100% - 160px);
+        /* reduce side margin for mobile */
+
+        display: grid;
+        grid-template-columns: 1fr;
+        /* force single column */
+        gap: 16px;
+
+        padding: 24px;
+        margin: 16px;
+        margin-top: 32px;
+
+        background-color: var(--bg-light);
+        border-radius: 16px;
+
+        align-self: center;
+    }
+
+    .userData {
+        text-align: center;
+    }
+
+    .availability {
+        margin-right: 0;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 550px) {
+    .moneyEarned {
+        grid-column: span 1;
+    }
+
+    .stats {
+        width: calc(100% - 160px);
+
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 24px;
+
+        padding: 24px;
+        margin: 56px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+
+        background-color: var(--bg-light);
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 440px) {
+    .profileInfo {
+        width: calc(100% - 80px);
+        padding: 16px;
+        margin: 24px;
+        margin-bottom: 8px;
+    }
+
+    .stats {
+        width: calc(100% - 80px);
+        gap: 16px;
+        padding: 16px;
+        margin: 24px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    .sample {
+        width: calc(100% - 80px);
+        gap: 16px;
+        padding: 16px;
+        margin: 24px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
 }
