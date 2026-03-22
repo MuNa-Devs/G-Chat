@@ -13,22 +13,22 @@ export default function BrowseWriters() {
 
     useEffect(() => {
         axios.get(
-            `${server_url}/g-chat/orders/writers/all?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
+            `${server_url}/g-chat/orders/writer/all?user_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
                 }
             }
         )
-        .then((res) => {
-            setWriters(res.data.writers);
-        })
-        .catch((err) => {
-            console.error(err);
+            .then((res) => {
+                setWriters(res.data.writers);
+            })
+            .catch((err) => {
+                console.error(err);
 
-            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
-                setLogout();
-        });
+                if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
+                    setLogout();
+            });
 
     }, []);
 
