@@ -2,7 +2,8 @@
     /* Core Theme Colors */
     --bg: #121417;
     --bg-light: #1c1f25;
-    --bg-lighter: #1e2228;
+    --bg-tlsnt: rgba(30, 34, 40, 0.5);
+    --bg-lighter: rgb(30, 34, 40);
     --card-bg: #2a2f36;
 
     /* Text Colors */

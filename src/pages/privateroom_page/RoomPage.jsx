@@ -36,6 +36,9 @@ export default function RoomPage() {
     // Show loader
     const [loading, setLoading] = useState(false);
 
+    // Div Loader
+    const [div_loader, setDivLoader] = useState(true);
+
     // Initial rooms load
     useEffect(() => {
         if (!user_details?.id) return;
@@ -116,8 +119,8 @@ export default function RoomPage() {
             const final_list = uniqueList([...rooms, ...room_res]);
 
             setLastSeenId(room_res[room_res.length - 1]?.r_id);
-            setLoading(false);
             setRooms(final_list);
+            setLoading(false);
         }
         catch (err) {
             console.log(err);

@@ -23,7 +23,8 @@ export default function MyPortfolio(props) {
         assignments_delivered,
         assignments_created,
         price_per_page,
-        sample_url
+        sample_url,
+        available
     }, setDetails] = useState({
         username: "",
         pfp: "#",
@@ -34,7 +35,8 @@ export default function MyPortfolio(props) {
         assignments_delivered: 0,
         assignments_created: 0,
         price_per_page: "_",
-        sample_url: "#"
+        sample_url: "#",
+        available: true
     });
 
     const [am_i_this_writer, setIt] = useState(false);
@@ -42,6 +44,8 @@ export default function MyPortfolio(props) {
     const [change_trigger, setChangeTrigger] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
+
         axios.get(
             server_url + `/g-chat/orders/writer/get?writer_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
             {
@@ -61,7 +65,21 @@ export default function MyPortfolio(props) {
             if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
                 setLogout();
         });
-    }, []);
+    }, [change_trigger]);
+
+    const setAvailability = (value) => {
+        setDetails(prev => ({ available: value, ...prev }));
+
+        axios.post(
+            server_url + `/g-chat/orders/writer/available?writer_id=${user_details?.id || sessionStorage.getItem("user_id")}`,
+            { available: value },
+            {
+                headers: {
+                    auth_token: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        ).then(res => console.log(res.data.success));
+    }
 
     const navigate = useNavigate();
 
@@ -121,8 +139,8 @@ export default function MyPortfolio(props) {
                                         <h5>Available for work</h5>
 
                                         <Toggle
-                                            defaultValue={true}
-                                            onChange={() => { }}
+                                            defaultValue={available}
+                                            onChange={setAvailability}
                                         />
                                     </div>
                                     :
@@ -271,19 +289,19 @@ export default function MyPortfolio(props) {
                             </div>
 
                             <div className={styles.footerLinks}>
-                                <span>Contact Us</span>
+                                <span onClick={() => navigate("/aprilfool")}>Contact Us</span>
 
                                 <i className="fa-regular fa-circle-dot"></i>
 
-                                <span>How It Works</span>
+                                <span onClick={() => navigate("/aprilfool")}>How It Works</span>
 
                                 <i className="fa-regular fa-circle-dot"></i>
 
-                                <span>Become a Writer</span>
+                                <span onClick={() => navigate("/aprilfool")}>Become a Writer</span>
 
                                 <i className="fa-regular fa-circle-dot"></i>
 
-                                <span>Privacy Policy</span>
+                                <span onClick={() => navigate("/aprilfool")}>Privacy Policy</span>
                             </div>
 
                             <div className={styles.footerContact}>

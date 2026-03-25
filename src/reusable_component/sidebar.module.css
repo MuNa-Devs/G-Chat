@@ -23,13 +23,14 @@
 /* Sidebar at left */
 .sidebarAtLeft {
     height: 100dvh;
-    width: 15rem;
+    width: calc(15rem - 1px);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     background-color: var(--bg-light);
     outline: 1px solid var(--border-light);
+    border-right: 1px solid var(--border-light);
     position: static;
     top: 0px;
     left: 0px;

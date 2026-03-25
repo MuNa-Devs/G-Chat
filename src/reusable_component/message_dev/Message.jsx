@@ -11,7 +11,8 @@ const formatTime = (time) => {
 
     return date.toLocaleTimeString([], {
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
+        hour12: true
     });
 };
 
@@ -53,14 +54,18 @@ export function Message(props) {
                             {
                                 (!props.conseq_msgs && props.constraint !== "no-logo")
                                 &&
-                                <h5 style={{marginTop: "8px"}}>{props.sender_name}</h5>
+                                <h5 style={{ marginTop: "8px" }}>{props.sender_name}</h5>
                             }
 
                             <div className={`${styles.message}`}>
                                 {
                                     isSingleEmoji(props.message)
                                         ? <h1>{props.message}</h1>
-                                        : <p>{props.message}</p>
+                                        : <p
+                                            style={{
+                                                fontFamily: "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                                            }}
+                                        >{props.message}</p>
                                 }
 
                                 <div className={styles.time}>
@@ -70,12 +75,16 @@ export function Message(props) {
                         </div>
                     </div>
                     :
-                    <div className={`${(props.conseq_msgs) && styles.conseqMsg} ${styles.myMsg}`}>
+                    <div className={`${(props.conseq_msgs && sessionStorage.getItem("user_id") != props.sender_id) && styles.conseqMsg} ${styles.myMsg}`}>
                         <div className={`${styles.message}`}>
                             {
                                 isSingleEmoji(props.message)
                                     ? <h1>{props.message}</h1>
-                                    : <p>{props.message}</p>
+                                    : <p
+                                        style={{
+                                            fontFamily: "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                                        }}
+                                    >{props.message}</p>
                             }
 
                             <div className={styles.time}>
@@ -103,7 +112,7 @@ export function Message(props) {
                         </div>
 
                         {
-                            props.constraint !== "no-logo"
+                            (props.constraint !== "no-logo" && sessionStorage.getItem("user_id") != props.sender_id)
                             &&
                             <img
                                 src={server_url + `/files/${props.sender_pfp}`}
@@ -182,7 +191,7 @@ export function File(props) {
                         </div>
                     </div>
                     :
-                    <div className={`${(props.conseq_msgs) && styles.conseqFile} ${styles.myFile}`}>
+                    <div className={`${(props.conseq_msgs && sessionStorage.getItem("user_id") != props.sender_id) && styles.conseqFile} ${styles.myFile}`}>
                         <div className={styles.file}>
                             <div className={`${styles.fileInfo}`} onClick={handleDownload}>
                                 <div className={`${styles.icon} ${getIcon(props.filename).classname}`}>
@@ -217,7 +226,7 @@ export function File(props) {
                         </div>
 
                         {
-                            props.constraint !== "no-logo"
+                            (props.constraint !== "no-logo" && sessionStorage.getItem("user_id") != props.sender_id)
                             &&
                             <img
                                 src={server_url + `/files/${props.sender_pfp}`}
@@ -229,6 +238,34 @@ export function File(props) {
                         }
                     </div>
             }
+        </div>
+    );
+}
+
+export function DateStamp({ day }) {
+
+    return (
+        <div
+            className={styles.dayStamp}
+            style={{
+                width: "calc(100% - 16px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "8px"
+            }}
+        >
+            <p
+                style={{
+                    backgroundColor: "transparent",
+                    color: "var(--text-secondary)",
+                    padding: "8px",
+                    fontWeight: "500",
+                    letterSpacing: "0.8px",
+                    fontFamily: "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                    borderRadius: "8px"
+                }}
+            >{day}</p>
         </div>
     );
 }

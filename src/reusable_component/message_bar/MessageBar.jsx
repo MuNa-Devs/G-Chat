@@ -9,7 +9,10 @@ export default function MessageBar(props) {
     };
 
     return (
-        <div className={styles.textControls}>
+        <div
+            className={styles.textControls}
+            style={props.style}
+        >
             <button
                 onClick={() => props.setShowPicker(prev => !prev)}
                 className={styles.emojis}

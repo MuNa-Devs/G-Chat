@@ -14,11 +14,19 @@
 .dmDashboard .noConv {
     flex: 1;
     height: 100%;
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 8px;
+
+    background-color: var(--bg);
+
+    background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239aa5b5' fill-opacity='0.08'%3E%3C!-- Chat Bubble --%3E%3Crect x='20' y='20' width='28' height='18' rx='6'/%3E%3Cpolygon points='28,38 32,44 36,38'/%3E%3C!-- Double Tick --%3E%3Cpath d='M80 30 l6 6 l10 -10' stroke='%23137fec' stroke-opacity='0.12' stroke-width='2' fill='none'/%3E%3Cpath d='M86 30 l6 6 l10 -10' stroke='%23137fec' stroke-opacity='0.12' stroke-width='2' fill='none'/%3E%3C!-- Star --%3E%3Cpolygon points='120,20 123,28 132,28 125,34 128,42 120,37 112,42 115,34 108,28 117,28'/%3E%3C!-- Small Circle --%3E%3Ccircle cx='50' cy='100' r='4'/%3E%3C!-- Message Lines --%3E%3Crect x='90' y='90' width='30' height='6' rx='3'/%3E%3Crect x='90' y='100' width='20' height='6' rx='3'/%3E%3C/g%3E%3C/svg%3E");
+
+    background-size: 144px 144px;
 }
 
 .noConv>img {
@@ -34,19 +42,35 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+
+    background-color: var(--bg);
+
+    background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239aa5b5' fill-opacity='0.08'%3E%3C!-- Chat Bubble --%3E%3Crect x='20' y='20' width='28' height='18' rx='6'/%3E%3Cpolygon points='28,38 32,44 36,38'/%3E%3C!-- Double Tick --%3E%3Cpath d='M80 30 l6 6 l10 -10' stroke='%23137fec' stroke-opacity='0.12' stroke-width='2' fill='none'/%3E%3Cpath d='M86 30 l6 6 l10 -10' stroke='%23137fec' stroke-opacity='0.12' stroke-width='2' fill='none'/%3E%3C!-- Star --%3E%3Cpolygon points='120,20 123,28 132,28 125,34 128,42 120,37 112,42 115,34 108,28 117,28'/%3E%3C!-- Small Circle --%3E%3Ccircle cx='50' cy='100' r='4'/%3E%3C!-- Message Lines --%3E%3Crect x='90' y='90' width='30' height='6' rx='3'/%3E%3Crect x='90' y='100' width='20' height='6' rx='3'/%3E%3C/g%3E%3C/svg%3E");
+
+    background-size: 144px 144px;
 }
 
 .personControlBar {
-    width: calc(100% - 32px);
+    width: calc(100%);
     height: 56px;
     padding-top: 8px;
     padding-bottom: 8px;
-    margin-left: 16px;
-    margin-right: 16px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+
+    background-color: var(--bg-light-tlsnt);
+    backdrop-filter: blur(10px);
+    /* 👈 MAGIC */
+    -webkit-backdrop-filter: blur(16px);
+    /* 👈 Safari support */
+    border-bottom: 1px solid var(--bg-light);
+
+    position: sticky;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
 }
 
 .personControlBar .person_info {
@@ -56,6 +80,7 @@
     align-items: center;
     justify-content: flex-start;
     gap: 16px;
+    z-index: 9900;
 }
 
 .person_info>img {
@@ -100,13 +125,18 @@
 .chatContainer {
     flex: 1;
     width: calc(100% - 32px);
+
+    margin-top: -72px;
+    margin-bottom: -56px;
     margin-left: 16px;
     margin-right: 16px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+
+    padding-top: 80px;
+    padding-bottom: 60px;
+
     border-radius: 8px;
-    border: 1px solid var(--bg-lighter);
     max-height: 100%;
+
     overflow-y: auto;
 }
 
@@ -440,7 +470,7 @@
     justify-content: center;
 }
 
-.backDrop{
+.backDrop {
     width: 100dvw;
     height: 100dvh;
     position: fixed;
@@ -452,7 +482,7 @@
     z-index: 40;
 }
 
-.addContactScreen{
+.addContactScreen {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -552,21 +582,6 @@
     }
 }
 
-@media (max-width: 630px){
-    .chatContainer {
-        flex: 1;
-        width: calc(100% - 16px);
-        margin-left: 8px;
-        margin-right: 8px;
-        padding-top: 8px;
-        padding-bottom: 8px;
-        border-radius: 8px;
-        border: 1px solid var(--bg-lighter);
-        max-height: 100%;
-        overflow-y: auto;
-    }
-}
-
 @media (max-width: 560px) {
     .dmDashboard {
         flex-direction: column;
@@ -574,14 +589,14 @@
         justify-content: space-between;
     }
 
-    .dmDashboard .messages{
+    .dmDashboard .messages {
         width: 19rem;
     }
 
-    .dmDashboard .chatPage{
+    .dmDashboard .chatPage {
         width: 100%;
     }
-    
+
     .dmDashboard .messagesCollapsed {
         width: calc(100% - 16px);
         height: calc(4rem - 48px);
@@ -601,12 +616,8 @@
     }
 }
 
-@media (max-width: 490px){
-    .personControlBar .roomOptions{
-        display: none;
-    }
-
-    .personControlBar .person_info{
+@media (max-width: 490px) {
+    .personControlBar .person_info {
         gap: 8px;
         max-width: 100%;
         word-wrap: break-word;
@@ -614,18 +625,18 @@
         white-space: pre-wrap;
     }
 
-    .personControlBar .person_info > h2{
+    .personControlBar .person_info>h2 {
         word-break: break-word;
     }
 }
 
-@media (max-width: 380px){
-    .textControls>textarea{
+@media (max-width: 380px) {
+    .textControls>textarea {
         padding-left: 4px;
         padding-right: 4px;
     }
 
-    .textControls{
+    .textControls {
         margin: 0px 16px 0px 8px;
     }
 }

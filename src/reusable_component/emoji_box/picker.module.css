@@ -7,6 +7,12 @@
     margin-left: 16px;
     margin-right: 16px;
     height: auto;
+
+    filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
+
+    position: fixed;
+    bottom: 64px;
+    z-index: 99;
 }
 
 .emojiPickerContainer .emojiBox {

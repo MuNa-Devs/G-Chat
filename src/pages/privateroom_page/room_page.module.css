@@ -44,6 +44,10 @@
 
     overflow-x: hidden;
 
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239aa5b5' fill-opacity='0.08'%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Ccircle cx='60' cy='40' r='6'/%3E%3Ccircle cx='50' cy='55' r='6'/%3E%3Cpath d='M40 40 L60 40 L50 55 Z' stroke='%23137fec' stroke-opacity='0.12' stroke-width='1.5' fill='none'/%3E%3Crect x='100' y='30' width='30' height='20' rx='5'/%3E%3Crect x='105' y='35' width='20' height='4' rx='2'/%3E%3Crect x='105' y='42' width='14' height='4' rx='2'/%3E%3Ccircle cx='120' cy='120' r='3'/%3E%3Ccircle cx='140' cy='140' r='3'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 144px 144px;
+
     animation: slide-in .4s ease-out 0s 1 forwards;
 }
 

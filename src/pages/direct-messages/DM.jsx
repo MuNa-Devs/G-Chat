@@ -2,7 +2,7 @@ import styles from "./dm.module.css";
 import SideBar from "../../reusable_component/SideBar";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
-import { Message } from "../../reusable_component/message_dev/Message";
+import { DateStamp, Message } from "../../reusable_component/message_dev/Message";
 import { useContext, useRef } from "react";
 import axios from "axios";
 import MessageBar from "../../reusable_component/message_bar/MessageBar";
@@ -14,6 +14,7 @@ import DivLoader from "../loading_screen/DivLoader";
 import AddContact from "./AddContact";
 import { File } from "../../reusable_component/message_dev/Message";
 import PageLoader from "../loading_screen/PageLoader";
+import eposhToString from "../../reusable_component/util_funcs/EpochToReadable";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
@@ -345,6 +346,16 @@ export default function DM() {
     // To hide chat panel on smaller screens
     const [show_contacts, setShowContacts] = useState(false);
 
+    // To hide Message bar and Person control bar
+    const [hide_bars, setHideBars] = useState(false);
+
+    useEffect(() => {
+        
+        if (add_contact) return;
+
+        setHideBars(false);
+    }, [add_contact]);
+
     return (
         <div className={styles.dmDashboard}>
             {
@@ -365,101 +376,120 @@ export default function DM() {
                 chat_selected
                     ?
                     <div className={styles.chatPage}>
-                        <div className={styles.personControlBar}>
-                            <div className={styles.person_info}>
-                                <img
-                                    src={server_url + `/files/${contact_details.pfp}`}
-                                    onError={(e) => {
-                                        e.target.onError = null;
-                                        e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
-                                    }}
-                                />
+                        {
+                            hide_bars
+                                ?
+                                <></>
+                                :
+                                <div className={styles.personControlBar}>
+                                    <div className={styles.person_info}>
+                                        <img
+                                            src={server_url + `/files/${contact_details.pfp}`}
+                                            onError={(e) => {
+                                                e.target.onError = null;
+                                                e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                            }}
+                                        />
 
-                                <h3>{contact_details.username}</h3>
-                            </div>
+                                        <h3>{contact_details.username}</h3>
+                                    </div>
+                                </div>
+                        }
 
-                            <button
-                                className={styles.roomOptions}
-                            ><i className="fa-solid fa-bars"></i></button>
+                        <div className={styles.chatContainer}>
+                            {
+                                chat_loader
+                                    ?
+                                    <PageLoader />
+                                    :
+                                    messages.length ?
+                                        messages.map((msg, index) => {
+                                            const day_string = eposhToString(msg.timestamp);
+
+                                            const prev = messages[index - 1];
+                                            const prev_day = prev ? eposhToString(prev.timestamp) : null;
+
+                                            const show = day_string !== prev_day;
+
+                                            return <div key={msg.msg_id || msg.identifiers.message_id}>
+                                                {
+                                                    msg.status === "pending"
+                                                        ? prev_day !== "Today" && <DateStamp day="Today" />
+                                                        : show && <DateStamp day={day_string} />
+                                                }
+
+                                                {
+                                                    msg.files_list.map((file, file_index) => (
+                                                        <File
+                                                            key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
+                                                            constraint={"no-logo"}
+                                                            sender_id={msg.sender_details.sender_id}
+                                                            sender_name={msg.sender_details.sender_name}
+                                                            sender_pfp={msg.sender_details.sender_pfp}
+                                                            filename={file.filename}
+                                                            file_url={file.file_url}
+                                                            timestamp={msg.timestamp}
+                                                            status={msg.status || "complete"}
+                                                        />
+                                                    ))
+                                                }
+
+                                                {
+                                                    msg.text
+                                                    &&
+                                                    <Message
+                                                        key={msg.msg_id || msg.identifiers.message_id}
+                                                        constraint={"no-logo"}
+                                                        message={msg.text}
+                                                        sender_id={msg.sender_details.sender_id}
+                                                        sender_name={msg.sender_details.sender_name}
+                                                        sender_pfp={msg.sender_details.sender_pfp}
+                                                        timestamp={msg.timestamp}
+                                                        files={msg.files_list}
+                                                        status={msg.status || "complete"}
+                                                    />
+                                                }
+                                            </div>
+                                        }) :
+                                        <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
+                            }
+
+                            <div ref={bottom_ref}></div>
                         </div>
 
                         {
-                            chat_loader
+                            show_file_object
+                            &&
+                            <FileObject
+                                files={files}
+                            />
+                        }
+
+                        {
+                            hide_bars
                                 ?
-                                <PageLoader />
+                                <></>
                                 :
-                                <>
-                                    <div className={styles.chatContainer}>
-                                        {
-                                            messages.length ?
-                                                messages.map((msg, index) => (
-                                                    <div key={msg.msg_id || msg.identifiers.message_id}>
-                                                        {
-                                                            msg.files_list.map((file, file_index) => (
-                                                                <File
-                                                                    key={`${msg.msg_id || msg.identifiers.message_id}-${file.filename}`}
-                                                                    constraint={"no-logo"}
-                                                                    sender_id={msg.sender_details.sender_id}
-                                                                    sender_name={msg.sender_details.sender_name}
-                                                                    sender_pfp={msg.sender_details.sender_pfp}
-                                                                    filename={file.filename}
-                                                                    file_url={file.file_url}
-                                                                    timestamp={msg.timestamp}
-                                                                    status={msg.status || "complete"}
-                                                                />
-                                                            ))
-                                                        }
+                                <MessageBar
+                                    setShowPicker={setShowPicker}
+                                    handleFiles={handleFiles}
+                                    input_ref={input_ref}
+                                    message={message}
+                                    setMessage={setMessage}
+                                    sendMessage={sendMessage}
+                                    style={{
+                                        position: "sticky"
+                                    }}
+                                />}
 
-                                                        {
-                                                            msg.text
-                                                            &&
-                                                            <Message
-                                                                key={msg.msg_id || msg.identifiers.message_id}
-                                                                constraint={"no-logo"}
-                                                                message={msg.text}
-                                                                sender_id={msg.sender_details.sender_id}
-                                                                sender_name={msg.sender_details.sender_name}
-                                                                sender_pfp={msg.sender_details.sender_pfp}
-                                                                timestamp={msg.timestamp}
-                                                                files={msg.files_list}
-                                                                status={msg.status || "complete"}
-                                                            />
-                                                        }
-                                                    </div>
-                                                )) :
-                                                <div className={styles.noMsgs}><h5>No Recent Messages</h5></div>
-                                        }
-
-                                        <div ref={bottom_ref}></div>
-                                    </div>
-
-                                    {
-                                        show_file_object
-                                        &&
-                                        <FileObject
-                                            files={files}
-                                        />
-                                    }
-
-                                    <MessageBar
-                                        setShowPicker={setShowPicker}
-                                        handleFiles={handleFiles}
-                                        input_ref={input_ref}
-                                        message={message}
-                                        setMessage={setMessage}
-                                        sendMessage={sendMessage}
-                                    />
-
-                                    {
-                                        show_picker
-                                        &&
-                                        <div className={styles.emojiPicker}>
-                                            <EmojiBox
-                                                setEmoji={setEmoji}
-                                            />
-                                        </div>
-                                    }
-                                </>
+                        {
+                            show_picker
+                            &&
+                            <div className={styles.emojiPicker}>
+                                <EmojiBox
+                                    setEmoji={setEmoji}
+                                />
+                            </div>
                         }
                     </div>
                     :
@@ -539,6 +569,7 @@ export default function DM() {
                 <div
                     className={styles.newContact}
                     onClick={() => {
+                        setHideBars(true);
                         setShowContacts(false);
                         setAddContact(true);
                     }}
@@ -564,6 +595,7 @@ export default function DM() {
 
                 <button
                     onClick={() => {
+                        setHideBars(true);
                         setAddContact(true);
                     }}
                 ><i className="fa-solid fa-plus"></i></button>
@@ -597,7 +629,8 @@ function Contact(props) {
 
         return date.toLocaleTimeString([], {
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
+            hour12: true
         });
     };
 
@@ -643,7 +676,11 @@ function Contact(props) {
             </div>
 
             <div className={styles.meta}>
-                <p>{formatTime(props.timestamp)}</p>
+                {
+                    props.timestamp
+                        ? <p>{formatTime(props.timestamp)}, {eposhToString(props.timestamp)}</p>
+                        : <p>Recent Contact</p>
+                }
 
                 {props.unread_msg && <div></div>}
             </div>

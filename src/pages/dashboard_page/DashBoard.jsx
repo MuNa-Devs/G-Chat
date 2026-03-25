@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from "axios";
-import { File, Message } from "../../reusable_component/message_dev/Message";
+import { File, Message, DateStamp } from "../../reusable_component/message_dev/Message";
 import EmojiBox from "../../reusable_component/emoji_box/EmojiBox";
 import MessageBar from '../../reusable_component/message_bar/MessageBar';
 import SideBar from '../../reusable_component/SideBar';
@@ -10,6 +10,7 @@ import { server_url } from '../../../creds/server_url';
 import { UiContext } from '../../utils/UiContext';
 import FileObject from '../../reusable_component/file_object/FileObject';
 import PageLoader from '../loading_screen/PageLoader';
+import eposhToString from '../../reusable_component/util_funcs/EpochToReadable';
 
 export default function DashBoard() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
@@ -300,8 +301,6 @@ export default function DashBoard() {
                     <h5 className={styles.smallName}>College Wide Discussions</h5>
                 </div>
 
-                <hr />
-
                 {/* CHAT MESSAGES */}
                 <div
                     ref={chatRef}
@@ -324,10 +323,25 @@ export default function DashBoard() {
                             <PageLoader />
                             :
                             <>
+                                {messages.length? <div style={{ height: "56px" }}></div> : <></>}
+
                                 {
                                     messages.length ?
-                                        messages.map((msg, index) => (
-                                            <div key={msg.msg_id || msg.identifiers.message_id}>
+                                        messages.map((msg, index) => {
+                                            const day_string = eposhToString(msg.timestamp);
+
+                                            const prev = messages[index - 1];
+                                            const prev_day = prev ? eposhToString(prev.timestamp) : null;
+
+                                            const show = day_string !== prev_day;
+
+                                            return <div key={msg.msg_id || msg.identifiers.message_id}>
+                                                {
+                                                    msg.status === "pending"
+                                                        ? prev_day !== "Today" && <DateStamp day="Today" />
+                                                        : show && <DateStamp day={day_string} />
+                                                }
+
                                                 {
                                                     msg.files_list.map((file, file_index) => (
                                                         <File
@@ -360,7 +374,7 @@ export default function DashBoard() {
                                                     />
                                                 }
                                             </div>
-                                        )) :
+                                        }) :
                                         <div
                                             className={styles.noMsgs}
                                             style={{
@@ -372,6 +386,8 @@ export default function DashBoard() {
                                             }}
                                         ><h5>No Recent Messages</h5></div>
                                 }
+
+                                {messages.length? <div style={{ height: "56px" }}></div> : <></>}
 
                                 <div ref={bottomRef} />
                             </>
