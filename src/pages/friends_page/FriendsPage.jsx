@@ -76,6 +76,7 @@ export default function FriendsPage() {
         ).then(res => {
             setResults(prev => prev.filter(u => u.id !== receiverId));
         }).catch(err => {
+            console.log(err);
             if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
                 setLogOut();
         });
