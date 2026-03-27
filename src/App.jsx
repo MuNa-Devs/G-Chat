@@ -15,9 +15,10 @@ import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
 import UserSettings from "./pages/user_settings/UserSettings";
 import DM from "./pages/direct-messages/DM";
-import AssignmentHome from "./pages/assignments_page/LandingPage";
-import MyPortfolio from "./pages/assignments_page/components/my_portfolio/MyPortfolio";
-import BrowseWriters from "./pages/assignments_page/components/browse_writers/BrowseWriters";
+import AssignmentHome from "./pages/dashboard_page/assignments_page/LandingPage";
+import MyPortfolio from "./pages/dashboard_page/assignments_page/components/my_portfolio/MyPortfolio";
+import BrowseWriters from "./pages/dashboard_page/assignments_page/components/browse_writers/BrowseWriters";
+import GlobalChat from "./pages/dashboard_page/global_chat/GlobalChat";
 
 export default function App() {
 	return (
@@ -59,6 +60,14 @@ export default function App() {
 			/>
 
 			<Route
+				path="/globalchat" element={
+					<LoginProtector>
+						<GlobalChat />
+					</LoginProtector>
+				}
+			/>
+
+			<Route
 				path="/friends" element={
 					<LoginProtector>
 						<FriendsPage />
@@ -75,7 +84,7 @@ export default function App() {
 			/>
 
 			<Route
-				path="/Assignments" element={
+				path="/assignments" element={
 					<LoginProtector>
 						<AssignmentHome />
 					</LoginProtector>

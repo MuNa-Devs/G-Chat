@@ -1,10 +1,10 @@
 import styles from "./get_started.module.css";
-import { server_url } from "../../../../../creds/server_url";
+import { server_url } from "../../../../../../creds/server_url";
 import axios from "axios";
 import { useContext } from "react";
-import { AppContext } from "../../../../Contexts";
+import { AppContext } from "../../../../../Contexts";
 import { useState } from "react";
-import DivLoader from "../../../loading_screen/DivLoader";
+import DivLoader from "../../../../loading_screen/DivLoader";
 import { useEffect } from "react";
 
 export default function WriterPopup(props) {

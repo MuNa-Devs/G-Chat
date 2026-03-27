@@ -37,7 +37,7 @@ export default function SideBar(props) {
                     <div className={styles.userDetails}>
                         <h4>{user_details.username || "User"}</h4>
 
-                        <p>{user_details.department || "Edit your profile"}</p>
+                        <p>{"Edit your profile"}</p>
                     </div>
                 </div>
 
@@ -85,17 +85,6 @@ export default function SideBar(props) {
                             setOpenLeft(false);
                         }}
                     ><i className="fa-solid fa-user-group"></i> <span>Friends</span></button>
-
-                    <button
-                        className={`
-                            ${props.active_page == "assignments" && styles.activeBtn}
-                        `}
-                        onClick={() => {
-                            navigate("/assignments");
-                            setOpenLeft(false);
-                        }}
-                    ><i className="fa-solid fa-file-pen"></i> <span>Assignments</span></button>
-                    
                 </div>
 
                 <div className={styles.sidebarUtils}>

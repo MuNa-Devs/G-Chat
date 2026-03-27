@@ -1,31 +1,50 @@
-import SideBar from "../../reusable_component/SideBar";
+import SideBar from "../../../reusable_component/SideBar";
 import GetStarted from "./components/get_started/GetStarted";
 import styles from "./landing_page.module.css";
-import writer from "./../../assets/images/writer.png";
-import history from "./../../assets/images/history.png";
-import portfolio from "./../../assets/images/portfolio.png";
+import writer from "./../../../assets/images/writer.png";
+import history from "./../../../assets/images/history.png";
+import portfolio from "./../../../assets/images/portfolio.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useContext } from "react";
+import { AppContext } from "../../../Contexts";
 
 export default function AssignmentHome(props) {
+    const { user_details } = useContext(AppContext);
     const navigate = useNavigate();
     const [showPopup, setShowPopup] = useState(false);
 
     return (
         <div className={styles.homeDiv}>
             <SideBar
-                logo="#"
-                active_page="assignments"
+                logo={user_details?.pfp}
+                active_page="dashboard"
             />
 
             <div className={styles.mainDiv}>
                 <div className={styles.header}>
-                    <h2>Assignments</h2>
+                    <div>
+                        <button
+                            style={{
+                                backgroundColor: "transparent",
+                                border: "none"
+                            }}
+                            onClick={() => navigate("/dashboard")}
+                        ><i
+                            style={{
+                                color: "var(--danger)",
+                                fontSize: "1.06em"
+                            }}
+                            className="fa-solid fa-chevron-left"
+                        ></i></button>
+
+                        <h2>Assignments</h2>
+                    </div>
 
                     <div>
-                        <button><i className="fa-solid fa-cart-shopping"></i></button>
+                        <button className={styles.utilBtn}><i className="fa-solid fa-cart-shopping"></i></button>
 
-                        <button><i className="fa-solid fa-envelope"></i></button>
+                        <button className={styles.utilBtn}><i className="fa-solid fa-envelope"></i></button>
                     </div>
                 </div>
 
@@ -186,7 +205,7 @@ export default function AssignmentHome(props) {
                         A secure marketplace where students and writers collaborate efficiently, with transparency, protection, and reliability at every step.
                     </h5>
                 </div>
-                
+
                 <GetStarted
                     show={showPopup}
                     setShow={setShowPopup}

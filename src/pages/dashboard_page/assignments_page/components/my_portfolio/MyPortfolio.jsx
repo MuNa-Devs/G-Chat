@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { server_url } from "../../../../../creds/server_url";
-import Toggle from "../../../../reusable_component/toggle_button/Toggle";
+import { server_url } from "../../../../../../creds/server_url";
+import Toggle from "../../../../../reusable_component/toggle_button/Toggle";
 import styles from "./my_portfolio.module.css";
 import { useNavigate } from "react-router-dom";
-import PageLoader from "../../../loading_screen/PageLoader";
+import PageLoader from "../../../../loading_screen/PageLoader";
 import { useEffect } from "react";
 import axios from "axios";
 import { useContext } from "react";
-import { AppContext } from "../../../../Contexts";
+import { AppContext } from "../../../../../Contexts";
 import WriterPopup from "../get_started/GetStarted";
 
 export default function MyPortfolio(props) {

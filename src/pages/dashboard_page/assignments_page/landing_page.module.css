@@ -39,7 +39,7 @@
     gap: 20px;
 }
 
-.header>div>button {
+.header>div>.utilBtn {
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -49,14 +49,14 @@
 }
 
 /* icon default */
-.header>div>button>i {
+.header>div>.utilBtn>i {
     font-size: 1.15em;
     color: var(--text-secondary);
     transition: color 0.3s ease;
 }
 
 /* underline (hidden initially) */
-.header>div>button::after {
+.header>div>.utilBtn::after {
     content: "";
     position: absolute;
     left: 0;
@@ -70,11 +70,11 @@
 }
 
 /* hover effects */
-.header>div>button:hover>i {
+.header>div>.utilBtn:hover>i {
     color: var(--accent);
 }
 
-.header>div>button:hover::after {
+.header>div>.utilBtn:hover::after {
     width: 100%;
 }
 

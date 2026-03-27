@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import styles from "./browse_writers.module.css";
-import WriterCard from "../../../../reusable_component/writer_card/WriterCard";
+import WriterCard from "../../../../../reusable_component/writer_card/WriterCard";
 import axios from "axios";
-import { server_url } from "../../../../../creds/server_url";
+import { server_url } from "../../../../../../creds/server_url";
 import { useContext } from "react";
-import { AppContext } from "../../../../Contexts";
-import PageLoader from "../../../loading_screen/PageLoader";
+import { AppContext } from "../../../../../Contexts";
+import PageLoader from "../../../../loading_screen/PageLoader";
 
 export default function BrowseWriters() {
     const { user_details, setLogout } = useContext(AppContext);

@@ -1,0 +1,145 @@
+.gcDiv{
+    width: calc(100% - 16px);
+    height: auto;
+    max-height: 18rem;
+    min-height: 15rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+
+    padding: 8px;
+}
+
+.gcDiv header{
+    width: calc(100% - 24px);
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px;
+    padding: 4px;
+}
+
+.gcDiv header>div{
+    width: auto;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}.gcDiv header>button {
+    background-color: var(--primary);
+    border: 1px solid var(--border-light);
+    padding: 6px 16px;
+    border-radius: 8px;
+    color: var(--button-text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.gcDiv header>button>i{
+    display: none;
+}
+
+.body{
+    width: calc(100% - 16px);
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+
+    margin: 8px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.msgCard{
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.msgCard>img{
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+
+    object-fit: cover;
+    display: block;
+    object-position: center;
+}
+
+.msgCard>div{
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.msgCard>div>div{
+    width: auto;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.msgCard p {
+    color: var(--text-secondary);
+    line-height: 1.4;
+
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Media Queries */
+@media (max-width: 710px) {
+    .gcDiv header>button {
+        background-color: var(--primary-bg);
+    }
+
+    .gcDiv header>button>i{
+        display: block;
+        color: var(--primary);
+        font-size: 1.06em;
+    }
+
+    .gcDiv header>button>span {
+        display: none;
+    }
+}
+
+@media (max-width: 670px){
+    .gcDiv{
+        min-height: 8rem;
+        max-height: 12rem;
+    }
+}

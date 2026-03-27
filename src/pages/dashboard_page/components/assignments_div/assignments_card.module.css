@@ -1,0 +1,111 @@
+.assignmentsCard {
+    width: calc(100% - 16px);
+    min-width: 276px;
+    height: auto;
+    max-height: 18rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+
+    padding: 8px;
+}
+
+.assignmentsCard header{
+    width: calc(100% - 24px);
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px;
+    padding: 4px;
+}
+
+.assignmentsCard header>div {
+    width: auto;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.assignmentsCard header>button {
+    background-color: var(--primary);
+    border: 1px solid var(--border-light);
+    padding: 6px 16px;
+    border-radius: 8px;
+    color: var(--button-text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.assignmentsCard header>button>i{
+    display: none;
+}
+
+.body {
+    width: calc(100% - 16px);
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+
+    margin: 8px;
+}
+
+.created,
+.pending {
+    width: calc(100% - 4px);
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+
+    margin-left: 4px;
+}
+
+.created>span,
+.pending>span {
+    background-color: var(--bg);
+    padding: 8px;
+    width: 16px;
+    height: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+    color: var(--text-primary);
+    border-radius: 8px;
+}
+
+/* Media Queries */
+@media (max-width: 710px) {
+    .assignmentsCard header>button {
+        background-color: var(--primary-bg);
+    }
+
+    .assignmentsCard header>button>i{
+        display: block;
+        color: var(--primary);
+        font-size: 1.06em;
+    }
+
+    .assignmentsCard header>button>span {
+        display: none;
+    }
+}
