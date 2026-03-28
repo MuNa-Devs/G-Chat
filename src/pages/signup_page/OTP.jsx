@@ -5,14 +5,19 @@ import { server_url } from "../../../creds/server_url";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../Contexts";
 import { code_alert_mapper } from "../page_utils/code_alert_mapper";
+import { loadUserDetails } from "../../loadUserDetails";
+import { UiContext } from "../../utils/UiContext";
 
 export default function OTP(props) {
+    // Getting required contexts
+    const { setUserDetails, setLoading, setLogOut } = useContext(AppContext);
+    const { setOverride } = useContext(UiContext);
+
     // Store countdown time
     const [time_remaining, setTimeRemaining] = useState(300);
 
     // Resend timer
     const [resend_countdown, setResendCountDown] = useState(0);
-    const [enable_resend, setEnableResend] = useState(false);
 
     // Store the input values
     const [values, setValues] = useState(Array(6).fill(""));
@@ -21,7 +26,7 @@ export default function OTP(props) {
     const input_refs = useRef([]);
 
     // Verification under process
-    const [is_loading, setLoading] = useState(false);
+    const [is_loading, setVerLoading] = useState(false);
 
     const navigate = useNavigate();
     const { setLogin } = useContext(AppContext);
@@ -97,31 +102,32 @@ export default function OTP(props) {
     };
 
     // Verify entered OTP
-    const handleVerifyClick = () => {
+    const handleVerifyClick = async () => {
         const final_otp = values.join("");
 
-        axios.post(
-            `${server_url}/g-chat/auth/verify-otp?user_id=${localStorage.getItem("user_id")}`,
-            {
-                email: props.email,
-                otp: final_otp
-            },
-            {
-                headers: {
-                    auth_token: `Bearer ${localStorage.getItem("token")}`
+        try {
+            const result = await axios.post(
+                `${server_url}/g-chat/auth/verify-otp?user_id=${localStorage.getItem("user_id")}`,
+                {
+                    email: props.email,
+                    otp: final_otp
+                },
+                {
+                    headers: {
+                        auth_token: `Bearer ${localStorage.getItem("token")}`
+                    }
                 }
-            }
-        ).then(res => {
-            if (res.data.success) {
+            )
+            
+            if (result.data.success) {
                 setLogin();
+                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
                 navigate("/dashboard");
             }
-
-            else
-                props.setAlert(code_alert_mapper[res.data.code])
-        }).catch(error => {
-            props.setAlert(code_alert_mapper[error.response?.data.code]);
-        });
+        }
+        catch (err){
+            props.setAlert(code_alert_mapper[err.response?.data?.code]);
+        }
     };
 
     const sendOTP = () => {
@@ -136,13 +142,16 @@ export default function OTP(props) {
                 }
             }
         ).then(res => {
-            if (res.data.success)
+            if (res.data.success){
+                setTimeRemaining(300);
                 setResendCountDown(60);
+            }
 
             else
-                props.setAlert(code_alert_mapper[res.data.code]);
+                props.setAlert(code_alert_mapper[res.data?.code]);
         }).catch(err => {
-            props.setAlert(code_alert_mapper[err.response?.data.code]);
+            props.setAlert(code_alert_mapper[err.response?.data?.code]);
+            console.log(err);
         })
     }
 
@@ -174,20 +183,22 @@ export default function OTP(props) {
                 className={styles.inputsContainer}
                 onPaste={handlePaste}
             >
-                {values.map((val, index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength="1"
-                        className={styles.otpInput}
-                        value={val}
-                        ref={(el) => (input_refs.current[index] = el)}
-                        onChange={(e) => handleChange(e, index)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        disabled={time_remaining <= 0}
-                    />
-                ))}
+                {
+                    values.map((val, index) => (
+                        <input
+                            key={index}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength="1"
+                            className={styles.otpInput}
+                            value={val}
+                            ref={(el) => (input_refs.current[index] = el)}
+                            onChange={(e) => handleChange(e, index)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                            disabled={time_remaining <= 0}
+                        />
+                    ))
+                }
             </div>
 
             <div className={styles.timer}>

@@ -1,41 +1,45 @@
-@keyframes slide-in{
-	0%{
-		transform: translate(100%, 0%);
-		opacity: 0;
-	}
-	100%{
-		transform: translate(0%, 0%);
-		opacity: 1;
-	}
+@keyframes slide-in {
+    0% {
+        transform: translate(100%, 0%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0%, 0%);
+        opacity: 1;
+    }
 }
 
-@keyframes slide-out{
-	0%{
-		transform: translate(0%, 0%);
-		opacity: 1;
-	}
-	100%{
-		transform: translate(-100%, 0%);
-		opacity: 0;
-	}
+@keyframes slide-out {
+    0% {
+        transform: translate(0%, 0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-100%, 0%);
+        opacity: 0;
+    }
 }
 
-@keyframes evaporate{
-	0%{
-		opacity: 1;
-	}
-	100%{
-		opacity: 0;
-	}
+@keyframes evaporate {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
 
-@keyframes condensate{
-	0%{
-		opacity: 0;
-	}
-	100%{
-		opacity: 1;
-	}
+@keyframes condensate {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .signupBody {
@@ -54,11 +58,11 @@
     text-align: center;
 }
 
-.evaporate{
+.evaporate {
     animation: evaporate 0.25s ease-in 0s 1 forwards;
 }
 
-.condensate{
+.condensate {
     animation: condensate .25s ease-out 0s 1 forwards;
 }
 
@@ -105,11 +109,11 @@
     justify-content: space-evenly;
 }
 
-.slideInDiv{
+.slideInDiv {
     animation: slide-in 0.4s ease-in 0s 1 forwards;
 }
 
-.slideOutDiv{
+.slideOutDiv {
     animation: slide-out 0.4s ease-out 0s 1 forwards;
 }
 
@@ -192,7 +196,9 @@ a {
     border-radius: 5px;
     border: none;
     cursor: pointer;
-} .signupBtn:hover{
+}
+
+.signupBtn:hover {
     opacity: 0.8;
 }
 
@@ -207,21 +213,24 @@ a {
     cursor: not-allowed;
 }
 
-@keyframes load{
-    0%{
+@keyframes load {
+    0% {
         transform: rotate(0deg);
     }
-    100%{
+
+    100% {
         transform: rotate(360deg);
     }
 }
 
-.registering{
+.registering {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-} .registering>i{
+}
+
+.registering>i {
     font-size: .975em;
     transform: translate(-50%, -50%);
     animation: load 0.85s linear 0s infinite forwards;
@@ -268,6 +277,12 @@ a {
 
 @media (max-width: 480px) {
     /*  */
+}
+
+@media (max-width: 350px) {
+    .signupCard {
+        padding: 16px;
+    }
 }
 
 @media (max-width: 1024px) {

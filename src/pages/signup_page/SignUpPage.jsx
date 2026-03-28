@@ -79,10 +79,6 @@ export default function SignUpPage() {
             if (response.data.success) {
                 sessionStorage.setItem("user_id", response.data.user.id);
                 localStorage.setItem("token", response.data.token);
-
-                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
-
-                setLogin(true);
                 setShowOtpScreen(true);
             }
 
@@ -124,6 +120,7 @@ export default function SignUpPage() {
                         ?
                         <OTP
                             setAlert={setAlert}
+                            setLoading={setLogin}
                             email={inputs.email}
                         />
                         :
