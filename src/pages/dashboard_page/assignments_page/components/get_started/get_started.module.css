@@ -1,3 +1,4 @@
+/* Overlay stays same but adds padding for small screens */
 .popupOverlay {
     position: fixed;
     inset: 0;
@@ -7,28 +8,37 @@
     align-items: center;
     justify-content: center;
 
+    padding: 16px; /* 🔥 prevents edge sticking on mobile */
     z-index: 999;
 }
 
+
+/* Main popup */
 .popupBox {
-    width: 420px;
+    width: 100%;
+    max-width: 420px; /* desktop limit */
+    
     background: var(--card-bg);
     border: 1px solid var(--border-light);
     border-radius: 16px;
-    padding: 32px;
+    padding: 28px;
 
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 
     box-shadow: 0px 0px 30px rgba(0,0,0,0.45);
 }
 
+
+/* Heading */
 .popupBox h3 {
-    font-size: 1.2em;
+    font-size: clamp(1rem, 2.5vw, 1.2rem); /* 🔥 responsive text */
     color: var(--text-primary);
 }
 
+
+/* Fields */
 .popupField {
     display: flex;
     flex-direction: column;
@@ -36,18 +46,22 @@
 }
 
 .popupField label {
-    font-size: 0.9em;
+    font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
+
+/* Inputs */
 .popupField input[type="file"],
 .popupField input[type="number"] {
+    width: 100%; /* 🔥 full width */
+    
     background: var(--bg-lighter);
     border: 1px solid var(--border);
     color: var(--text-primary);
 
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
 }
 
 .popupField input:focus {
@@ -55,17 +69,23 @@
     border-color: var(--accent);
 }
 
+
+/* Buttons */
 .popupActions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap; /* 🔥 wraps on small screens */
 }
 
 .popupActions button {
-    padding: 12px 18px;
+    padding: 10px 16px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+
+    flex: 1; /* 🔥 equal width on mobile */
+    min-width: 120px;
 }
 
 .popupActions button:first-child {
@@ -76,27 +96,71 @@
     background: var(--success);
 }
 
+
+/* Capture button */
 .captureBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: 8px;
 
     background: var(--accent);
     color: white;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.85rem;
+
     width: fit-content;
 }
 
+
+/* Image preview */
 .previewImage {
     width: 100%;
-    max-height: 220px;
+    max-height: 200px; /* slightly smaller for mobile */
     object-fit: contain;
 
-    margin-top: 12px;
-    border-radius: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
     border: 1px solid var(--border-light);
+}
+
+
+
+@media (max-width: 480px) {
+
+    .popupBox {
+        padding: 20px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .popupActions {
+        flex-direction: column; /* stack buttons */
+    }
+
+    .popupActions button {
+        width: 100%;
+    }
+
+    .captureBtn {
+        width: 100%;
+    }
+
+    .previewImage {
+        max-height: 160px;
+    }
+
+    .captureBtn {
+        font-size: 0.9rem;
+        width: auto;
+    }
+
+    .popupField input[type="number"] {
+        padding: 12px;
+        width: auto;
+    }
 }
