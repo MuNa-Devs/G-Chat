@@ -15,17 +15,17 @@
 
 /* Main popup */
 .popupBox {
-    width: 100%;
+    width: calc(100% - 48px);
     max-width: 420px; /* desktop limit */
     
-    background: var(--card-bg);
+    background: var(--bg-lighter);
     border: 1px solid var(--border-light);
     border-radius: 16px;
-    padding: 28px;
+    padding: 24px;
 
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
 
     box-shadow: 0px 0px 30px rgba(0,0,0,0.45);
 }
@@ -54,19 +54,18 @@
 /* Inputs */
 .popupField input[type="file"],
 .popupField input[type="number"] {
-    width: 100%; /* 🔥 full width */
+    width: calc(100% - 16px); /* 🔥 full width */
     
-    background: var(--bg-lighter);
+    background: var(--card-bg);
     border: 1px solid var(--border);
     color: var(--text-primary);
 
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px;
 }
 
 .popupField input:focus {
     outline: none;
-    border-color: var(--accent);
 }
 
 
@@ -74,22 +73,26 @@
 .popupActions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap; /* 🔥 wraps on small screens */
+
+    padding: 8px;
 }
 
 .popupActions button {
-    padding: 10px 16px;
+    padding: 8px 16px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 
     flex: 1; /* 🔥 equal width on mobile */
     min-width: 120px;
+    border: 1px solid var(--border-light);
 }
 
 .popupActions button:first-child {
-    background: var(--border);
+    background: var(--danger-light-bg);
+    color: var(--danger-light);
 }
 
 .popupActions button:last-child {
@@ -103,7 +106,7 @@
     align-items: center;
     justify-content: center;
 
-    padding: 10px 14px;
+    padding: 8px 16px;
     border-radius: 8px;
 
     background: var(--accent);
@@ -121,17 +124,14 @@
     max-height: 200px; /* slightly smaller for mobile */
     object-fit: contain;
 
-    margin-top: 10px;
+    margin-top: 8px;
     border-radius: 10px;
     border: 1px solid var(--border-light);
 }
 
-
-
 @media (max-width: 480px) {
-
     .popupBox {
-        padding: 20px;
+        padding: 16px;
         border-radius: 12px;
         display: flex;
         flex-direction: column;
@@ -160,7 +160,7 @@
     }
 
     .popupField input[type="number"] {
-        padding: 12px;
+        padding: 8px;
         width: auto;
     }
 }

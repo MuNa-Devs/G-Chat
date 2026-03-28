@@ -121,7 +121,7 @@ export default function WriterPopup(props) {
                             </button>
 
                             <button onClick={submitWriter}>
-                                OK
+                                Continue
                             </button>
                         </div>
                 }
