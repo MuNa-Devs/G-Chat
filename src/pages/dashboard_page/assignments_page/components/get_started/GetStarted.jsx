@@ -70,7 +70,7 @@ export default function WriterPopup(props) {
                     <label>Handwriting Sample</label>
 
                     <label className={styles.captureBtn}>
-                        Take Sample Picture
+                        <p>Take Sample Picture</p>
 
                         <input
                             type="file"

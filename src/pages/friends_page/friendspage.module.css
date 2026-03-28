@@ -314,3 +314,22 @@
         width: 100%;
     }
 }
+
+@media (max-width: 450px){
+    .modalBox{
+        min-width: 20rem;
+    }
+}
+
+@media (max-width: 370px){
+    .modalBox{
+        min-width: calc(100% - 32px);
+        min-height: calc(100% - 32px);
+
+        max-width: 100dvw;
+        max-height: 100dvh;
+
+        border-radius: 0px;
+        background-color: var(--bg);
+    }
+}

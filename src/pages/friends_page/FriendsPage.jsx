@@ -76,15 +76,15 @@ export default function FriendsPage() {
             const request_id = res.data.response;
 
             setSent(prev => ([
-                    {
+                {
                     request_id,
                     user_id: user_details?.id || sessionStorage.getItem("user_id"),
                     receiver_id,
                     receiver_name,
                     receiver_pfp,
                     sent_at: ""
-                    },
-                    ...prev
+                },
+                ...prev
             ]));
         }).catch(err => {
             console.log(err);
@@ -433,7 +433,30 @@ export default function FriendsPage() {
                         onClick={() => setShowRequests(false)}
                     >
                         <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
-                            <h3>Friend Requests</h3>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between"
+                                }}
+                            >
+                                <h3>Friend Requests</h3>
+
+                                <button
+                                    onClick={() => setShowRequests(false)}
+                                    style={{
+                                        backgroundColor: "transparent",
+                                        border: "none"
+                                    }}
+                                ><i
+                                    className="fa-solid fa-xmark"
+                                    style={{
+                                        color: "var(--danger)",
+                                        fontSize: "1.06em"
+                                    }}
+                                ></i></button>
+                            </div>
 
                             <div className={styles.tabs}>
                                 <button

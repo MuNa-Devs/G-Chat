@@ -72,6 +72,7 @@
 /* Buttons */
 .popupActions {
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     gap: 8px;
     flex-wrap: wrap; /* 🔥 wraps on small screens */
@@ -87,16 +88,18 @@
 
     flex: 1; /* 🔥 equal width on mobile */
     min-width: 120px;
-    border: 1px solid var(--border-light);
 }
 
 .popupActions button:first-child {
-    background: var(--danger-light-bg);
-    color: var(--danger-light);
+    background: transparent;
+    color: var(--danger);
+    order: 2;
 }
 
 .popupActions button:last-child {
     background: var(--success);
+    border: 1px solid var(--border-light);
+    order: 1;
 }
 
 
@@ -109,14 +112,16 @@
     padding: 8px 16px;
     border-radius: 8px;
 
-    background: var(--accent);
-    color: var(--button-text);
+    background: var(--primary);
     cursor: pointer;
-    font-size: 0.85rem;
 
     width: fit-content;
 }
 
+.captureBtn>p{
+    font-size: 0.96em !important;
+    color: var(--button-text);
+}
 
 /* Image preview */
 .previewImage {

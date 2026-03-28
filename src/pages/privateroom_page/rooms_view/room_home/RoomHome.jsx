@@ -409,6 +409,9 @@ export default function RoomHome() {
                                 message={message}
                                 setMessage={setMessage}
                                 sendMessage={sendMessage}
+                                style={{
+                                    position: "sticky"
+                                }}
                             />
 
                             {
