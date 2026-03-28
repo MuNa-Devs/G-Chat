@@ -15,7 +15,6 @@ export default function FriendItem({
 
     return (
         <div className={styles.friendItem}>
-
             <div className={styles.avatar}>
                 {user.username.charAt(0).toUpperCase()}
             </div>

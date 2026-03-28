@@ -36,10 +36,60 @@
     object-position: center;
 }
 
-.name{
+.name {
     flex: 1;
-    height: auto;
+    min-width: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+}
+
+.name h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    margin-right: 8px;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+
+    position: fixed;
+    right: 0%;
+}
+
+.action>button{
+    background-color: var(--primary-bg);
+    border: 1px solid var(--border-light);
+    padding: 6px;
+    border-radius: 8px;
+    z-index: 2;
+}
+
+.action>button>i,
+.action>div .pending{
+    color: var(--accent);
+    font-size: 1.04em;
+}
+
+.actionVisible {
+    opacity: 1;
+    right: 16%;
+    pointer-events: auto;
+}
+
+/* Media Queries */
+@media (min-width: 401px){
+    .action {
+        opacity: 1;
+        position: relative;
+        pointer-events: auto;
+    }
 }

@@ -1,35 +1,36 @@
 import { useEffect, useState, useContext } from 'react';
 import axios from "axios";
-
 import SideBar from '../../reusable_component/SideBar';
 import styles from './friendspage.module.css';
 import { server_url } from '../../../creds/server_url';
 import { AppContext } from '../../Contexts';
+import Friend from '../../reusable_component/friend_div/Friend';
+import PageLoader from '../loading_screen/PageLoader';
+import DivLoader from '../loading_screen/DivLoader';
+import UserProfile from '../user_profile/UserProfile';
 
 export default function FriendsPage() {
-
     const { user_details, setLogOut } = useContext(AppContext);
+
+    // List loader
+    const [div_loader, setDivLoader] = useState(true);
+    const [requests_loader, setReqLoader] = useState(true);
 
     const [friend, setFriend] = useState("");
     const [friends, setFriends] = useState([]);
     const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [has_searched, setHasSearched] = useState(false);
     const [showRequests, setShowRequests] = useState(false);
     const [received, setReceived] = useState([]);
     const [sent, setSent] = useState([]);
     const [activeTab, setActiveTab] = useState("received");
-    const [activeMenu, setActiveMenu] = useState(null);
-    const [selectedFriend, setSelectedFriend] = useState(null);
-    const [showProfile, setShowProfile] = useState(false);
-
-
+    const [show_profile, setShowProfile] = useState(false);
 
     const searchFriends = async (query) => {
         try {
             setLoading(true);
-            setHasSearched(false);
-            console.log(query);
+            setHasSearched(true);
 
             const res = await axios.get(
                 `${server_url}/g-chat/users/search?user_id=${user_details?.id || localStorage.getItem("user_id")}&query=${query}&last_seen_id=${Number.MAX_SAFE_INTEGER}`,
@@ -47,34 +48,44 @@ export default function FriendsPage() {
             // }
 
             setResults(res.data?.users || []);
-            setHasSearched(true);
         } catch (err) {
             console.error(err);
 
             if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
                 setLogOut();
-
-            setHasSearched(true);
         }
         finally {
             setLoading(false);
         }
     };
 
+    const sendRequest = async (receiver_id, receiver_name, receiver_pfp) => {
+        if (!receiver_id) return;
 
-    const sendRequest = async (receiverId) => {
         axios.post(`${server_url}/g-chat/users/requests?action=send&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
             {
                 senderId: user_details?.id || localStorage.getItem("user_id"),
-                receiverId
+                receiverId: receiver_id
             },
             {
                 headers: {
                     auth_token: `Bearer ${localStorage.getItem("token")}`
                 }
-            } // res.data.response = { request_id -> id of the request row in db }
+            } // res.data = { request_id -> id of the request row in db }
         ).then(res => {
-            setResults(prev => prev.filter(u => u.id !== receiverId));
+            const request_id = res.data.response;
+
+            setSent(prev => ([
+                    {
+                    request_id,
+                    user_id: user_details?.id || sessionStorage.getItem("user_id"),
+                    receiver_id,
+                    receiver_name,
+                    receiver_pfp,
+                    sent_at: ""
+                    },
+                    ...prev
+            ]));
         }).catch(err => {
             console.log(err);
             if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
@@ -82,13 +93,12 @@ export default function FriendsPage() {
         });
     };
 
-
     const acceptRequest = async (requestId) => {
         try {
             await axios.post(
                 `${server_url}/g-chat/users/requests?action=accept&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
                 {
-                    requestId:requestId,
+                    requestId: requestId,
                     userId: user_details?.id || Number(localStorage.getItem("user_id"))
                 },
                 {
@@ -150,7 +160,6 @@ export default function FriendsPage() {
         }
     };
 
-
     const rejectRequest = async (requestId) => {
         axios.post(
             `${server_url}/g-chat/users/requests?action=reject&user_id=${user_details?.id || localStorage.getItem("user_id")}`,
@@ -174,40 +183,11 @@ export default function FriendsPage() {
 
     };
 
-    const openProfile = async (friendId) => {
-        try {
-            const res = await axios.get(
-                `${server_url}/g-chat/users/get-user?user_id=${user_details?.id || localStorage.getItem("user_id")}&req_user_id=${friendId}`,
-                {
-                    headers: {
-                        auth_token: `Bearer ${localStorage.getItem("token")}`
-                    }
-                }
-            ); // Server sends this data:
-            // res.data.user = array of {
-            //  id -> friend's id
-            //  username -> friend's name
-            //  pfp -> friend's pfp filename
-            //  department -> friend's department
-            //  about -> friend's bio
-            //  phone -> friend's phone num
-            //  personal_email -> friend's personal email
-            // }
-
-            setSelectedFriend(res.data.user);
-            setShowProfile(true);
-        } catch (err) {
-            if (err.response?.data?.code === "NOT_FOUND") {
-                console.error("User profile not found");
-            }
-
-            if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
-                setLogOut();
-        }
-    };
-
     const removeFriend = async (friendId) => {
         // Here friendId is expected to be relationship id in db.
+
+        if (!friendId) return;
+
         try {
             await axios.post(
                 `${server_url}/g-chat/users/friends/remove?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
@@ -235,16 +215,13 @@ export default function FriendsPage() {
         friends.some(f => f.id === userId);
 
     const isPending = (userId) =>
-        sent.some(s => s.receiver_id === userId) ||
-        received.some(r => r.sender_id === userId);
-
-
-
-
-
+        sent.some(s => s.receiver_id == userId) ||
+        received.some(r => r.sender_id == userId);
 
     useEffect(() => {
         if (!user_details?.id) return;
+
+        setDivLoader(true);
 
         axios.get(
             `${server_url}/g-chat/users/friends?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
@@ -260,29 +237,41 @@ export default function FriendsPage() {
             //  username -> username of ur friend
             //  pfp -> pfp filename of ur frined
             // }
-            .then(res => setFriends(res.data.friends))
-            .catch(console.error);
-    }, [user_details]);
+            .then(res => {
+                setFriends(res.data.friends);
+                setDivLoader(false);
+            })
+            .catch(err => {
+                console.log(err);
 
+                if (["INVALID_USER", "FORBIDDEN_ACCESS"].includes(err.response?.data?.code))
+                    setLogOut();
+
+                setDivLoader(false);
+            });
+    }, [user_details]);
 
     useEffect(() => {
         if (!friend.trim()) {
             setResults([]);
             setHasSearched(false);
             setLoading(false);
+
             return;
         }
 
         const delay = setTimeout(() => {
-            searchFriends(friend);
+            searchFriends(friend.trim());
         }, 400);
 
         return () => clearTimeout(delay);
     }, [friend]);
 
     useEffect(() => {
-        if (!showRequests || !user_details?.id) return;
-        
+        if (!user_details?.id) return;
+
+        setReqLoader(true);
+
         axios.get(
             `${server_url}/g-chat/users/requests/received?user_id=${user_details?.id || localStorage.getItem("user_id")}`,
             {
@@ -291,14 +280,14 @@ export default function FriendsPage() {
                 }
             }
         )   // Server returns this:
-        // sentRes.data.sent_reqs = array of {
-        //  request_id -> the id of this request in DB,
-        //  user_id -> the id of user who received this request (you),
-        //  sender_id -> the one who sent u this request,
-        //  sender_name -> name of sender,
-        //  sender_pfp -> pfp filename of sender,
-        //  sent_at -> the time at which this req was sent (UTC)
-        // }
+            // sentRes.data.sent_reqs = array of {
+            //  request_id -> the id of this request in DB,
+            //  user_id -> the id of user who received this request (you),
+            //  sender_id -> the one who sent u this request,
+            //  sender_name -> name of sender,
+            //  sender_pfp -> pfp filename of sender,
+            //  sent_at -> the time at which this req was sent (UTC)
+            // }
             .then(res => setReceived(res.data?.rec_reqs))
             .catch(console.error);
 
@@ -320,17 +309,13 @@ export default function FriendsPage() {
                 }
             }
         )
-            .then(res => setSent(res.data?.sent_reqs))
+            .then(res => {
+                setSent(res.data?.sent_reqs);
+                setReqLoader(false);
+            })
             .catch(console.error);
 
     }, [showRequests, user_details]);
-    useEffect(() => {
-        const closeMenu = () => setActiveMenu(null);
-        document.addEventListener("click", closeMenu);
-        return () => document.removeEventListener("click", closeMenu);
-    }, []);
-
-
 
     return (
         <div className={styles.friendsMain}>
@@ -341,254 +326,284 @@ export default function FriendsPage() {
 
             <div className={styles.body}>
                 <div className={styles.header}>
-                    <div className={styles.pageNameContainer}>
-                        <h2 className={styles.global}>Friends</h2>
-                        <p className={styles.smallName}>
-                            List of friends you connected with
-                        </p>
+                    <div>
+                        <div className={styles.pageNameContainer}>
+                            <h2 className={styles.global}>Friends</h2>
+                        </div>
+
+                        <button
+                            className={styles.requestsBtn}
+                            onClick={() => setShowRequests(true)}
+                        >
+                            <i className="fa-solid fa-bell"></i>
+                        </button>
                     </div>
 
-                    <div className={styles.headerInputContainer}>
+                    <div className={styles.searchBar}>
+                        <div><i className="fa-solid fa-magnifying-glass"></i></div>
+
                         <input
-                            className={styles.input}
-                            placeholder="Search users..."
-                            type="text"
                             value={friend}
-                            onChange={(e) => setFriend(e.target.value)}
+                            type="text"
+                            placeholder="Search users..."
+                            onChange={e => {
+                                setFriend(e.target.value);
+                            }}
                         />
                     </div>
-                    <button
-                        className={styles.requestsBtn}
-                        onClick={() => setShowRequests(true)}
-                    >
-                        Requests
-                    </button>
-
                 </div>
 
-                <div className={styles.line}></div>
+                <hr className={styles.divider} />
 
-                {/* SEARCH RESULTS */}
-                <div className={styles.resultsContainer}>
-                    {loading && (
-                        <div className={styles.loading}>Searching...</div>
-                    )}
+                {
+                    (div_loader || loading)
+                        ? <PageLoader />
+                        : <div className={styles.friendsList}>
+                            {
+                                has_searched
+                                    ?
+                                    <>
+                                        <h3
+                                            style={{
+                                                letterSpacing: "0.8px",
+                                                margin: "8px"
+                                            }}
+                                        >{results.length > 0 ? "Search Results" : "No Results Found"}</h3>
 
-                    {!loading && results.map((u) => (
-                        <div key={u.id} className={styles.friendItem}>
-                            <div className={styles.avatar}>
-                                {u.username.charAt(0).toUpperCase()}
-                            </div>
+                                        {
+                                            results.map(r => (
+                                                <Friend
+                                                    key={r.id}
+                                                    ruse={"searched_friend"}
+                                                    user_id={r.id}
+                                                    username={r.username}
+                                                    url={r.pfp}
+                                                    is_friend={r.is_friend}
+                                                    is_pending={isPending(r.id)}
+                                                    setShowProfile={setShowProfile}
+                                                    removeFriend={r.is_friend ? removeFriend : null}
+                                                    sendRequest={(!r.is_friend && !isPending(r.id)) ? sendRequest : null}
+                                                />
+                                            ))
+                                        }
+                                    </>
+                                    :
+                                    friends.length > 0
+                                        ?
+                                        <>
+                                            <h3
+                                                style={{
+                                                    letterSpacing: "0.8px",
+                                                    margin: "8px"
+                                                }}
+                                            >{"Your Friends"}</h3>
 
-                            <div className={styles.userInfo}>
-                                <div className={styles.username}>{u.username}</div>
-                            </div>
-
-                            <div className={styles.action}>
-                                {isFriend(u.id) ? (
-                                    <span className={styles.connected}>Connected</span>
-                                ) : isPending(u.id) ? (
-                                    <span className={styles.pending}>Pending</span>
-                                ) : (
-                                    <button
-                                        onClick={() => sendRequest(u.id)}
-                                        className={styles.addBtn}
-                                    >
-                                        Add Friend
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-
-
-                    {!loading && hasSearched && results.length === 0 && (
-                        <div className={styles.emptyState}>
-                            No users found
-                        </div>
-                    )}
-                </div>
-
-                {/* FRIENDS LIST */}
-                <div className={styles.friendsList}>
-                    {friends.length > 0 && (
-                        <h3 className={styles.sectionTitle}>Your Friends</h3>
-                    )}
-
-                    {friends.length === 0 && !hasSearched && (
-                        <div className={styles.emptyState}>
-                            You have no friends yet
-                        </div>
-                    )}
-
-                    {friends.map((f) => (
-                        <div key={f.id} className={styles.friendItem}>
-                            <div className={styles.avatar}>
-                                {f.username.charAt(0).toUpperCase()}
-                            </div>
-
-                            <div className={styles.userInfo}>
-                                <div className={styles.username}>{f.username}</div>
-                                <div className={styles.subText}>Friend</div>
-                            </div>
-
-                            <div
-                                className={styles.menuIcon}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActiveMenu(f.id);
-                                }}
-                            >
-                                ⋮
-                            </div>
-
-                            {showProfile && selectedFriend && (
-                                <div
-                                    className={styles.profileOverlay}
-                                    onClick={() => setShowProfile(false)}
-                                >
-                                    <div
-                                        className={styles.profileModal}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <img
-                                            src={
-                                                selectedFriend.pfp
-                                                    ? `${server_url}/files/${selectedFriend.pfp}`
-                                                    : "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
+                                            {
+                                                friends.map((f) => (
+                                                    <Friend
+                                                        key={f.friend_id}
+                                                        ruse={"friends"}
+                                                        user_id={f.id}
+                                                        friend_id={f.friend_id}
+                                                        url={f.pfp}
+                                                        username={f.username}
+                                                        setShowProfile={setShowProfile}
+                                                        removeFriend={removeFriend}
+                                                        sendRequest={sendRequest}
+                                                    />
+                                                ))
                                             }
-                                            onError={(e) => {
-                                                e.currentTarget.src =
-                                                    "https://cdn-icons-png.flaticon.com/512/4847/4847985.png";
+                                        </>
+                                        : <h5
+                                            style={{
+                                                marginTop: "8px"
                                             }}
-                                            className={styles.profilePic}
-                                            alt="profile"
-                                        />
-
-                                        <div className={styles.fname}>
-                                            <h3>{selectedFriend.username}</h3>
-                                        </div>
-                                        <div className={styles.fdept}>
-                                            <p className={styles.department}>
-                                                {selectedFriend.department || "No department"}
-                                            </p>
-                                        </div>
-                                        <div className={styles.fabout}>
-                                            <p className={styles.about}>
-                                                {selectedFriend.about || "No bio available"}
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            className={styles.messageBtn}
-                                            onClick={() => {
-                                                setShowProfile(false);
-                                                navigate(`/dm/${selectedFriend.id}`);
-                                            }}
-                                        >
-                                            Message
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-
-                            {activeMenu === f.id && (
-                                <div className={styles.menu}>
-                                    <div onClick={() => openChat(f.id)}>Message</div>
-                                    <div onClick={() => openProfile(f.id)}>View Profile</div>
-                                    <div
-                                        className={styles.danger}
-                                        onClick={() => removeFriend(f.friend_id)}
-                                    >
-                                        Remove Friend
-                                    </div>
-                                </div>
-                            )}
+                                        >You have no friends yet!</h5>
+                            }
                         </div>
+                }
+            </div>
 
-                    ))}
-                </div>
-
-                {showRequests && (
-                    <div className={styles.modalOverlay}
-                        onClick={() => setShowRequests(false)}>
+            {
+                showRequests
+                &&
+                (
+                    <div
+                        className={styles.modalOverlay}
+                        onClick={() => setShowRequests(false)}
+                    >
                         <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
-
-                            <div className={styles.modalHeader}>
-                                <h3>Friend Requests</h3>
-                                <span
-                                    className={styles.close}
-                                    onClick={() => setShowRequests(false)}
-                                >
-
-                                </span>
-                            </div>
+                            <h3>Friend Requests</h3>
 
                             <div className={styles.tabs}>
                                 <button
                                     className={activeTab === "received" ? styles.activeTab : ""}
                                     onClick={() => setActiveTab("received")}
-                                >
-                                    Received
-                                </button>
+                                >Received</button>
 
                                 <button
                                     className={activeTab === "sent" ? styles.activeTab : ""}
                                     onClick={() => setActiveTab("sent")}
-                                >
-                                    Sent
-                                </button>
+                                >Sent</button>
                             </div>
+
+                            <hr
+                                className={styles.divider}
+                                style={{
+                                    width: "calc(100%)",
+                                    margin: "0px"
+                                }}
+                            />
 
                             <div className={styles.requestsList}>
-                                {activeTab === "received" &&
-                                    received.map(r => (
-                                        <div key={r.request_id} className={styles.requestItem}>
-                                            <span>{r.sender_name}</span>
+                                {
+                                    activeTab === "received"
+                                    &&
+                                    <>
+                                        {
+                                            requests_loader
+                                                ?
+                                                <DivLoader />
+                                                :
+                                                received.map(r => (
+                                                    <div key={r.request_id} className={styles.requestItem}>
+                                                        <div
+                                                            className={styles.userInfo}
+                                                            style={{
+                                                                flex: "1",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "flex-start",
+                                                                gap: "8px"
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={server_url + "/files/" + r.sender_pfp}
+                                                                onError={e => {
+                                                                    e.onerror = null;
+                                                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
+                                                                }}
+                                                            />
 
-                                            <div>
-                                                <button
-                                                    onClick={() => acceptRequest(r.request_id)}
-                                                    className={styles.accept}
-                                                >
-                                                    Accept
-                                                    
-                                                </button>
-                                                <button
-                                                    onClick={() => rejectRequest(r.request_id)}
-                                                    className={styles.reject}
-                                                >
-                                                    Reject
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))
+                                                            <h5>{r.sender_name}</h5>
+                                                        </div>
+
+                                                        <div>
+                                                            <button
+                                                                onClick={() => acceptRequest(r.request_id)}
+                                                                className={styles.accept}
+                                                                style={{
+                                                                    backgroundColor: "var(--success-bg)"
+                                                                }}
+                                                            ><i
+                                                                className="fa-solid fa-check"
+                                                                style={{
+                                                                    color: "var(--success)"
+                                                                }}
+                                                            ></i></button>
+
+                                                            <button
+                                                                onClick={() => rejectRequest(r.request_id)}
+                                                                className={styles.reject}
+                                                                style={{
+                                                                    backgroundColor: "var(--danger-light-bg)"
+                                                                }}
+                                                            ><i
+                                                                className="fa-solid fa-x"
+                                                                style={{
+                                                                    color: "var(--danger-light)"
+                                                                }}
+                                                            ></i></button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                        }
+                                    </>
                                 }
 
-                                {activeTab === "sent" &&
-                                    sent.map(s => (
-                                        <div key={s.request_id} className={styles.requestItem}>
-                                            <span>{s.receiver_name}</span>
-                                            <span className={styles.pending}>Pending</span>
-                                        </div>
-                                    ))
+                                {
+                                    activeTab === "sent"
+                                    &&
+                                    <>
+                                        {
+                                            requests_loader
+                                                ?
+                                                <DivLoader />
+                                                :
+                                                sent.map(s => (
+                                                    <div key={s.request_id} className={styles.requestItem}>
+                                                        <div
+                                                            className={styles.userInfo}
+                                                            style={{
+                                                                flex: "1",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "flex-start",
+                                                                gap: "8px"
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={server_url + "/files/" + s.sender_pfp}
+                                                                onError={e => {
+                                                                    e.onerror = null;
+                                                                    e.target.src = "https://cdn-icons-png.flaticon.com/512/4847/4847985.png"
+                                                                }}
+                                                            />
+
+                                                            <h5>{s.receiver_name}</h5>
+                                                        </div>
+
+                                                        <div
+                                                            style={{
+                                                                padding: "8px",
+                                                                border: "1px solid var(--border-light)",
+                                                                backgroundColor: "var(--bg)",
+                                                                borderRadius: "8px"
+                                                            }}
+                                                            className={styles.pending}
+                                                        >
+                                                            <i
+                                                                style={{
+                                                                    color: "var(--text-secondary)"
+                                                                }}
+                                                                className="fa-regular fa-clock"
+                                                            ></i>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                        }
+                                    </>
                                 }
 
-                                {activeTab === "received" && received.length === 0 && (
-                                    <div className={styles.emptyState}>No requests</div>
-                                )}
+                                {
+                                    (activeTab === "received" && !requests_loader) && received.length === 0 && (
+                                        <div className={styles.emptyState}>
+                                            <h5>No requests</h5>
+                                        </div>
+                                    )
+                                }
 
-                                {activeTab === "sent" && sent.length === 0 && (
-                                    <div className={styles.emptyState}>No sent requests</div>
-                                )}
+                                {
+                                    (activeTab === "sent" && !requests_loader) && sent.length === 0 && (
+                                        <div className={styles.emptyState}>
+                                            <h5>No sent requests</h5>
+                                        </div>
+                                    )
+                                }
                             </div>
-
                         </div>
                     </div>
-                )}
+                )
+            }
 
-            </div>
+            {
+                show_profile
+                &&
+                <UserProfile
+                    user_id={show_profile}
+                    closeHook={setShowProfile}
+                />
+            }
         </div>
     );
 }

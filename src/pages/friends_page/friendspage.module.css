@@ -1,451 +1,316 @@
-.friendsMain {
-    display: flex;
-    flex-direction: row;
-    height: 100dvh;
+@keyframes slide-in {
+    0% {
+        transform: translate(50%, 0%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0%, 0%);
+        opacity: 1;
+    }
 }
 
-.sidebar {
-    margin: 0;
-    padding: 0;
+@keyframes btn-reveal{
+    0%{
+        transform: scale(0.8);
+    }
+    100%{
+        transform: scale(1);
+    }
+}
+
+@keyframes reveal {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes reveal-mobile {
+    0% {
+        transform: translate(0%, 0%) scale(0.8);
+    }
+
+    75% {
+        transform: translate(0%, 0%) scale(1.05);
+    }
+
+    100% {
+        transform: translate(0%, 0%) scale(1);
+    }
+}
+
+.friendsMain {
+    width: 100%;
+    height: 100dvh;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    overflow-x: hidden;
 }
 
 .body {
     flex: 1;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-}
-
-.headerInputContainer {
     height: 100%;
-    width: 68%;
-}
 
-.input {
-    height: 76%;
-    width: 40%;
-    border: none;
-    border-radius: 15px;
-
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'><path d='M21 20l-5.6-5.6a7 7 0 10-1.4 1.4L20 21l1-1zM4 10a6 6 0 1112 0 6 6 0 01-12 0z'/></svg>") no-repeat 10px center;
-    color: var(--text-primary);
-    background-size: 18px;
-    padding-left: 40px;
-    background-color: #1d1b36;
-
-    margin-top: 6px;
-    margin-left: 170px;
-}
-
-.input:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgb(32, 143, 240);
-}
-
-.header {
-    height: 9%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.global {
-
-    color: var(--text-primary);
-    margin-left: 30px;
-    font-size: 1.5rem;
-}
-
-.smallName {
-    color: var(--text-secondary);
-    margin-left: 30px;
-    font-size: 14px;
-    margin-top: 0px;
-}
-
-.header {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-
-}
-
-.line {
-    width: 96.5%;
-    height: 1px;
-    background-color: var(--border);
-    margin-top: 10px;
-    margin-left: 30px;
-}
-
-.resultsContainer {
-    margin-top: 12px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    animation: slide-in .4s ease-out 0s 1 forwards;
+}
+
+.header {
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 8px;
 }
 
-.friendsList{
-    width: calc(100% - 16px);
-    padding: 8px;
-}
+.header>div {
+    width: calc(100% - 32px);
+    height: auto;
 
-/* Individual user row */
-.friendItem {
     display: flex;
     align-items: center;
-    padding: 8px;
-    border-radius: 10px;
-    background: var(--bg-lighter);
-
-    gap: 12px;
-    width: calc(100% - 56px);
-    margin-left: 16px;
-    margin-top: 10px;
-    margin-right: 16px;
+    justify-content: space-between;
+    padding: 16px;
 }
 
+.header>div>button {
+    background-color: transparent;
+    border: none;
+}
 
-/* Avatar circle */
-.avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #4f46e5;
-    color: white;
+.header>div>button>i {
+    color: var(--accent);
+    font-size: 1.16em;
+}
+
+.header .searchBar {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    height: auto;
+    width: calc(100% - 34px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0px;
+    margin: 4px 16px 0px;
+}
+
+.header .searchBar div {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    margin-right: 12px;
+
+    height: 16px;
+    width: 24px;
+    padding: 8px;
 }
 
-/* Username + subtext */
-.userInfo {
-    flex: 1;
+.header .searchBar div i {
+    color: var(--button-text);
 }
 
-.username {
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--text-primary);
-}
-
-.subText {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-/* Add button */
-.addBtn {
-    padding: 6px 12px;
-    font-size: 13px;
+.header .searchBar input {
+    height: 24px;
+    width: 100%;
+    background-color: transparent;
     border: none;
-    border-radius: 8px;
-    background: #4f46e5;
-    color: white;
-    cursor: pointer;
-}
+    outline: none;
 
-.addBtn:hover {
-    background: #4338ca;
-}
-
-/* Loading + empty */
-.loading {
-    text-align: center;
-    font-size: 14px;
-    color: #6b7280;
-}
-
-.emptyState {
-    text-align: center;
-    font-size: 14px;
-    color: #9ca3af;
-    margin-top: 10px;
-}
-
-.friendsList .sectionTitle{
+    caret-color: var(--text-primary);
     color: var(--text-primary);
-    margin-left: 30px;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-    margin-top: 10px;
+
+    letter-spacing: 0.5px;
+}
+
+.divider {
+    width: calc(100% - 32px);
+    border: 1px solid var(--border-light);
+    margin: 0px 16px;
+}
+
+.friendsList {
+    width: calc(100% - 32px);
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+
+    margin: 0px 16px;
 }
 
 .modalOverlay {
     position: fixed;
+
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(2px);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 2;
 }
 
-.modalBox {
-    width: 400px;
-    background: var(--bg-light);
+.modalBox{
+    min-width: 32rem;
+    height: 65dvh;
+    max-height: 280px;
+    min-height: 160px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: var(--bg-lighter);
     border-radius: 12px;
     padding: 16px;
+
+    box-shadow: 0 0 40px var(--shadow);
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+
+    animation: reveal 0.25s ease-out 0s 1 forwards;
 }
 
-.modalHeader {
+.tabs{
+    height: 32px;
+    width: calc(100% - 2px);
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-}
-
-.close {
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.tabs {
-    display: flex;
-    margin-top: 10px;
-
-}
-
-.tabs button {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-.activeTab {
-    background: #000;
-    color: var(--text-primary);
-}
-
-.requestsList {
-    margin-top: 12px;
-}
-
-.requestItem {
-    display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    background-color: var(--card-bg);
-    color: var(--text-primary);
+    gap: 4px;
+
+    border: 1px solid var(--border);
     border-radius: 8px;
-    width: 95.5%;
-    padding: 10px; 
-    margin-top: 5px;;
-}
-
-.accept {
-    background: green;
-    color: white;
-    margin-right: 6px;
-}
-
-.reject {
-    background: red;
-    color: white;
-}
-
-.pending {
-    color: gray;
-}
-
-.requestsBtn{
-    background-color: var(--primary);
-    color: var(--text-primary);
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    margin-right: 20px;
-    transition: transform 0.2s ease
-}
-
-.accept, .reject {
-    border: none;
-    border-radius: 6px;
-    padding: 4px 10px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-.accept:hover {
-    background-color: #22863a;
-    transform: scale(1.1);
-}
-.reject:hover {
-    background-color: #b91c1c;
-    transform: scale(1.1);
-}
-.requestsBtn:hover {
-    background-color: #0f6ae2;
-    transform: scale(1.05);
-}
-.sidebar {
     margin: 0;
-    padding: 0;
-    position: fixed;
-}
-.menuIcon {
-    cursor: pointer;
-    padding: 4px 8px;
-    color: var(--text-primary);
+    background-color: var(--card-bg);
 }
 
-.menu {
-    position: absolute;
-    right: 10px;
-    top: 45px;
-    background: var(--bg-light);
+.tabs>button{
+    background-color: transparent;
+    height: 100%;
+    flex: 1;
     border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    overflow: hidden;
-    z-index: 10;
-    color: var(--text-primary);
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75em;
 }
 
-.menu div {
-    padding: 10px 14px;
-    cursor: pointer;
+.tabs .activeTab{
+    background-color: var(--bg-light);
+    color: var(--text-primary) !important;
+
+    animation: btn-reveal 0.2s ease-out 0s 1 forwards;
 }
 
-.menu div:hover {
-    background: #29313d;
+.requestsList{
+    width: 100%;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+
+    overflow-y: auto;
 }
 
+.requestItem{
+    width: calc(100% - 34px);
+    height: auto;
 
-.danger {
-    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 16px;
+    background-color: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
 }
 
-.danger:hover {
-    background: #fee2e2;
-}
+.requestItem>div{
+    width: auto;
 
-.menuIcon:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-}
-
-.profileOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    gap: 8px;
 }
 
-.profileModal {
-    background: var(--bg-light);
-    padding: 24px;
-    border-radius: 16px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    color: var(--text-primary);
-}
-
-.profilePic {
-    width: 96px;
-    height: 96px;
+.userInfo>img{
+    height: 48px;
+    width: 48px;
+    
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 12px;
-    margin-top: 0px;
+    display: block;
+    object-position: center;
 }
 
-.department {
-    font-size: 13px;
-    opacity: 0.7;
+.requestItem>div>button{
+    padding: 8px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+}
+
+.emptyState{
+    width: 100%;
+    height: calc(100% - 8px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     margin-bottom: 8px;
 }
 
-.about {
-    font-size: 14px;
-    margin-bottom: 16px;
+/* Media Queries */
+@media (max-width: 610px){
+    .modalBox{
+        min-width: 24rem;
+    }
 }
 
-.messageBtn {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    background: #4f46e5;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
-
-.fname,.fdept,.fabout{
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-.connected,.pending{
-    color: var(--text-primary);
-}
-
-@media(max-width: 560px){
+@media (max-width: 560px) {
     .friendsMain {
         flex-direction: column;
     }
-    .headerInputContainer {
+
+    .body {
         width: 100%;
     }
-    .input {
-        margin-top: 100px;
-        width: 85%;
-        margin-left: 10px;
-    }
-    .header .pageNameContainer .global {
-        font-size: 1.9rem;
-        margin-top: 5px;
-        margin-left: 25px;
-    }
-    .pageNameContainer{
-        display: flex;
-        flex-direction: row;
-        width: 340px;
-    }
-    .headerInputContainer{
-        margin-top: -50px;
-        margin-left: -300px;
-    }
-    .header{
-        display:flex;
-        margin-top:0;
-    }
-    .smallName{
-        margin-top: 40px;
-        width: 240px;
-        margin-left: -65px;
-
-    }
-    .requestsBtn{
-        align-self: flex-start;
-        margin-left: -80px;
-        margin-top: 15px;
-    }
-    .line{
-        margin-left: 14px;
-        margin-top: 80px;
-        width: 93%;
-    }
-    .resultsContainer{
-        margin-left: 14px;
-    }  
-    .friendItem{
-        width: calc(100% - 48px);
-        margin-top: 10px;
-        margin-left: 16px;
-        margin-right: 16px;
-    } 
 }
