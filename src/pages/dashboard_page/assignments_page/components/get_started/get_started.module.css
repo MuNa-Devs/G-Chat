@@ -110,7 +110,7 @@
     border-radius: 8px;
 
     background: var(--accent);
-    color: white;
+    color: var(--button-text);
     cursor: pointer;
     font-size: 0.85rem;
 
