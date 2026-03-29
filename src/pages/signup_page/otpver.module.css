@@ -16,6 +16,15 @@
     }
 }
 
+@keyframes rotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
 .otpScreen {
     width: auto;
     height: 100%;
@@ -166,8 +175,4 @@
         caret-color: var(--text-primary);
         color: var(--text-primary);
     }
-}
-
-@media (max-width: 350px){
-    
 }

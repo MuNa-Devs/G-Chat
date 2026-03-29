@@ -12,6 +12,8 @@ export const code_alert_mapper = {
     "DUPLICATE_USER": "User with this email already exists! Try to log-in instead.",
     "DATABASE_ERROR": "Database or Server error",
     "INVALID_USER": "Invalid email or password",
+    "INVALID_OTP": "Entered OTP is incorrect or expired.",
+    "OTP_NOT_FOUND": "OTP check failed. Please try $Resend OTP",
     "DB_INTEGRITY_ERROR": "We're unable to process your request right now. Please contact support if the issue persists.",
     "INTERNAL_ERROR": "Internal server error"
 }

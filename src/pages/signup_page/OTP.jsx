@@ -7,11 +7,15 @@ import { AppContext } from "../../Contexts";
 import { code_alert_mapper } from "../page_utils/code_alert_mapper";
 import { loadUserDetails } from "../../loadUserDetails";
 import { UiContext } from "../../utils/UiContext";
+import ButtonLoader from "../loading_screen/ButtonLoader";
 
 export default function OTP(props) {
     // Getting required contexts
     const { setUserDetails, setLoading, setLogOut } = useContext(AppContext);
     const { setOverride } = useContext(UiContext);
+
+    // Loaders
+    const [resend_loader, setResendLoader] = useState(true);
 
     // Store countdown time
     const [time_remaining, setTimeRemaining] = useState(300);
@@ -104,6 +108,7 @@ export default function OTP(props) {
     // Verify entered OTP
     const handleVerifyClick = async () => {
         const final_otp = values.join("");
+        setVerLoading(true);
 
         try {
             const result = await axios.post(
@@ -118,19 +123,24 @@ export default function OTP(props) {
                     }
                 }
             )
-            
+
             if (result.data.success) {
                 setLogin();
-                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
                 navigate("/dashboard");
+                await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
             }
         }
-        catch (err){
+        catch (err) {
             props.setAlert(code_alert_mapper[err.response?.data?.code]);
+        }
+        finally{
+            setVerLoading(false);
         }
     };
 
     const sendOTP = () => {
+        setResendLoader(true);
+
         axios.post(
             `${server_url}/g-chat/auth/send-otp?user_id=${localStorage.getItem("user_id")}`,
             {
@@ -142,16 +152,18 @@ export default function OTP(props) {
                 }
             }
         ).then(res => {
-            if (res.data.success){
+            if (res.data.success) {
                 setTimeRemaining(300);
                 setResendCountDown(60);
             }
-
             else
                 props.setAlert(code_alert_mapper[res.data?.code]);
+
+            setResendLoader(false);
         }).catch(err => {
             props.setAlert(code_alert_mapper[err.response?.data?.code]);
             console.log(err);
+            setResendLoader(false);
         })
     }
 
@@ -220,13 +232,41 @@ export default function OTP(props) {
                     values.includes("")
                 }
             >
-                Verify
+                {
+                    is_loading
+                        ? <ButtonLoader
+                            loader_style={{
+                                gap: "4px"
+                            }}
+                            dot_style={{
+                                backgroundColor: "var(--text-secondary)"
+                            }}
+                            />
+                        : "Verify"
+                }
             </button>
 
             <div className={styles.resendInfo}>
                 {
                     (resend_countdown === 0)
-                        ? <button onClick={sendOTP}>Resend OTP</button>
+                        ? <button
+                            className={resend_loader ? styles.loader : ""}
+                            onClick={sendOTP}
+                        >
+                            {
+                                resend_loader
+                                    ? <ButtonLoader
+                                        loader_style={{
+                                            gap: "1px"
+                                        }}
+                                        dot_style={{
+                                            width: "6px",
+                                            height: "6px"
+                                        }}
+                                    />
+                                    : "Resend OTP"
+                            }
+                        </button>
                         : <p>Resend OTP available in <span>{resend_countdown} sec</span></p>
                 }
             </div>
