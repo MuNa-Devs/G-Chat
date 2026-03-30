@@ -7,19 +7,22 @@ import { AppProvider } from './Contexts.jsx';
 import ThemeManager from './utils/ThemeManager.jsx';
 import UiContextProvider, { UiContextController } from './utils/UiContext.jsx';
 import { DMProvider } from './utils/DMContext.jsx';
+import { FriendProvider } from './utils/FriendContexts.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<BrowserRouter>
 		<DMProvider>
-			<ThemeManager>
-				<UiContextProvider>
-					<AppProvider>
-						<UiContextController>
-							<App />
-						</UiContextController>
-					</AppProvider>
-				</UiContextProvider>
-			</ThemeManager>
+			<FriendProvider>
+				<ThemeManager>
+					<UiContextProvider>
+						<AppProvider>
+							<UiContextController>
+								<App />
+							</UiContextController>
+						</AppProvider>
+					</UiContextProvider>
+				</ThemeManager>
+			</FriendProvider>
 		</DMProvider>
 	</BrowserRouter>
 );
