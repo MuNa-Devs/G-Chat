@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-
+import createContact from "../direct-messages/CreateContact";
 import styles from "./user_profile.module.css";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
 import PageLoader from "../loading_screen/PageLoader";
 import { FriendContext } from "../../utils/FriendContexts";
+import { DMContext } from "../../utils/DMContext";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile(props) {
     const [loader, setLoader] = useState(true);
@@ -16,9 +18,33 @@ export default function UserProfile(props) {
         removeFriend
     } = useContext(FriendContext);
 
+    const {
+        setChatSelected,
+        setLoading,
+        setSelectedCID,
+        setContactDetails,
+        setAddContact
+    } = useContext(DMContext);
+
     const user_id = props.user_id;
-    const { user_details } = useContext(AppContext);
+    const { user_details, setLogOut } = useContext(AppContext);
     const [user_data, setUserData] = useState({});
+
+    const [request_sent, setRequestSent] = useState(false);
+
+    const handleAddFriend = async () => {
+        try {
+            await sendRequest(
+                user_data.id,
+                user_data.username,
+                user_data.pfp
+            );
+
+            setRequestSent(true);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => {
         axios.get(
@@ -45,6 +71,8 @@ export default function UserProfile(props) {
 
         setLoader(false);
     }, [user_data]);
+
+    const navigate = useNavigate();
 
     return (
         <div className={styles.wrapper}>
@@ -110,7 +138,22 @@ export default function UserProfile(props) {
                                         user_data.is_friend
                                             ?
                                             <>
-                                                <button><i className="fa-regular fa-message"></i> Message</button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const c_det = await createContact(user_details?.id || sessionStorage.getItem("user_id"), user_data.friend_id, { setLogOut });
+                                                        await setChatSelected(true);
+                                                        setLoading(true);
+                                                        await setSelectedCID(Number(c_det?.contact_id));
+                                                        await setContactDetails({
+                                                            username: c_det?.username,
+                                                            pfp: c_det?.pfp
+                                                        });
+                                                        await setAddContact(false);
+
+                                                        navigate("/direct-messages");
+                                                    }}
+                                                ><i className="fa-regular fa-message"></i> Message</button>
+
                                                 <button
                                                     style={{
                                                         backgroundColor: "transparent",
@@ -120,19 +163,54 @@ export default function UserProfile(props) {
                                                         fontWeight: "500",
                                                         letterSpacing: "1px"
                                                     }}
-                                                    onClick={async e => {
-                                                        await removeFriend(user_data.friend_id);
-                                                        setUserData(prev => ({
-                                                            is_friend: false,
-                                                            friend_id: null,
-                                                            ...prev
-                                                        }));
+                                                    onClick={async () => {
+                                                        try {
+                                                            await removeFriend(user_data.friend_id);
+
+                                                            setUserData(prev => ({
+                                                                ...prev,
+                                                                is_friend: false,
+                                                                friend_id: null
+                                                            }));
+                                                        } catch (err) {
+                                                            console.error(err);
+                                                        }
                                                     }}
                                                 ><i style={{ color: "var(--danger)" }} className="fa-solid fa-user-minus"></i> Remove Friend</button>
                                             </>
                                             :
                                             <>
-                                                <button> <i className="fa-solid fa-user-plus"></i> Add Friend</button>
+                                                {
+                                                    request_sent
+                                                        ? (
+                                                            <div
+                                                                style={{
+                                                                    padding: "9px 8px",
+                                                                    border: "1px solid var(--border-light)",
+                                                                    backgroundColor: "var(--bg)",
+                                                                    borderRadius: "8px",
+                                                                    margin: "0",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    flex: "1"
+                                                                }}
+                                                            >
+                                                                <i
+                                                                    style={{
+                                                                        color: "var(--text-secondary)",
+                                                                        fontSize: "0.88em"
+                                                                    }}
+                                                                    className="fa-regular fa-clock"
+                                                                ></i>
+                                                            </div>
+                                                        )
+                                                        : (
+                                                            <button onClick={handleAddFriend}>
+                                                                <i className="fa-solid fa-user-plus"></i> Add Friend
+                                                            </button>
+                                                        )
+                                                }
                                             </>
                                     }
                                 </div>
