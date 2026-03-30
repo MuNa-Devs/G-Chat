@@ -7,9 +7,7 @@ import ViewRoom from "./pages/privateroom_page/rooms_view/room_dashboard/ViewRoo
 import RoomHome from "./pages/privateroom_page/rooms_view/room_home/RoomHome";
 import Dorakaled from "./pages/page_not_found/404";
 import AprilFool from "./pages/page_not_found/AprilFool";
-
 import { LoginProtector } from "./Contexts";
-
 import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./pages/loading_screen/LoadingScreen";
 import Settings from "./pages/settings_page/Settings";
