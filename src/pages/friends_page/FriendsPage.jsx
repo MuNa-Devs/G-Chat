@@ -11,16 +11,21 @@ import UserProfile from '../user_profile/UserProfile';
 import { FriendContext } from '../../utils/FriendContexts';
 
 export default function FriendsPage() {
-    const {     sent,
-                received,
-                friends,
-                setSent,
-                setReceived,
-                setFriends,
-                sendRequest,
-                acceptRequest,
-                rejectRequest,
-                removeFriend,} = useContext(FriendContext);
+
+    // Global Funcs
+    const {
+        sent,
+        received,
+        friends,
+        setSent,
+        setReceived,
+        setFriends,
+        sendRequest,
+        acceptRequest,
+        rejectRequest,
+        removeFriend
+    } = useContext(FriendContext);
+
     const { user_details, setLogOut } = useContext(AppContext);
 
     // List loader
@@ -66,11 +71,6 @@ export default function FriendsPage() {
             setLoading(false);
         }
     };
-
- 
-
-    const isFriend = (userId) =>
-        friends.some(f => f.id === userId);
 
     const isPending = (userId) =>
         sent.some(s => s.receiver_id == userId) ||
