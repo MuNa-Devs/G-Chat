@@ -15,6 +15,7 @@ import AddContact from "./AddContact";
 import { File } from "../../reusable_component/message_dev/Message";
 import PageLoader from "../loading_screen/PageLoader";
 import eposhToString from "../../reusable_component/util_funcs/EpochToReadable";
+import { DMContext } from "../../utils/DMContext";
 
 export default function DM() {
     const { user_details, socket, setLogOut } = useContext(AppContext);
@@ -22,8 +23,21 @@ export default function DM() {
     const input_ref = useRef(null);
     const search_ref = useRef(null);
 
+    // Required Global functions
+    const {
+        chat_selected,
+        setChatSelected,
+        is_loading,
+        setLoading,
+        selected_contactID,
+        setSelectedCID,
+        contact_details,
+        setContactDetails,
+        add_contact,
+        setAddContact
+    } = useContext(DMContext);
+
     // Contct load placeholder
-    const [is_loading, setLoading] = useState(true);
     const [chat_loader, setChatLoader] = useState(true);
 
     // To toggle between chats & search chats
@@ -44,21 +58,9 @@ export default function DM() {
     // To set last contact id
     const [last_seen_con, setLastSeenCon] = useState(Number.MAX_SAFE_INTEGER);
 
-    // To set contact selected or not
-    const [chat_selected, setChatSelected] = useState(false);
-
-    // To set selected contact's ID
-    const [selected_contactID, setSelectedCID] = useState(null);
-
-    // To set selected contact's details
-    const [contact_details, setContactDetails] = useState({});
-
     // File Picker:
     const [show_file_object, setShowFileObject] = useState(false);
     const [files, setFiles] = useState([]);
-
-    // Add Contact toggle
-    const [add_contact, setAddContact] = useState(false);
 
     // File input handler:
     const handleFiles = (e) => {
@@ -350,7 +352,7 @@ export default function DM() {
     const [hide_bars, setHideBars] = useState(false);
 
     useEffect(() => {
-        
+
         if (add_contact) return;
 
         setHideBars(false);
@@ -607,10 +609,6 @@ export default function DM() {
                 <div className={styles.addContactScreen}>
                     <AddContact
                         setAddContact={setAddContact}
-                        setSelectedCID={setSelectedCID}
-                        setChatSelected={setChatSelected}
-                        setContactDetails={setContactDetails}
-                        setLoading={setLoading}
                         setShowContacts={setShowContacts}
                     />
                 </div>

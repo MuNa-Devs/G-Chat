@@ -11,18 +11,18 @@ import { FriendProvider } from './utils/FriendContexts.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<BrowserRouter>
-		<DMProvider>
-			<FriendProvider>
-				<ThemeManager>
-					<UiContextProvider>
-						<AppProvider>
+		<ThemeManager>
+			<UiContextProvider>
+				<AppProvider>
+					<DMProvider>
+						<FriendProvider>
 							<UiContextController>
 								<App />
 							</UiContextController>
-						</AppProvider>
-					</UiContextProvider>
-				</ThemeManager>
-			</FriendProvider>
-		</DMProvider>
+						</FriendProvider>
+					</DMProvider>
+				</AppProvider>
+			</UiContextProvider>
+		</ThemeManager>
 	</BrowserRouter>
 );

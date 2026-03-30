@@ -7,6 +7,7 @@ import DivLoader from "../loading_screen/DivLoader";
 import axios from "axios";
 import { useContext } from "react";
 import { AppContext } from "../../Contexts";
+import { DMContext } from "../../utils/DMContext";
 import createContact from "./CreateContact";
 import PageLoader from "../loading_screen/PageLoader";
 
@@ -248,18 +249,27 @@ export default function AddContact(props) {
 function RecentFriend({ user_id, friend_id, url, username, props }) {
     // Here user_id is the id of current user not of their friend
 
+    // Required Global functions
+    const {
+        setChatSelected,
+        setLoading,
+        setSelectedCID,
+        setContactDetails,
+        setAddContact
+    } = useContext(DMContext);
+
     return (
         <div className={styles.block}
             onClick={async () => {
                 const c_det = await createContact(user_id, friend_id, props);
-                await props.setChatSelected(true);
-                props.setLoading(true);
-                await props.setSelectedCID(Number(c_det?.contact_id));
-                await props.setContactDetails({
+                await setChatSelected(true);
+                setLoading(true);
+                await setSelectedCID(Number(c_det?.contact_id));
+                await setContactDetails({
                     username: c_det?.username,
                     pfp: c_det?.pfp
                 });
-                props.setAddContact(false);
+                setAddContact(false);
             }}
         >
             <div className={styles.pfp}>

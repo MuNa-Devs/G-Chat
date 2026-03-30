@@ -5,9 +5,16 @@ import styles from "./user_profile.module.css";
 import { server_url } from "../../../creds/server_url";
 import { AppContext } from "../../Contexts";
 import PageLoader from "../loading_screen/PageLoader";
+import { FriendContext } from "../../utils/FriendContexts";
 
 export default function UserProfile(props) {
     const [loader, setLoader] = useState(true);
+
+    // Global Functions
+    const {
+        sendRequest,
+        removeFriend
+    } = useContext(FriendContext);
 
     const user_id = props.user_id;
     const { user_details } = useContext(AppContext);
@@ -112,6 +119,14 @@ export default function UserProfile(props) {
                                                         color: "var(--danger)",
                                                         fontWeight: "500",
                                                         letterSpacing: "1px"
+                                                    }}
+                                                    onClick={async e => {
+                                                        await removeFriend(user_data.friend_id);
+                                                        setUserData(prev => ({
+                                                            is_friend: false,
+                                                            friend_id: null,
+                                                            ...prev
+                                                        }));
                                                     }}
                                                 ><i style={{ color: "var(--danger)" }} className="fa-solid fa-user-minus"></i> Remove Friend</button>
                                             </>

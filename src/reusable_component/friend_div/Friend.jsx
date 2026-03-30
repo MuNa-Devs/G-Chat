@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { server_url } from "../../../creds/server_url";
 import createContact from "../../pages/direct-messages/CreateContact";
 import styles from "./friend.module.css";
 import { useRef } from "react";
+import { DMContext } from "../../utils/DMContext";
+import { AppContext } from "../../Contexts";
+import { useNavigate } from "react-router-dom";
 
 export default function Friend(props) {
     const {
@@ -13,6 +16,18 @@ export default function Friend(props) {
         username,
         ...rem_props
     } = props;
+
+    const { user_details } = useContext(AppContext);
+    const navigate = useNavigate();
+
+    // Required Global functions
+    const {
+        setChatSelected,
+        setLoading,
+        setSelectedCID,
+        setContactDetails,
+        setAddContact
+    } = useContext(DMContext);
 
     // ruse -> where this div is being used
     // user_id -> id of current user's friend
@@ -45,14 +60,14 @@ export default function Friend(props) {
                     key={friend_id}
                     onClick={async () => {
                         const c_det = await createContact(user_id, friend_id, rem_props);
-                        await rem_props.setChatSelected(true);
-                        rem_props.setLoading(true);
-                        await rem_props.setSelectedCID(Number(c_det?.contact_id));
-                        await rem_props.setContactDetails({
+                        await setChatSelected(true);
+                        setLoading(true);
+                        await setSelectedCID(Number(c_det?.contact_id));
+                        await setContactDetails({
                             username: c_det?.username,
                             pfp: c_det?.pfp
                         });
-                        await rem_props.setAddContact(false);
+                        await setAddContact(false);
                     }}
                 >
                     <div className={styles.pfp}>
@@ -101,9 +116,18 @@ export default function Friend(props) {
                         className={`${styles.action} ${show_actions ? styles.actionVisible : ""}`}
                     >
                         <button
-                            onClick={e => {
+                            onClick={async e => {
                                 e.stopPropagation();
-                                console.log("hi")
+                                const c_det = await createContact(user_details?.id || sessionStorage.getItem("user_id"), friend_id, rem_props);
+                                await setChatSelected(true);
+                                setLoading(true);
+                                await setSelectedCID(Number(c_det?.contact_id));
+                                await setContactDetails({
+                                    username: c_det?.username,
+                                    pfp: c_det?.pfp
+                                });
+                                
+                                navigate("/direct-messages");
                             }}
                         ><i className="fa-solid fa-message"></i></button>
 
