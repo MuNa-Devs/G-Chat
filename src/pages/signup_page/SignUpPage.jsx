@@ -13,6 +13,7 @@ import OTP from './OTP.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from "react";
 import axios from 'axios';
+import ButtonLoader from '../loading_screen/ButtonLoader.jsx';
 
 // Signup page component
 export default function SignUpPage() {
@@ -187,9 +188,14 @@ export default function SignUpPage() {
                                 {
                                     reg_status
                                         ?
-                                        <div className={styles.registering}>
-                                            <i className="fa-solid fa-spinner"></i>
-                                        </div>
+                                        <ButtonLoader
+                                            loader_style={{
+                                                gap: "4px"
+                                            }}
+                                            dot_style={{
+                                                backgroundColor: "var(--button-text)"
+                                            }}
+                                        />
                                         :
                                         "Register"
                                 }

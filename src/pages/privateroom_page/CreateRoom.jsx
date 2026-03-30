@@ -1,6 +1,6 @@
 import styles from "./new_room.module.css";
 import ScrollDownBox from "../../reusable_component/scroll_downs/ScrollDownBox";
-
+import ButtonLoader from "../loading_screen/ButtonLoader";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { server_url } from "../../../creds/server_url";
@@ -15,6 +15,7 @@ export default function NewRoom(props) {
     const [room_type, setRoomType] = useState("public");
     const [join_pref, setJoinPref] = useState("Anyone Can Join");
     const [room_size, setRoomSize] = useState(10);
+    const [creating, setCreating] = useState(false);
 
     useEffect(() => {
         if (props.btn_text === "Update") {
@@ -37,7 +38,9 @@ export default function NewRoom(props) {
     }
 
     const createRoom = () => {
-        setBtnText(props.altering || "Creating...");
+        if (!room_name || !room_type || !join_pref) return;
+
+        setCreating(true);
         document.getElementById("save").disabled = true;
         const form = new FormData();
 
@@ -48,7 +51,7 @@ export default function NewRoom(props) {
         form.append("join_pref", join_pref);
         form.append("room_size", room_size);
         form.append("room_aid", user_details.id);
-        
+
         if (props.api === "update") form.append("room_id", props.room_data.r_id);
 
         axios.post(
@@ -67,12 +70,15 @@ export default function NewRoom(props) {
 
             props.setRefreshState(prev => prev + 1);
 
+            setCreating(false);
             props.closeHook(false);
         }).catch(err => {
             console.log(err);
 
             if (["INVALID_JWT", "FORBIDDEN"].includes(err.response?.data?.code))
                 setLogOut();
+
+            setCreating(false);
         });
     }
 
@@ -86,9 +92,30 @@ export default function NewRoom(props) {
                         onClick={() => props.closeHook(false)}
                     >Cancel</button>
 
-                    <button className={styles.save} id="save"
+                    <button
+                        className={styles.save}
+                        id="save"
                         onClick={createRoom}
-                    ><i className="fa-regular fa-cloud"></i> {btn_text}</button>
+                        disabled={creating}
+                    >
+                        {
+                            creating
+                                ? <ButtonLoader
+                                    loader_style={{
+                                        gap: "4px",
+                                        padding: "4px 8px"
+                                    }}
+                                    dot_style={{
+                                        backgroundColor: "var(--button-text)"
+                                    }}
+                                />
+                                : (
+                                    <>
+                                        <i className="fa-regular fa-cloud"></i> {btn_text}
+                                    </>
+                                )
+                        }
+                    </button>
                 </div>
             </div>
 
@@ -210,9 +237,30 @@ export default function NewRoom(props) {
                     onClick={() => props.closeHook(false)}
                 >Cancel</button>
 
-                <button className={styles.save} id="save"
+                <button
+                    className={styles.save}
+                    id="save"
                     onClick={createRoom}
-                ><i className="fa-regular fa-cloud"></i> {btn_text}</button>
+                    disabled={creating}
+                >
+                    {
+                        creating
+                            ? <ButtonLoader
+                                loader_style={{
+                                    gap: "4px",
+                                    padding: "4px 8px"
+                                }}
+                                dot_style={{
+                                    backgroundColor: "var(--button-text)"
+                                }}
+                            />
+                            : (
+                                <>
+                                    <i className="fa-regular fa-cloud"></i> {btn_text}
+                                </>
+                            )
+                    }
+                </button>
             </div>
         </div>
     );

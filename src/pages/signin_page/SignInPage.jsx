@@ -7,7 +7,7 @@ import { loadUserDetails } from '../../loadUserDetails.js';
 import { UiContext } from '../../utils/UiContext';
 import { code_alert_mapper } from '../page_utils/code_alert_mapper.js';
 import Alert from '../../reusable_component/alert_div/Alert.jsx';
-
+import ButtonLoader from '../loading_screen/ButtonLoader.jsx';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
@@ -57,7 +57,7 @@ function SignInPage() {
                 localStorage.setItem("token", response.data.token);
 
                 await loadUserDetails(setUserDetails, setLoading, setOverride, setLogOut);
-                
+
                 setLogin(true);
                 navigate("/dashboard");
             } else
@@ -145,9 +145,15 @@ function SignInPage() {
                     {
                         load_status
                             ?
-                            <div className={styles.signingin}>
-                                <i className="fa-solid fa-spinner"></i>
-                            </div>
+
+                            <ButtonLoader
+                                loader_style={{
+                                    gap: "4px"
+                                }}
+                                dot_style={{
+                                    backgroundColor: "var(--button-text)"
+                                }}
+                            />
                             :
                             "Log In"
                     }
